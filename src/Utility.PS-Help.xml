@@ -1,0 +1,187 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<helpItems schema="maml">
+
+<command:command xmlns:maml="http://schemas.microsoft.com/maml/2004/10" xmlns:command="http://schemas.microsoft.com/maml/dev/command/2004/10" xmlns:dev="http://schemas.microsoft.com/maml/dev/2004/10" xmlns:MSHelp="http://msdn.microsoft.com/mshelp">
+<command:details><command:name>ConvertFrom-SecureString</command:name>
+<command:verb>ConvertFrom</command:verb>
+<command:noun>SecureString</command:noun>
+<maml:description><maml:para>Converts a secure string to an encrypted standard string.
+</maml:para>
+</maml:description>
+</command:details>
+<maml:description><maml:para>The ConvertFrom-SecureString cmdlet converts a secure string ( System.Security.SecureString ) to an encrypted standard string ( System.String ). Unlike a secure string, an encrypted standard string can be saved in a file for later use. The encrypted standard string can be converted back to a secure string by using the ConvertTo-SecureString cmdlet.
+</maml:para>
+<maml:para>If an encryption key is specified by using the Key or SecureKey parameters, the Advanced Encryption Standard (AES) encryption algorithm is used. The specified key must have a length of 128, 192, or 256 bits, because those are the key lengths supported by the AES encryption algorithm. If no key is specified, the Windows Data Protection API (DPAPI) is used to encrypt the standard string representation.
+</maml:para>
+</maml:description>
+<command:syntax><command:syntaxItem><maml:name>ConvertFrom-SecureString</maml:name>
+<command:parameter required="true" variableLength="true" globbing="false" pipelineInput="True (ByValue)" position="0" aliases="none"><maml:name>SecureString</maml:name>
+<maml:Description><maml:para>Converts a secure string to an encrypted standard string.
+</maml:para>
+</maml:Description>
+<command:parameterValue required="true" variableLength="false">SecureString</command:parameterValue>
+<dev:type><maml:name>SecureString</maml:name>
+<maml:uri /></dev:type>
+<dev:defaultValue>None</dev:defaultValue>
+</command:parameter>
+<command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="1" aliases="none"><maml:name>AsPlainText</maml:name>
+<maml:Description><maml:para>Specifies a secure string to convert to a plain text string. The secure string cmdlets help protect confidential text. The text is encrypted for privacy and is deleted from computer memory after it is used. If you use this parameter to return the plain text value, the system cannot protect that value in this manner. To use this parameter, you must also specify the Force parameter.
+</maml:para>
+</maml:Description>
+<dev:type><maml:name>SwitchParameter</maml:name>
+<maml:uri /></dev:type>
+<dev:defaultValue>False</dev:defaultValue>
+</command:parameter>
+<command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="2" aliases="none"><maml:name>Force</maml:name>
+<maml:Description><maml:para>Confirms that you understand the implications of using the AsPlainText parameter and still want to use it.
+</maml:para>
+</maml:Description>
+<dev:type><maml:name>SwitchParameter</maml:name>
+<maml:uri /></dev:type>
+<dev:defaultValue>False</dev:defaultValue>
+</command:parameter>
+</command:syntaxItem>
+<command:syntaxItem><maml:name>ConvertFrom-SecureString</maml:name>
+<command:parameter required="true" variableLength="true" globbing="false" pipelineInput="True (ByValue)" position="0" aliases="none"><maml:name>SecureString</maml:name>
+<maml:Description><maml:para>Specifies the secure string to convert to an encrypted standard string.
+</maml:para>
+</maml:Description>
+<command:parameterValue required="true" variableLength="false">SecureString</command:parameterValue>
+<dev:type><maml:name>SecureString</maml:name>
+<maml:uri /></dev:type>
+<dev:defaultValue>None</dev:defaultValue>
+</command:parameter>
+<command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="named" aliases="none"><maml:name>Key</maml:name>
+<maml:Description><maml:para>Specifies the encryption key as a byte array.
+</maml:para>
+</maml:Description>
+<command:parameterValue required="true" variableLength="false">Byte[]</command:parameterValue>
+<dev:type><maml:name>Byte[]</maml:name>
+<maml:uri /></dev:type>
+<dev:defaultValue>None</dev:defaultValue>
+</command:parameter>
+</command:syntaxItem>
+<command:syntaxItem><maml:name>ConvertFrom-SecureString</maml:name>
+<command:parameter required="true" variableLength="true" globbing="false" pipelineInput="True (ByValue)" position="0" aliases="none"><maml:name>SecureString</maml:name>
+<maml:Description><maml:para>Specifies the secure string to convert to an encrypted standard string.
+</maml:para>
+</maml:Description>
+<command:parameterValue required="true" variableLength="false">SecureString</command:parameterValue>
+<dev:type><maml:name>SecureString</maml:name>
+<maml:uri /></dev:type>
+<dev:defaultValue>None</dev:defaultValue>
+</command:parameter>
+<command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="1" aliases="none"><maml:name>SecureKey</maml:name>
+<maml:Description><maml:para>Specifies the encryption key as a secure string. The secure string value is converted to a byte array before being used as the key.
+</maml:para>
+</maml:Description>
+<command:parameterValue required="true" variableLength="false">SecureString</command:parameterValue>
+<dev:type><maml:name>SecureString</maml:name>
+<maml:uri /></dev:type>
+<dev:defaultValue>None</dev:defaultValue>
+</command:parameter>
+</command:syntaxItem>
+</command:syntax>
+<command:parameters><command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="1" aliases="none"><maml:name>AsPlainText</maml:name>
+<maml:Description><maml:para>Specifies a secure string to convert to a plain text string. The secure string cmdlets help protect confidential text. The text is encrypted for privacy and is deleted from computer memory after it is used. If you use this parameter to return the plain text value, the system cannot protect that value in this manner. To use this parameter, you must also specify the Force parameter.
+</maml:para>
+</maml:Description>
+<command:parameterValue required="false" variableLength="false">SwitchParameter</command:parameterValue>
+<dev:type><maml:name>SwitchParameter</maml:name>
+<maml:uri /></dev:type>
+<dev:defaultValue>False</dev:defaultValue>
+</command:parameter>
+<command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="2" aliases="none"><maml:name>Force</maml:name>
+<maml:Description><maml:para>Confirms that you understand the implications of using the AsPlainText parameter and still want to use it.
+</maml:para>
+</maml:Description>
+<command:parameterValue required="false" variableLength="false">SwitchParameter</command:parameterValue>
+<dev:type><maml:name>SwitchParameter</maml:name>
+<maml:uri /></dev:type>
+<dev:defaultValue>False</dev:defaultValue>
+</command:parameter>
+<command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="named" aliases="none"><maml:name>Key</maml:name>
+<maml:Description><maml:para>Specifies the encryption key as a byte array.
+</maml:para>
+</maml:Description>
+<command:parameterValue required="true" variableLength="false">Byte[]</command:parameterValue>
+<dev:type><maml:name>Byte[]</maml:name>
+<maml:uri /></dev:type>
+<dev:defaultValue>None</dev:defaultValue>
+</command:parameter>
+<command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="1" aliases="none"><maml:name>SecureKey</maml:name>
+<maml:Description><maml:para>Specifies the encryption key as a secure string. The secure string value is converted to a byte array before being used as the key.
+</maml:para>
+</maml:Description>
+<command:parameterValue required="true" variableLength="false">SecureString</command:parameterValue>
+<dev:type><maml:name>SecureString</maml:name>
+<maml:uri /></dev:type>
+<dev:defaultValue>None</dev:defaultValue>
+</command:parameter>
+<command:parameter required="true" variableLength="true" globbing="false" pipelineInput="True (ByValue)" position="0" aliases="none"><maml:name>SecureString</maml:name>
+<maml:Description><maml:para>Specifies the secure string to convert to an encrypted standard string.
+</maml:para>
+</maml:Description>
+<command:parameterValue required="true" variableLength="false">SecureString</command:parameterValue>
+<dev:type><maml:name>SecureString</maml:name>
+<maml:uri /></dev:type>
+<dev:defaultValue>None</dev:defaultValue>
+</command:parameter>
+</command:parameters>
+<command:inputTypes><command:inputType><dev:type><maml:name>System.Security.SecureString</maml:name>
+</dev:type>
+<maml:description><maml:para>You can pipe a SecureString object to ConvertFrom-SecureString .
+</maml:para>
+</maml:description>
+</command:inputType>
+</command:inputTypes>
+<command:returnValues><command:returnValue><dev:type><maml:name>System.String</maml:name>
+</dev:type>
+<maml:description><maml:para>ConvertFrom-SecureString returns a standard string object.
+</maml:para>
+</maml:description>
+</command:returnValue>
+</command:returnValues>
+<maml:alertSet><maml:alert><maml:para>To create a secure string from characters that are typed at the command prompt, use the AsSecureString* parameter of the Read-Host cmdlet.
+</maml:para>
+<maml:para>  When you use the Key or SecureKey parameters to specify a key, the key length must be correct. For example, a key of 128 bits can be specified as a byte array of 16 digits. Similarly, 192-bit and 256-bit keys correspond to byte arrays of 24 and 32 digits, respectively.
+</maml:para>
+<maml:para>*
+</maml:para>
+</maml:alert>
+</maml:alertSet>
+<command:examples><command:example><maml:title>Example 1: Create a secure string</maml:title>
+<dev:code>PS C:\&gt;$SecureString = Read-Host -AsSecureString</dev:code>
+<dev:remarks><maml:para>This command creates a secure string from characters that you type at the command prompt. After entering the command, type the string you want to store as a secure string. An asterisk (*) is displayed to represent each character that you type.
+</maml:para>
+</dev:remarks>
+</command:example>
+<command:example><maml:title>Example 2: Convert a secure string to an encrypted standard string</maml:title>
+<dev:code>PS C:\&gt;$StandardString = ConvertFrom-SecureString $SecureString</dev:code>
+<dev:remarks><maml:para>This command converts the secure string in the $SecureString variable to an encrypted standard string. The resulting encrypted standard string is stored in the $StandardString variable.
+</maml:para>
+</dev:remarks>
+</command:example>
+<command:example><maml:title>Example 3: Convert a secure string to an encrypted standard string with a 192-bit key</maml:title>
+<dev:code>PS C:\&gt;$Key = (3,4,2,3,56,34,254,222,1,1,2,23,42,54,33,233,1,34,2,7,6,5,35,43)
+PS C:\&gt;$StandardString = ConvertFrom-SecureString $SecureString -Key $Key</dev:code>
+<dev:remarks><maml:para>These commands use the AES algorithm to convert the secure string stored in the $SecureString variable to an encrypted standard string with a 192-bit key. The resulting encrypted standard string is stored in the $StandardString variable.
+</maml:para>
+<maml:para>The first command stores a key in the $Key variable. The key is an array of 24 digits, all of which are less than 256.
+</maml:para>
+<maml:para>Because each digit represents a byte (8 bits), the key has 24 digits for a total of 192 bits (8 x 24). This is a valid key length for the AES algorithm. Each individual value is less than 256, which is the maximum value that can be stored in an unsigned byte.
+</maml:para>
+<maml:para>The second command uses the key in the $Key variable to convert the secure string to an encrypted standard string.
+</maml:para>
+</dev:remarks>
+</command:example>
+</command:examples>
+<command:relatedLinks><maml:navigationLink><maml:linkText>Online Version:</maml:linkText>
+<maml:uri>http://go.microsoft.com/fwlink/?LinkId=821708</maml:uri>
+</maml:navigationLink>
+<maml:navigationLink><maml:linkText>ConvertTo-SecureString</maml:linkText>
+<maml:uri></maml:uri>
+</maml:navigationLink>
+</command:relatedLinks>
+</command:command>
+</helpItems>
