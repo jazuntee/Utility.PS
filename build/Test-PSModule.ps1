@@ -26,7 +26,7 @@ Processor_Architecture: $env:Processor_Architecture
 
 ## Initialize
 Remove-Module CommonFunctions -ErrorAction SilentlyContinue
-Import-Module "$PSScriptRoot\CommonFunctions.psm1" -ErrorAction Stop
+Import-Module "$PSScriptRoot\CommonFunctions.psm1" -WarningAction SilentlyContinue -ErrorAction Stop
 
 [System.IO.DirectoryInfo] $BaseDirectoryInfo = Get-PathInfo $BaseDirectory -InputPathType Directory -ErrorAction Stop
 [System.IO.DirectoryInfo] $ModuleDirectoryInfo = Get-PathInfo $ModuleDirectory -InputPathType Directory -DefaultDirectory $BaseDirectoryInfo.FullName -ErrorAction SilentlyContinue
@@ -45,12 +45,14 @@ $strScriptBlockTest = 'Import-Module {0};' -f $ModulePath
 
 $ScriptBlockTest = {
     param ([string]$ModulePath,[string]$TestsDirectory)
+    ## Force WindowsPowerShell to load correct version of built-in modules when launched from PowerShell 6+
+    if ($PSVersionTable.PSEdition -eq 'Desktop') { Import-Module 'Microsoft.PowerShell.Management','Microsoft.PowerShell.Utility','CimCmdlets' -MaximumVersion 5.9.9.9 }
     Import-Module Pester
     $PSModule = Import-Module $ModulePath -PassThru
 
     $CodeCoverage = Invoke-Pester @{ Path = (Join-Path $TestsDirectory "*"); Parameters = @{ ModulePath = $ModulePath } } -CodeCoverage (Join-Path $PSModule.ModuleBase "*") -PassThru
 }
-$strScriptBlockTest = 'Invoke-Command -ScriptBlock {{ {0} }} -ArgumentList {1}' -f $ScriptBlockTest,(($ModulePath,$ModuleTestsDirectoryInfo.FullName | ConvertTo-PSString -Compact) -join ',')
+$strScriptBlockTest = 'Invoke-Command -ScriptBlock {{ {0} }} -ArgumentList {1}' -f $ScriptBlockTest,(($ModulePath,$ModuleTestsDirectoryInfo.FullName | ConvertTo-PsString -Compact) -join ',')
 
 #[string] $strScriptBlockTest = Get-Content (Join-Path $BaseDirectoryInfo.FullName 'tests\Get-X509Certificate.tests.ps1') -Raw
 

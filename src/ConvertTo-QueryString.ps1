@@ -41,8 +41,8 @@ function ConvertTo-QueryString {
             else
             {
                 ## Non-Terminating Error
-                $Exception = New-Object ArgumentException -ArgumentList ("Cannot convert input of type {0} to query string." -f $InputObject.GetType())
-                Write-Error -Exception $Exception -Category ([System.Management.Automation.ErrorCategory]::ParserError) -CategoryActivity $MyInvocation.MyCommand -ErrorId "ConvertQueryStringFailureTypeNotSupported" -TargetObject $InputObject
+                $Exception = New-Object ArgumentException -ArgumentList ('Cannot convert input of type {0} to query string.' -f $InputObject.GetType())
+                Write-Error -Exception $Exception -Category ([System.Management.Automation.ErrorCategory]::ParserError) -CategoryActivity $MyInvocation.MyCommand -ErrorId 'ConvertQueryStringFailureTypeNotSupported' -TargetObject $InputObject
                 continue
             }
 

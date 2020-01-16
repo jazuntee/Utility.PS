@@ -7,23 +7,23 @@ param (
 Import-Module $ModulePath -Force
 
 ## Load Test Helper Functions
-. (Join-Path $PSScriptRoot "TestCommon.ps1")
+. (Join-Path $PSScriptRoot 'TestCommon.ps1')
 
-Describe "ConvertFrom-Base64String" {
+Describe 'ConvertFrom-Base64String' {
 
-    Context "Base64-Encoded String Input" {
+    Context 'Base64-Encoded String Input' {
         class StringOutput {
             [string] $CommandName = 'ConvertFrom-Base64String'
             [hashtable] $BoundParameters = @{}
             [type] $ExpectedInputType = [string]
             [hashtable[]] $IO = @(
                 @{
-                    Input = "QSBzdHJpbmcgd2l0aCBiYXNlNjQgZW5jb2Rpbmc="
-                    Output = "A string with base64 encoding"
+                    Input = 'QSBzdHJpbmcgd2l0aCBiYXNlNjQgZW5jb2Rpbmc='
+                    Output = 'A string with base64 encoding'
                 }
                 @{
-                    Input = "QW5vdGhlciBiYXNlNjQtZW5jb2RlZCBzdHJpbmc="
-                    Output = "Another base64-encoded string"
+                    Input = 'QW5vdGhlciBiYXNlNjQtZW5jb2RlZCBzdHJpbmc='
+                    Output = 'Another base64-encoded string'
                 }
             )
         }
@@ -37,11 +37,11 @@ Describe "ConvertFrom-Base64String" {
             [type] $ExpectedInputType = [string]
             [hashtable[]] $IO = @(
                 @{
-                    Input = "5oIhNbCaFUGAe8NsiAKfpA=="
+                    Input = '5oIhNbCaFUGAe8NsiAKfpA=='
                     Output = [byte[]]@(230, 130, 33, 53, 176, 154, 21, 65, 128, 123, 195, 108, 136, 2, 159, 164)
                 }
                 @{
-                    Input = "OTAAAA=="
+                    Input = 'OTAAAA=='
                     Output = [byte[]]@(57, 48, 0, 0)
                 }
             )
@@ -49,7 +49,7 @@ Describe "ConvertFrom-Base64String" {
         TestGroup ByteArrayOutput
     }
 
-    Context "Base64Url-Encoded String Input" {
+    Context 'Base64Url-Encoded String Input' {
         class StringOutput {
             [string] $CommandName = 'ConvertFrom-Base64String'
             [hashtable] $BoundParameters = @{
@@ -59,12 +59,12 @@ Describe "ConvertFrom-Base64String" {
             [type] $ExpectedInputType = [string]
             [hashtable[]] $IO = @(
                 @{
-                    Input = "QVNDSUkgc3RyaW5nIHdpdGggYmFzZTY0dXJsIGVuY29kaW5n"
-                    Output = "ASCII string with base64url encoding"
+                    Input = 'QVNDSUkgc3RyaW5nIHdpdGggYmFzZTY0dXJsIGVuY29kaW5n'
+                    Output = 'ASCII string with base64url encoding'
                 }
                 @{
-                    Input = "QW5vdGhlciBiYXNlNjR1cmwtZW5jb2RlZCBzdHJpbmcgd2l0aCBBU0NJSSBlbmNvZGluZw"
-                    Output = "Another base64url-encoded string with ASCII encoding"
+                    Input = 'QW5vdGhlciBiYXNlNjR1cmwtZW5jb2RlZCBzdHJpbmcgd2l0aCBBU0NJSSBlbmNvZGluZw'
+                    Output = 'Another base64url-encoded string with ASCII encoding'
                 }
             )
         }
@@ -79,11 +79,11 @@ Describe "ConvertFrom-Base64String" {
             [type] $ExpectedInputType = [string]
             [hashtable[]] $IO = @(
                 @{
-                    Input = "5oIhNbCaFUGAe8NsiAKfpA"
+                    Input = '5oIhNbCaFUGAe8NsiAKfpA'
                     Output = [byte[]]@(230, 130, 33, 53, 176, 154, 21, 65, 128, 123, 195, 108, 136, 2, 159, 164)
                 }
                 @{
-                    Input = "OTAAAA"
+                    Input = 'OTAAAA'
                     Output = [byte[]]@(57, 48, 0, 0)
                 }
             )

@@ -22,7 +22,7 @@ param
 
 ## Initialize
 Remove-Module CommonFunctions -ErrorAction SilentlyContinue
-Import-Module $PSScriptRoot\CommonFunctions.psm1
+Import-Module $PSScriptRoot\CommonFunctions.psm1 -DisableNameChecking
 
 [System.IO.DirectoryInfo] $BaseDirectoryInfo = Get-PathInfo $BaseDirectory -InputPathType Directory -ErrorAction Stop
 [System.IO.FileInfo] $PackagesConfigFileInfo = Get-PathInfo $PackagesConfigPath -DefaultDirectory $BaseDirectoryInfo.FullName -DefaultFilename "packages.config" -ErrorAction Stop

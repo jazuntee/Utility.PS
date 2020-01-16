@@ -29,8 +29,8 @@ function ConvertFrom-SecureString {
         if (${AsPlainText}) {
             if (!${Force}) {
                 ## Non-Terminating Error
-                $Exception = New-Object ArgumentException -ArgumentList "The system cannot protect plain text output. To suppress this warning and convert a SecureString to plain text, reissue the command specifying the Force parameter."
-                Write-Error -Exception $Exception -Category ([System.Management.Automation.ErrorCategory]::InvalidArgument) -CategoryActivity $MyInvocation.MyCommand -ErrorId "ConvertSecureStringFailureForceRequired" -TargetObject ${SecureString} #-ErrorAction Stop
+                $Exception = New-Object ArgumentException -ArgumentList 'The system cannot protect plain text output. To suppress this warning and convert a SecureString to plain text, reissue the command specifying the Force parameter.'
+                Write-Error -Exception $Exception -Category ([System.Management.Automation.ErrorCategory]::InvalidArgument) -CategoryActivity $MyInvocation.MyCommand -ErrorId 'ConvertSecureStringFailureForceRequired' -TargetObject ${SecureString} #-ErrorAction Stop
             }
             return
         }

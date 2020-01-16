@@ -7,9 +7,9 @@ param (
 Import-Module $ModulePath -Force
 
 ## Load Test Helper Functions
-. (Join-Path $PSScriptRoot "TestCommon.ps1")
+. (Join-Path $PSScriptRoot 'TestCommon.ps1')
 
-Describe "ConvertFrom-SecureString" {
+Describe 'ConvertFrom-SecureString' {
 
     class SecureStringInput {
         [string] $CommandName = 'ConvertFrom-SecureString'
@@ -28,7 +28,7 @@ Describe "ConvertFrom-SecureString" {
     TestGroup SecureStringInput
 
     Write-Host
-    It "StandardInput" {
+    It 'StandardInput' {
         $Input = (ConvertTo-SecureString 'SuperSecretString' -AsPlainText -Force -OutBuffer 1)
         $Input | Should -BeOfType [securestring]
         $Output = ConvertFrom-SecureString $Input
@@ -37,7 +37,7 @@ Describe "ConvertFrom-SecureString" {
         $Output.Length -eq 524 | Should -BeTrue
     }
 
-    It "Non-Terminating Errors" {
+    It 'Non-Terminating Errors' {
         $ScriptBlock = { ConvertFrom-SecureString (ConvertTo-SecureString 'SuperSecretString' -AsPlainText -Force) -AsPlainText -ErrorAction SilentlyContinue }
         $ScriptBlock | Should -Not -Throw
         $Output = Invoke-Expression $ScriptBlock.ToString() -ErrorVariable ErrorObjects
@@ -52,7 +52,7 @@ Describe "ConvertFrom-SecureString" {
         }
     }
 
-    It "Terminating Errors" {
+    It 'Terminating Errors' {
         $ScriptBlock = { ConvertFrom-SecureString (ConvertTo-SecureString 'SuperSecretString' -AsPlainText -Force) -AsPlainText -ErrorAction Stop }
         $ScriptBlock | Should -Throw
         try {

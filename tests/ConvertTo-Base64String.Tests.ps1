@@ -7,23 +7,23 @@ param (
 Import-Module $ModulePath -Force
 
 ## Load Test Helper Functions
-. (Join-Path $PSScriptRoot "TestCommon.ps1")
+. (Join-Path $PSScriptRoot 'TestCommon.ps1')
 
-Describe "ConvertTo-Base64String" {
+Describe 'ConvertTo-Base64String' {
 
-    Context "Base64-Encoded String Output" {
+    Context 'Base64-Encoded String Output' {
         class StringInput {
             [string] $CommandName = 'ConvertTo-Base64String'
             [hashtable] $BoundParameters = @{}
             [type] $ExpectedInputType = [string]
             [hashtable[]] $IO = @(
                 @{
-                    Input = "A string with base64 encoding"
-                    Output = "QSBzdHJpbmcgd2l0aCBiYXNlNjQgZW5jb2Rpbmc="
+                    Input = 'A string with base64 encoding'
+                    Output = 'QSBzdHJpbmcgd2l0aCBiYXNlNjQgZW5jb2Rpbmc='
                 }
                 @{
-                    Input = "Another base64-encoded string"
-                    Output = "QW5vdGhlciBiYXNlNjQtZW5jb2RlZCBzdHJpbmc="
+                    Input = 'Another base64-encoded string'
+                    Output = 'QW5vdGhlciBiYXNlNjQtZW5jb2RlZCBzdHJpbmc='
                 }
             )
         }
@@ -32,17 +32,17 @@ Describe "ConvertTo-Base64String" {
         class ByteInput {
             [string] $CommandName = 'ConvertTo-Base64String'
             [hashtable] $BoundParameters = @{
-                WarningAction = "SilentlyContinue"
+                WarningAction = 'SilentlyContinue'
             }
             [type] $ExpectedInputType = [byte[]]
             [hashtable[]] $IO = @(
                 @{
                     Input = [byte[]]@(230, 130, 33, 53, 176, 154, 21, 65, 128, 123, 195, 108, 136, 2, 159, 164)
-                    Output = "5oIhNbCaFUGAe8NsiAKfpA=="
+                    Output = '5oIhNbCaFUGAe8NsiAKfpA=='
                 }
                 @{
                     Input = [byte[]]@(57, 48, 0, 0)
-                    Output = "OTAAAA=="
+                    Output = 'OTAAAA=='
                 }
             )
         }
@@ -127,7 +127,7 @@ Describe "ConvertTo-Base64String" {
         TestGroup FileInput
     }
 
-    Context "Base64Url-Encoded String Output" {
+    Context 'Base64Url-Encoded String Output' {
         class StringInput {
             [string] $CommandName = 'ConvertTo-Base64String'
             [hashtable] $BoundParameters = @{
@@ -137,11 +137,11 @@ Describe "ConvertTo-Base64String" {
             [hashtable[]] $IO = @(
                 @{
                     Input = 'ASCII string with base64url encoding'
-                    Output = "QVNDSUkgc3RyaW5nIHdpdGggYmFzZTY0dXJsIGVuY29kaW5n"
+                    Output = 'QVNDSUkgc3RyaW5nIHdpdGggYmFzZTY0dXJsIGVuY29kaW5n'
                 }
                 @{
-                    Input = "Another base64url-encoded string with ASCII encoding"
-                    Output = "QW5vdGhlciBiYXNlNjR1cmwtZW5jb2RlZCBzdHJpbmcgd2l0aCBBU0NJSSBlbmNvZGluZw"
+                    Input = 'Another base64url-encoded string with ASCII encoding'
+                    Output = 'QW5vdGhlciBiYXNlNjR1cmwtZW5jb2RlZCBzdHJpbmcgd2l0aCBBU0NJSSBlbmNvZGluZw'
                 }
             )
         }
@@ -149,7 +149,7 @@ Describe "ConvertTo-Base64String" {
     }
 
     Write-Host
-    It "Terminating Errors" {
+    It 'Terminating Errors' {
         $ScriptBlock = { ([int]127),([decimal]127),([long]127) | ConvertTo-Base64String -ErrorAction Stop }
         $ScriptBlock | Should -Throw
         try {

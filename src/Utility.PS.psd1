@@ -10,7 +10,7 @@
 RootModule = 'Utility.PS.psm1'
 
 # Version number of this module.
-ModuleVersion = '1.0.0.0'
+ModuleVersion = '1.0.0.1'
 
 # Supported PSEditions
 CompatiblePSEditions = 'Core','Desktop'
@@ -22,10 +22,10 @@ GUID = 'e6c8b1d2-a261-4a57-80a7-ea8080132c86'
 Author = 'Jason Thompson'
 
 # Company or vendor of this module
-CompanyName = ''
+CompanyName = 'Microsoft Corporation'
 
 # Copyright statement for this module
-Copyright = '(c) 2019 Jason Thompson. All rights reserved.'
+Copyright = '(c) 2020 Jason Thompson. All rights reserved.'
 
 # Description of the functionality provided by this module
 Description = 'This module contains cmdlets that extend the basic features of PowerShell.'
@@ -40,13 +40,13 @@ PowerShellVersion = '5.1'
 # PowerShellHostVersion = ''
 
 # Minimum version of Microsoft .NET Framework required by this module
-DotNetFrameworkVersion = '4.5'
+# DotNetFrameworkVersion = '4.5'
 
 # Minimum version of the common language runtime (CLR) required by this module
-#CLRVersion = ''
+# CLRVersion = ''
 
 # Processor architecture (None, X86, Amd64) required by this module
-#ProcessorArchitecture = ''
+# ProcessorArchitecture = ''
 
 # Modules that must be imported into the global environment prior to importing this module
 # RequiredModules = @()
@@ -71,12 +71,16 @@ NestedModules = @(
     '.\ConvertFrom-SecureString.ps1'
     '.\ConvertFrom-SecureStringAsPlainText.ps1'
     '.\ConvertTo-Base64String.ps1'
+    '.\ConvertTo-Csv.ps1'
     '.\ConvertTo-HexString.ps1'
-    '.\ConvertTo-PSString.ps1'
+    '.\ConvertTo-PsParameterString.ps1'
+    '.\ConvertTo-PsString.ps1'
     '.\ConvertTo-QueryString.ps1'
     '.\Get-X509Certificate.ps1'
     '.\Invoke-CommandAsSystem.ps1'
     '.\New-SecureStringKey.ps1'
+    '.\Remove-SensitiveData.ps1'
+    '.\Write-HostPrompt.ps1'
 )
 
 # Functions to export from this module
@@ -87,12 +91,16 @@ FunctionsToExport = @(
     'ConvertFrom-SecureString'
     'ConvertFrom-SecureStringAsPlainText'
     'ConvertTo-Base64String'
+    'ConvertTo-Csv'
     'ConvertTo-HexString'
-    'ConvertTo-PSString'
+    'ConvertTo-PsParameterString'
+    'ConvertTo-PsString'
     'ConvertTo-QueryString'
     'Get-X509Certificate'
     'Invoke-CommandAsSystem'
     'New-SecureStringKey'
+    'Remove-SensitiveData'
+    'Write-HostPrompt'
 )
 
 # Cmdlets to export from this module
@@ -111,10 +119,7 @@ AliasesToExport = @()
 # ModuleList = @()
 
 # List of all files packaged with this module
-#FileList = @(
-#    '..\build\packages\Microsoft.Identity.Client.4.2.1\lib\netcoreapp2.1\Microsoft.Identity.Client.dll'
-#    '..\build\packages\Microsoft.Identity.Client.4.2.1\lib\net45\Microsoft.Identity.Client.dll'
-#)
+# FileList = @()
 
 # Private data to pass to the module specified in RootModule/ModuleToProcess. This may also contain a PSData hashtable with additional module metadata used by PowerShell.
 PrivateData = @{

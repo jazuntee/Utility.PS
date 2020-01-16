@@ -17,7 +17,7 @@ function ConvertFrom-SecureStringAsPlainText {
         [Parameter(Mandatory=$true, Position=0, ValueFromPipeline=$true)]
         [securestring] $SecureString,
         # Confirms that you understand the implications of using the AsPlainText parameter and still want to use it.
-        [Parameter(Mandatory=$true, Position=1)]
+        [Parameter(Mandatory=$true)]
         [switch] $Force
     )
 

@@ -6,12 +6,12 @@ Set-StrictMode -Version 2.0
 .DESCRIPTION
 
 .EXAMPLE
-    PS C:\>ConvertTo-PSString @{ key1='value1'; key2='value2' }
+    PS C:\>ConvertTo-PsString @{ key1='value1'; key2='value2' }
     Convert hashtable to PowerShell string.
 .INPUTS
     System.String
 #>
-function ConvertTo-PSString {
+function ConvertTo-PsString {
     [CmdletBinding()]
     [OutputType([string])]
     param (
@@ -126,7 +126,7 @@ function ConvertTo-PSString {
                     $iInput = 0
                     foreach ($enumHashtable in $InputObject.GetEnumerator()) {
                         if ($iInput -gt 0) { $OutputString += ';' }
-                        $OutputString += '''{0}''={1}' -f $enumHashtable.Key, (ConvertTo-PSString $enumHashtable.Value -Compact:$Compact)
+                        $OutputString += '''{0}''={1}' -f $enumHashtable.Key, (ConvertTo-PsString $enumHashtable.Value -Compact:$Compact)
                         $iInput++
                     }
                     $OutputString += '}'
@@ -136,7 +136,7 @@ function ConvertTo-PSString {
                     $iInput = 0
                     for ($iInput = 0; $iInput -lt $InputObject.Count; $iInput++) {
                         if ($iInput -gt 0) { $OutputString += ',' }
-                        $OutputString += ConvertTo-PSString $InputObject[$iInput] -Compact:$Compact -RemoveTypes $InputObject.GetType().DeclaredMembers[0].GetParameters()[1].ParameterType
+                        $OutputString += ConvertTo-PsString $InputObject[$iInput] -Compact:$Compact -RemoveTypes $InputObject.GetType().DeclaredMembers[0].GetParameters()[1].ParameterType
                     }
                     $OutputString += ')'
                     break }
@@ -145,7 +145,7 @@ function ConvertTo-PSString {
                     $iInput = 0
                     for ($iInput = 0; $iInput -lt $InputObject.Count; $iInput++) {
                         if ($iInput -gt 0) { $OutputString += ',' }
-                        $OutputString += ConvertTo-PSString $InputObject[$iInput] -Compact:$Compact -RemoveTypes $_.GenericTypeArguments
+                        $OutputString += ConvertTo-PsString $InputObject[$iInput] -Compact:$Compact -RemoveTypes $_.GenericTypeArguments
                     }
                     $OutputString += ')'
                     break }
@@ -154,7 +154,7 @@ function ConvertTo-PSString {
                     $iInput = 0
                     for ($iInput = 0; $iInput -lt $InputObject.Count; $iInput++) {
                         if ($iInput -gt 0) { $OutputString += ',' }
-                        $OutputString += ConvertTo-PSString $InputObject[$iInput] -Compact:$Compact
+                        $OutputString += ConvertTo-PsString $InputObject[$iInput] -Compact:$Compact
                     }
                     $OutputString += ')'
                     break }

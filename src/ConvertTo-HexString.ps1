@@ -20,18 +20,18 @@ function ConvertTo-HexString {
         [object] $InputObjects,
         # Delimiter between Hex pairs
         [Parameter (Mandatory=$false)]
-        [string] $Delimiter = " ",
+        [string] $Delimiter = ' ',
         # Encoding to use for text strings
         [Parameter (Mandatory=$false)]
-        [ValidateSet("Ascii", "UTF32", "UTF7", "UTF8", "BigEndianUnicode", "Unicode")]
-        [string] $Encoding = "Default"
+        [ValidateSet('Ascii', 'UTF32', 'UTF7', 'UTF8', 'BigEndianUnicode', 'Unicode')]
+        [string] $Encoding = 'Default'
     )
 
     begin {
         function Transform ([byte[]]$InputBytes) {
             [string[]] $outHexString = New-Object string[] $InputBytes.Count
             for ($iByte = 0; $iByte -lt $InputBytes.Count; $iByte++) {
-                $outHexString[$iByte] = $InputBytes[$iByte].ToString("X2")
+                $outHexString[$iByte] = $InputBytes[$iByte].ToString('X2')
             }
             return $outHexString -join $Delimiter
         }
@@ -85,8 +85,8 @@ function ConvertTo-HexString {
                 else
                 {
                     ## Non-Terminating Error
-                    $Exception = New-Object ArgumentException -ArgumentList ("Cannot convert input of type {0} to Hex string." -f $InputObject.GetType())
-                    Write-Error -Exception $Exception -Category ([System.Management.Automation.ErrorCategory]::ParserError) -CategoryActivity $MyInvocation.MyCommand -ErrorId "ConvertHexFailureTypeNotSupported" -TargetObject $InputObject
+                    $Exception = New-Object ArgumentException -ArgumentList ('Cannot convert input of type {0} to Hex string.' -f $InputObject.GetType())
+                    Write-Error -Exception $Exception -Category ([System.Management.Automation.ErrorCategory]::ParserError) -CategoryActivity $MyInvocation.MyCommand -ErrorId 'ConvertHexFailureTypeNotSupported' -TargetObject $InputObject
                 }
 
                 if ($null -ne $InputBytes -and $InputBytes.Count -gt 0) {

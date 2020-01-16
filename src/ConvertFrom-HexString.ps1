@@ -20,14 +20,14 @@ function ConvertFrom-HexString {
         [string[]] $InputObject,
         # Delimiter between Hex pairs
         [Parameter (Mandatory=$false)]
-        [string] $Delimiter = " ",
+        [string] $Delimiter = ' ',
         # Output raw byte array
         [Parameter (Mandatory=$false)]
         [switch] $RawBytes,
         # Encoding to use for text strings
         [Parameter (Mandatory=$false)]
-        [ValidateSet("Ascii", "UTF32", "UTF7", "UTF8", "BigEndianUnicode", "Unicode")]
-        [string] $Encoding = "Default"
+        [ValidateSet('Ascii', 'UTF32', 'UTF7', 'UTF8', 'BigEndianUnicode', 'Unicode')]
+        [string] $Encoding = 'Default'
     )
 
     process

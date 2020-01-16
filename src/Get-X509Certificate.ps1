@@ -26,8 +26,8 @@ function Get-X509Certificate {
         [object] $InputObjects,
         # Input encoding to use for text strings
         [Parameter (Mandatory=$false)]
-        [ValidateSet("Ascii", "UTF32", "UTF7", "UTF8", "BigEndianUnicode", "Unicode")]
-        [string] $Encoding = "Default"
+        [ValidateSet('Ascii', 'UTF32', 'UTF7', 'UTF8', 'BigEndianUnicode', 'Unicode')]
+        [string] $Encoding = 'Default'
     )
 
     begin {
@@ -73,8 +73,8 @@ function Get-X509Certificate {
                 }
                 else {
                     # Otherwise, write a terminating error message indicating that input object type is not supported.
-                    $errorMessage = "Cannot convert input of type {0} to X.509 certificate." -f $InputObject.GetType()
-                    Write-Error -Message $errorMessage -Category ([System.Management.Automation.ErrorCategory]::ParserError) -ErrorId "GetX509CertificateFailureTypeNotSupported" -ErrorAction Stop
+                    $errorMessage = 'Cannot convert input of type {0} to X.509 certificate.' -f $InputObject.GetType()
+                    Write-Error -Message $errorMessage -Category ([System.Management.Automation.ErrorCategory]::ParserError) -ErrorId 'GetX509CertificateFailureTypeNotSupported' -ErrorAction Stop
                 }
 
                 ## Only write output if the input is not a byte stream.

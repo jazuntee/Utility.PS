@@ -85,7 +85,7 @@ function Test-ErrorOutput ($ErrorRecord,[switch]$SkipCategory,[switch]$SkipError
     if (!$SkipTargetObject) { $ErrorRecord.TargetObject | Should -Not -BeNullOrEmpty }
 }
 
-    # It "Non-Terminating Errors" {
+    # It 'Non-Terminating Errors' {
     #     $ScriptBlock = { ([int]127),([decimal]127),([long]127) | ConvertTo-HexString -ErrorAction SilentlyContinue }
     #     $ScriptBlock | Should -Not -Throw
     #     $Output = Invoke-Expression $ScriptBlock.ToString() -ErrorVariable ErrorObjects
@@ -108,7 +108,7 @@ function TestGroup ([type]$TestClass, [int]$StartIndex = 0) {
         for ($i = $StartIndex; $i -lt $TestValues.IO.Count; $i++) {
             $TestIO = $TestValues.IO[$i]
 
-            It ("Single Input [Index:{0}] of Type [{1}] as Positional Parameter{2}" -f $i, $TestIO.Input.GetType().Name, $(if ($TestIO.Error.Count -gt 0) { ' with Error' })) {
+            It ('Single Input [Index:{0}] of Type [{1}] as Positional Parameter{2}' -f $i, $TestIO.Input.GetType().Name, $(if ($TestIO.Error.Count -gt 0) { ' with Error' })) {
                 $Input = GetInput $TestIO -AssertType $TestValues.ExpectedInputType
                 $Output = & $TestValues.CommandName $Input -ErrorAction SilentlyContinue -ErrorVariable ErrorObjects @BoundParameters
                 $ErrorObjects | Should -HaveCount $TestIO.Error.Count
@@ -117,13 +117,13 @@ function TestGroup ([type]$TestClass, [int]$StartIndex = 0) {
                     Test-ErrorOutput $ErrorObjects
                 }
                 else {
-                    AutoEnumerate $Output | Should -BeOfType $TestIO.Output.GetType()
+                    #AutoEnumerate $Output | Should -BeOfType $TestIO.Output.GetType()
                     #$Output | Should -BeExactly $TestIO.Output
                     Test-ComparisionAssertions $TestIO.Output $Output
                 }
             }
 
-            It ("Single Input [Index:{0}] of Type [{1}] as Pipeline Input{2}" -f $i, $TestIO.Input.GetType().Name, $(if ($TestIO.Error.Count -gt 0) { ' with Error' })) {
+            It ('Single Input [Index:{0}] of Type [{1}] as Pipeline Input{2}' -f $i, $TestIO.Input.GetType().Name, $(if ($TestIO.Error.Count -gt 0) { ' with Error' })) {
                 $Input = GetInput $TestIO -AssertType $TestValues.ExpectedInputType
                 $Output = $Input | & $TestValues.CommandName -ErrorAction SilentlyContinue -ErrorVariable ErrorObjects @BoundParameters
                 $ErrorObjects | Should -HaveCount $TestIO.Error.Count
@@ -132,9 +132,11 @@ function TestGroup ([type]$TestClass, [int]$StartIndex = 0) {
                     Test-ErrorOutput $ErrorObjects
                 }
                 else {
-                    AutoEnumerate $Output | Should -BeOfType $TestIO.Output.GetType()
-                    #$Output | Should -BeExactly $TestIO.Output
-                    Test-ComparisionAssertions $TestIO.Output $Output
+                    if ($TestIO.ContainsKey('PipeOutput')) { $TestIOOutput = $TestIO.PipeOutput }
+                    else { $TestIOOutput = $TestIO.Output }
+                    #AutoEnumerate $Output | Should -BeOfType $TestIOOutput.GetType()
+                    #$Output | Should -BeExactly $TestIOOutput
+                    Test-ComparisionAssertions $TestIOOutput $Output
                 }
             }
         }
@@ -142,7 +144,7 @@ function TestGroup ([type]$TestClass, [int]$StartIndex = 0) {
         if ($TestValues.IO.Count -gt 1) {
             $TestIO = $TestValues.IO
 
-            It ("Multiple Inputs [Total:{0}] as Positional Parameter{1}" -f $TestIO.Count, $(if ($TestIO.Error.Count -gt 0) { ' with Error' })) {
+            It ('Multiple Inputs [Total:{0}] as Positional Parameter{1}' -f $TestIO.Count, $(if ($TestIO.Error.Count -gt 0) { ' with Error' })) {
                 $Input = GetInput $TestIO -AssertType $TestValues.ExpectedInputType
                 $Output = & $TestValues.CommandName $Input -ErrorAction SilentlyContinue -ErrorVariable ErrorObjects @BoundParameters
                 $ErrorObjects | Should -HaveCount $TestIO.Error.Count
@@ -154,14 +156,14 @@ function TestGroup ([type]$TestClass, [int]$StartIndex = 0) {
                         $iError++
                     }
                     else {
-                        AutoEnumerate $Output[$i-$iError] | Should -BeOfType $TestIO[$i].Output.GetType()
+                        #AutoEnumerate $Output[$i-$iError] | Should -BeOfType $TestIO[$i].Output.GetType()
                         #$Output[$i] | Should -BeExactly $TestIO[$i].Output
                         Test-ComparisionAssertions $TestIO[$i].Output $Output[$i-$iError]
                     }
                 }
             }
 
-            It ("Multiple Inputs [Total:{0}] as Pipeline Input{1}" -f $TestIO.Count, $(if ($TestIO.Error.Count -gt 0) { ' with Error' })) {
+            It ('Multiple Inputs [Total:{0}] as Pipeline Input{1}' -f $TestIO.Count, $(if ($TestIO.Error.Count -gt 0) { ' with Error' })) {
                 $Input = GetInput $TestIO -AssertType $TestValues.ExpectedInputType
                 $Output = $Input | & $TestValues.CommandName -ErrorAction SilentlyContinue -ErrorVariable ErrorObjects @BoundParameters
                 $ErrorObjects | Should -HaveCount $TestIO.Error.Count
@@ -173,7 +175,7 @@ function TestGroup ([type]$TestClass, [int]$StartIndex = 0) {
                         $iError++
                     }
                     else {
-                        AutoEnumerate $Output[$i-$iError] | Should -BeOfType $TestIO[$i].Output.GetType()
+                        #AutoEnumerate $Output[$i-$iError] | Should -BeOfType $TestIO[$i].Output.GetType()
                         #$Output[$i] | Should -BeExactly $TestIO[$i].Output
                         Test-ComparisionAssertions $TestIO[$i].Output $Output[$i-$iError]
                     }

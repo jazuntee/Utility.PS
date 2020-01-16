@@ -7,11 +7,11 @@ param (
 Import-Module $ModulePath -Force
 
 ## Load Test Helper Functions
-. (Join-Path $PSScriptRoot "TestCommon.ps1")
+. (Join-Path $PSScriptRoot 'TestCommon.ps1')
 
-Describe "ConvertFrom-QueryString" {
+Describe 'ConvertFrom-QueryString' {
 
-    Context "Query String Input" {
+    Context 'Query String Input' {
         class PSObjectOutput {
             [string] $CommandName = 'ConvertFrom-QueryString'
             [hashtable] $BoundParameters = @{}

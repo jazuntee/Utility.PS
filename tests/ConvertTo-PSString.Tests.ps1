@@ -7,7 +7,7 @@ param (
 Import-Module $ModulePath -Force
 
 ## Load Test Helper Functions
-. (Join-Path $PSScriptRoot "TestCommon.ps1")
+. (Join-Path $PSScriptRoot 'TestCommon.ps1')
 
 function TestGroup ([type]$TestClass, [int]$StartIndex = 0) {
     Context $TestClass.Name {
@@ -17,7 +17,7 @@ function TestGroup ([type]$TestClass, [int]$StartIndex = 0) {
         for ($i = $StartIndex; $i -lt $TestValues.IO.Count; $i++) {
             [hashtable[]] $TestIO = $TestValues.IO[$i]
 
-            It ("Single Input [Index:{0}] of Type [{1}] as Positional Parameter" -f $i, $TestIO[0].Input.GetType().Name) {
+            It ('Single Input [Index:{0}] of Type [{1}] as Positional Parameter' -f $i, $TestIO[0].Input.GetType().Name) {
                 $TestInput = GetInput $TestIO[0] -AssertType $TestValues.ExpectedInputType
                 $PSString = & $TestValues.CommandName $TestInput @BoundParameters
                 #Write-Host ($PSString -join "`r`n")
@@ -35,7 +35,7 @@ function TestGroup ([type]$TestClass, [int]$StartIndex = 0) {
                 }
             }
 
-            It ("Single Input [Index:{0}] of Type [{1}] as Pipeline Input" -f $i, $TestIO[0].Input.GetType().Name) {
+            It ('Single Input [Index:{0}] of Type [{1}] as Pipeline Input' -f $i, $TestIO[0].Input.GetType().Name) {
                 $TestInput = GetInput $TestIO[0] -AssertType $TestValues.ExpectedInputType
                 $PSString = $TestInput | & $TestValues.CommandName -WarningAction SilentlyContinue @BoundParameters
                 #Write-Host ($PSString -join "`r`n")
@@ -58,7 +58,7 @@ function TestGroup ([type]$TestClass, [int]$StartIndex = 0) {
         if ($TestValues.IO.Count -gt 1) {
             $TestIO = $TestValues.IO
 
-            It ("Multiple Inputs [Total:{0}] as Positional Parameter" -f $TestIO.Count) {
+            It ('Multiple Inputs [Total:{0}] as Positional Parameter' -f $TestIO.Count) {
                 $TestInput = GetInput $TestIO -AssertType $TestValues.ExpectedInputType
                 $PSString = & $TestValues.CommandName $TestInput @BoundParameters
                 #Write-Host ($PSString -join "`r`n")
@@ -75,7 +75,7 @@ function TestGroup ([type]$TestClass, [int]$StartIndex = 0) {
                 }
             }
 
-            It ("Multiple Inputs [Total:{0}] as Pipeline Input" -f $TestIO.Count) {
+            It ('Multiple Inputs [Total:{0}] as Pipeline Input' -f $TestIO.Count) {
                 $TestInput = GetInput $TestIO -AssertType $TestValues.ExpectedInputType
                 $PSString = $TestInput | & $TestValues.CommandName -WarningAction SilentlyContinue @BoundParameters
                 #Write-Host ($PSString -join "`r`n")
@@ -95,10 +95,10 @@ function TestGroup ([type]$TestClass, [int]$StartIndex = 0) {
     }
 }
 
-Describe "ConvertTo-PSString" {
+Describe 'ConvertTo-PsString' {
 
-    It "parses null object" {
-        $PSString = ConvertTo-PSString $null
+    It 'parses null object' {
+        $PSString = ConvertTo-PsString $null
         $PSString | Should -BeOfType [System.String]
         $PSString | Should -BeExactly '$null'
         $null -eq (Invoke-Expression $PSString) | Should -BeTrue
@@ -106,7 +106,7 @@ Describe "ConvertTo-PSString" {
 
     ## Reference: https://docs.microsoft.com/en-us/dotnet/csharp/language-reference/keywords/value-types-table
     class ValueTypeInput {
-        [string] $CommandName = 'ConvertTo-PSString'
+        [string] $CommandName = 'ConvertTo-PsString'
         [hashtable] $BoundParameters = @{}
         [type] $ExpectedInputType
         [hashtable[]] $IO = @(
@@ -172,7 +172,7 @@ Describe "ConvertTo-PSString" {
     TestGroup ValueTypeInput
 
     class ValueTypeInputCompactNoEnumerate {
-        [string] $CommandName = 'ConvertTo-PSString'
+        [string] $CommandName = 'ConvertTo-PsString'
         [hashtable] $BoundParameters = @{
             Compact = $true
             NoEnumerate = $true
@@ -241,7 +241,7 @@ Describe "ConvertTo-PSString" {
     TestGroup ValueTypeInputCompactNoEnumerate
 
     class ObjectInput {
-        [string] $CommandName = 'ConvertTo-PSString'
+        [string] $CommandName = 'ConvertTo-PsString'
         [hashtable] $BoundParameters = @{}
         [type] $ExpectedInputType
         [hashtable[]] $IO = @(
@@ -259,7 +259,7 @@ Describe "ConvertTo-PSString" {
             }
             @{
                 Input = [ordered]@{
-                    key1 = "value1"
+                    key1 = 'value1'
                     key2 = 2
                     key3 = [UInt16]3
                 }
@@ -271,8 +271,8 @@ Describe "ConvertTo-PSString" {
             }
             @{
                 Input = [string[]]@(
-                    "arrayValue1"
-                    "arrayValue2"
+                    'arrayValue1'
+                    'arrayValue2'
                 )
                 Output = [object[]]@(
                     '[System.String]''arrayValue1'''
@@ -291,8 +291,8 @@ Describe "ConvertTo-PSString" {
             }
             @{
                 Input = [object[]]@(
-                    "arrayValue1"
-                    "arrayValue2"
+                    'arrayValue1'
+                    'arrayValue2'
                     3
                     4
                 )
@@ -305,7 +305,7 @@ Describe "ConvertTo-PSString" {
             }
             @{
                 Input = [object[]]@(
-                    Write-Output ([string[]]("arrayValue1","arrayValue2")) -NoEnumerate
+                    Write-Output ([string[]]('arrayValue1','arrayValue2')) -NoEnumerate
                     Write-Output ([int[]](1,2)) -NoEnumerate
                     $null
                     Write-Output ([hashtable[]](@{h1k1='v1'},@{h2k2='v2'})) -NoEnumerate
@@ -319,8 +319,8 @@ Describe "ConvertTo-PSString" {
             }
             @{
                 Input = [System.Collections.ArrayList]@(
-                    "arrayListValue1"
-                    "arrayListValue2"
+                    'arrayListValue1'
+                    'arrayListValue2'
                     3
                     4
                 )
@@ -333,8 +333,8 @@ Describe "ConvertTo-PSString" {
             }
             @{
                 Input = [System.Collections.Generic.List[string]]@(
-                    "listValue1"
-                    "listValue2"
+                    'listValue1'
+                    'listValue2'
                 )
                 Output = [object[]]@(
                     '[System.String]''listValue1'''
@@ -369,7 +369,7 @@ Describe "ConvertTo-PSString" {
     TestGroup ObjectInput
 
     class ObjectInputCompactNoEnumerate {
-        [string] $CommandName = 'ConvertTo-PSString'
+        [string] $CommandName = 'ConvertTo-PsString'
         [hashtable] $BoundParameters = @{
             Compact = $true
             NoEnumerate = $true
@@ -390,7 +390,7 @@ Describe "ConvertTo-PSString" {
             }
             @{
                 Input = [ordered]@{
-                    key1 = "value1"
+                    key1 = 'value1'
                     key2 = 2
                     key3 = $null
                 }
@@ -403,8 +403,8 @@ Describe "ConvertTo-PSString" {
             }
             @{
                 Input = [string[]]@(
-                    "arrayValue1"
-                    "arrayValue2"
+                    'arrayValue1'
+                    'arrayValue2'
                 )
                 Output = '[String[]](Write-Output @(''arrayValue1'',''arrayValue2'') -NoEnumerate)'
                 PipeOutput = '(Write-Output @(''arrayValue1'',''arrayValue2'') -NoEnumerate)'
@@ -419,8 +419,8 @@ Describe "ConvertTo-PSString" {
             }
             @{
                 Input = [object[]]@(
-                    "arrayValue1"
-                    "arrayValue2"
+                    'arrayValue1'
+                    'arrayValue2'
                     3
                     4
                 )
@@ -429,7 +429,7 @@ Describe "ConvertTo-PSString" {
             }
             @{
                 Input = [object[]]@(
-                    Write-Output ([string[]]("arrayValue1","arrayValue2")) -NoEnumerate
+                    Write-Output ([string[]]('arrayValue1','arrayValue2')) -NoEnumerate
                     Write-Output ([int[]](1,2)) -NoEnumerate
                     $null
                     Write-Output ([hashtable[]](@{h1k1='v1'},@{h2k2='v2'})) -NoEnumerate
@@ -439,8 +439,8 @@ Describe "ConvertTo-PSString" {
             }
             @{
                 Input = [System.Collections.ArrayList]@(
-                    "arrayListValue1"
-                    "arrayListValue2"
+                    'arrayListValue1'
+                    'arrayListValue2'
                     3
                     4
                 )
@@ -449,8 +449,8 @@ Describe "ConvertTo-PSString" {
             }
             @{
                 Input = [System.Collections.Generic.List[string]]@(
-                    "listValue1"
-                    "listValue2"
+                    'listValue1'
+                    'listValue2'
                 )
                 Output = '[Collections.Generic.List[[string]]]@(''listValue1'',''listValue2'')'
                 PipeOutput = '(Write-Output @(''listValue1'',''listValue2'') -NoEnumerate)'

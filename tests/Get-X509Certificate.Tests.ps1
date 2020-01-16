@@ -6,7 +6,7 @@ param (
 
 Import-Module $ModulePath -Force
 
-Describe "Get-X509Certificate" {
+Describe 'Get-X509Certificate' {
     ## Stage Input Data
     [string] $Base64Cert = 'MIIFmTCCA4GgAwIBAgIQea0WoUqgpa1Mc1j0BxMuZTANBgkqhkiG9w0BAQUFADBfMRMwEQYKCZImiZPyLGQBGRYDY29tMRkwFwYKCZImiZPyLGQBGRYJbWljcm9zb2Z0MS0wKwYDVQQDEyRNaWNyb3NvZnQgUm9vdCBDZXJ0aWZpY2F0ZSBBdXRob3JpdHkwHhcNMDEwNTA5MjMxOTIyWhcNMjEwNTA5MjMyODEzWjBfMRMwEQYKCZImiZPyLGQBGRYDY29tMRkwFwYKCZImiZPyLGQBGRYJbWljcm9zb2Z0MS0wKwYDVQQDEyRNaWNyb3NvZnQgUm9vdCBDZXJ0aWZpY2F0ZSBBdXRob3JpdHkwggIiMA0GCSqGSIb3DQEBAQUAA4ICDwAwggIKAoICAQDzXfqAZ9Rap6kMLJAg0DUIPHWEzbcHiZyJ2t7Ow2D6kWhanpRxKRh2fMLgyCV2lA5Y+gQ0Nubfr/eAuulYCyuT5Z0F43cikfc0ZDwikR1e4QmQvBT+/HVYGeF5tweSo66IWQjYnwfKA1j8aCltMtfSqMtL/OELSDJP5uu4rU/kXG8TlJnbldV126gat5SRtHdb9UgMj2p5fRRwBH1tr5D12nDYR7e/my9s5wW34RFgrHmRFHzF1qbk4X7Vw37lktI8ALU2gt554W3ztW74nzPJy1J9c5g224uha6KVl5uj3sJNJv8GlmclBsjnrOTuEjOVMZnINQhONMp5U9W1vmMyWUA2wKVOBE0921sHM+RYv+8/U2TYQlk1V/0PRXwkBE2e1jh0EZcikM5oRHSSb9VLb7CG48c2QqDQ/MHAWvmjYbkwR3GWChawkcBCle8Qfyhq4yofseTNAz93cQTHIPxJDx1FiKTXy36IrY4t7EXbxFEEySr87IaemhGXW97OU4jm4rf9rJXCKEDb7wSQ34EzOdmyRaUjhwalVYkxuwYtYA5BGH0fLrWXyxHrFdUkpZTvFRSJ/Utz+jJb/NEzAPlZYnAHMuouq0Ate8rdIWcbMJmPFqojqEHRsG4RmzbE3kB0nOFYZcFgHnpbOMiPuwQmfNQWQOW2a2yqhv0Av87BNQIDAQABo1EwTzALBgNVHQ8EBAMCAcYwDwYDVR0TAQH/BAUwAwEB/zAdBgNVHQ4EFgQUDqyCYEBWJ5flJRP8KuEKU5VZ5KQwEAYJKwYBBAGCNxUBBAMCAQAwDQYJKoZIhvcNAQEFBQADggIBAMURTQM6YN1dUhF3j7K7NsiyBb+0t6jYIJ1cEwO2HCL6BhM1tshj1JpHbyZX0lXxBLEmX9apUGigvNK4bszD6azfGc14rFl0rGY0NsQbPmw4TDMOMBINoyb+UVMA/69aToQNDx/kbQUuToVLjWwzb1TSZKu/UK99ejmgN+1jAw/8EwbOFjbUVDuVG1FiOuVNF9QFOZKaJ6hbqr3su77jIIlgcWxWs6UT0G0OI36VA+1oPfLYY7hrTbboMLXhypRL96KqXZkwsj2nwlFsKCABJCcrSwC3nRFrcL6yEIK8DJto0I07JIeqmShynTNfWZC99d6TnjpiWjQ54ohVHbkGsMGJay3XacMZEjaE0Mmg2v8vaXiy5Xra69cMwPe9Yxe4ORM4ojZbe/KFVmodZGLBOOKqv1FmopT1EpxmIhBr8rcwki3yKfA9OxRDaKLxnCk3y844ICVtfGfzfiQSJAMIgUfspZ6X9RjXz7vV73aW7/3O21adlaBC+ZdY4dcxItNfWeY+biIA6kOEtiXb2fMIVmjAZGsdfOy2k6JiV24u2OdYj8QxSSbd3ik1h/UwcXBbFDxpvYkSfesuo/7Yf56CWlIKK8FDK9kwiJ/IEPuJjeahhXUzfmye23MTZGJppS99ypZtn/gETTCSPW4hFCHJPeDD/YprnUr90aGdmUN3P7Da'
     [string] $Base64CertThumbnail = 'CDD4EEAE6000AC7F40C3802C171E30148030C072'
@@ -63,7 +63,7 @@ SB/c9O+lxbtVGjhjhE63bK2VVOxlIhBJF7jAHscPrFRH
     [string] $DERCertFileThumbnail = 'A43489159A520F0D93D032CCAF37E7FE20A8B419'
 
     ## Begin Assertions
-    It "parses base64-encoded string" {
+    It 'parses base64-encoded string' {
         $Base64Cert | Should -BeOfType [System.String]
         $X509Certificate = Get-X509Certificate $Base64Cert
         $X509Certificate | Should -BeOfType [System.Security.Cryptography.X509Certificates.X509Certificate2]
@@ -71,7 +71,7 @@ SB/c9O+lxbtVGjhjhE63bK2VVOxlIhBJF7jAHscPrFRH
         $X509Certificate.Thumbprint | Should -BeExactly $Base64CertThumbnail
     }
 
-    It "parses base64-encoded string via pipeline" {
+    It 'parses base64-encoded string via pipeline' {
         $Base64Cert | Should -BeOfType [System.String]
         $X509Certificate = $Base64Cert | Get-X509Certificate
         $X509Certificate | Should -BeOfType [System.Security.Cryptography.X509Certificates.X509Certificate2]
@@ -79,7 +79,7 @@ SB/c9O+lxbtVGjhjhE63bK2VVOxlIhBJF7jAHscPrFRH
         $X509Certificate.Thumbprint | Should -BeExactly $Base64CertThumbnail
     }
 
-    It "parses DER-encoded byte array" {
+    It 'parses DER-encoded byte array' {
         Write-Output $DERCert -NoEnumerate | Should -BeOfType [System.Byte[]]
         $X509Certificate = Get-X509Certificate $DERCert
         $X509Certificate | Should -BeOfType [System.Security.Cryptography.X509Certificates.X509Certificate2]
@@ -87,7 +87,7 @@ SB/c9O+lxbtVGjhjhE63bK2VVOxlIhBJF7jAHscPrFRH
         $X509Certificate.Thumbprint | Should -BeExactly $DERCertThumbnail
     }
 
-    It "parses DER-encoded byte array via pipeline" {
+    It 'parses DER-encoded byte array via pipeline' {
         $DERCert | Should -BeOfType [System.Byte]
         $X509Certificate = $DERCert | Get-X509Certificate
         $X509Certificate | Should -BeOfType [System.Security.Cryptography.X509Certificates.X509Certificate2]
@@ -95,7 +95,7 @@ SB/c9O+lxbtVGjhjhE63bK2VVOxlIhBJF7jAHscPrFRH
         $X509Certificate.Thumbprint | Should -BeExactly $DERCertThumbnail
     }
 
-    It "parses DER-encoded byte array via pipeline with no enumerate" {
+    It 'parses DER-encoded byte array via pipeline with no enumerate' {
         Write-Output $DERCert -NoEnumerate | Should -BeOfType [System.Byte[]]
         $X509Certificate = Write-Output $DERCert -NoEnumerate | Get-X509Certificate -Verbose
         $X509Certificate | Should -BeOfType [System.Security.Cryptography.X509Certificates.X509Certificate2]
@@ -103,7 +103,7 @@ SB/c9O+lxbtVGjhjhE63bK2VVOxlIhBJF7jAHscPrFRH
         $X509Certificate.Thumbprint | Should -BeExactly $DERCertThumbnail
     }
 
-    It "parses base64-encoded file" {
+    It 'parses base64-encoded file' {
         $Base64CertFile | Should -BeOfType [System.IO.FileInfo]
         $X509Certificate = Get-X509Certificate $Base64CertFile
         $X509Certificate | Should -BeOfType [System.Security.Cryptography.X509Certificates.X509Certificate2]
@@ -111,7 +111,7 @@ SB/c9O+lxbtVGjhjhE63bK2VVOxlIhBJF7jAHscPrFRH
         $X509Certificate.Thumbprint | Should -BeExactly $Base64CertFileThumbnail
     }
 
-    It "parses base64-encoded file via pipeline" {
+    It 'parses base64-encoded file via pipeline' {
         $Base64CertFile | Should -BeOfType [System.IO.FileInfo]
         $X509Certificate = $Base64CertFile | Get-X509Certificate
         $X509Certificate | Should -BeOfType [System.Security.Cryptography.X509Certificates.X509Certificate2]
@@ -119,7 +119,7 @@ SB/c9O+lxbtVGjhjhE63bK2VVOxlIhBJF7jAHscPrFRH
         $X509Certificate.Thumbprint | Should -BeExactly $Base64CertFileThumbnail
     }
 
-    It "parses DER-encoded file" {
+    It 'parses DER-encoded file' {
         $DERCertFile | Should -BeOfType [System.IO.FileInfo]
         $X509Certificate = Get-X509Certificate $DERCertFile
         $X509Certificate | Should -BeOfType [System.Security.Cryptography.X509Certificates.X509Certificate2]
@@ -127,7 +127,7 @@ SB/c9O+lxbtVGjhjhE63bK2VVOxlIhBJF7jAHscPrFRH
         $X509Certificate.Thumbprint | Should -BeExactly $DERCertFileThumbnail
     }
 
-    It "parses DER-encoded file via pipeline" {
+    It 'parses DER-encoded file via pipeline' {
         $DERCertFile | Should -BeOfType [System.IO.FileInfo]
         $X509Certificate = $DERCertFile | Get-X509Certificate
         $X509Certificate | Should -BeOfType [System.Security.Cryptography.X509Certificates.X509Certificate2]
@@ -135,7 +135,7 @@ SB/c9O+lxbtVGjhjhE63bK2VVOxlIhBJF7jAHscPrFRH
         $X509Certificate.Thumbprint | Should -BeExactly $DERCertFileThumbnail
     }
 
-    It "parses base64-encoded string, base64-encoded file, DER-encoded byte array, and DER-encoded file" {
+    It 'parses base64-encoded string, base64-encoded file, DER-encoded byte array, and DER-encoded file' {
         $Base64Cert | Should -BeOfType [System.String]
         $Base64CertFile | Should -BeOfType [System.IO.FileInfo]
         Write-Output $DERCert -NoEnumerate | Should -BeOfType [System.Byte[]]
@@ -150,7 +150,7 @@ SB/c9O+lxbtVGjhjhE63bK2VVOxlIhBJF7jAHscPrFRH
         $X509Certificate[3].Thumbprint | Should -BeExactly $DERCertFileThumbnail
     }
 
-    It "parses base64-encoded string, base64-encoded file, DER-encoded byte array, and DER-encoded file via pipeline" {
+    It 'parses base64-encoded string, base64-encoded file, DER-encoded byte array, and DER-encoded file via pipeline' {
         $Base64Cert | Should -BeOfType [System.String]
         $Base64CertFile | Should -BeOfType [System.IO.FileInfo]
         Write-Output $DERCert -NoEnumerate | Should -BeOfType [System.Byte[]]
@@ -165,7 +165,7 @@ SB/c9O+lxbtVGjhjhE63bK2VVOxlIhBJF7jAHscPrFRH
         $X509Certificate[3].Thumbprint | Should -BeExactly $DERCertFileThumbnail
     }
 
-    It "throws exception for int array" {
+    It 'throws exception for int array' {
         $IntArray = @(48,130,5,237,48,130,3,213,160,3,2,1,2,2,16,40,204,58,37,191,186,68,172,68,154,155,88,107,67,57,170,48,13,6,9,42,134,72,134,247,13,1,1,11,5,0,48,129,136,49,11,48,9,6,3,85,4,6,19,2,85,83,49,19,48,17,6,3,85,4,8,19,10,87,97,115,104,105,110,103,116,111,110,49,16,48,14,6,3,85,4,7,19,7,82,101,100,109,111,110,100,49,30,48,28,6,3,85,4,10,19,21,77,105,99,114,111,115,111,102,116,32,67,111,114,112,111,114,97,116,105,111,110,49,50,48,48,6,3,85,4,3,19,41,77,105,99,114,111,115,111,102,116,32,82,111,111,116,32,67,101,114,116,105,102,105,99,97,116,101,32,65,117,116,104,111,114,105,116,121,32,50,48,49,48,48,30,23,13,49,48,48,54,50,51,50,49,53,55,50,52,90,23,13,51,53,48,54,50,51,50,50,48,52,48,49,90,48,129,136,49,11,48,9,6,3,85,4,6,19,2,85,83,49,19,48,17,6,3,85,4,8,19,10,87,97,115,104,105,110,103,116,111,110,49,16,48,14,6,3,85,4,7,19,7,82,101,100,109,111,110,100,49,30,48,28,6,3,85,4,10,19,21,77,105,99,114,111,115,111,102,116,32,67,111,114,112,111,114,97,116,105,111,110,49,50,48,48,6,3,85,4,3,19,41,77,105,99,114,111,115,111,102,116,32,82,111,111,116,32,67,101,114,116,105,102,105,99,97,116,101,32,65,117,116,104,111,114,105,116,121,32,50,48,49,48,48,130,2,34,48,13,6,9,42,134,72,134,247,13,1,1,1,5,0,3,130,2,15,0,48,130,2,10,2,130,2,1,0,185,8,158,40,228,228,236,6,78,80,104,179,65,197,123,235,174,182,142,175,129,186,34,68,31,101,52,105,76,190,112,64,23,242,22,123,226,121,253,134,237,13,57,244,27,168,173,146,144,30,203,61,118,143,90,217,181,145,16,46,60,5,141,138,109,36,84,231,31,237,86,173,131,180,80,156,21,165,23,116,136,89,32,252,8,197,132,118,211,104,212,111,40,120,206,92,184,243,80,144,68,255,227,99,95,190,161,154,44,150,21,4,214,7,254,30,132,33,224,66,49,17,196,40,54,148,207,80,164,98,158,201,214,171,113,0,178,91,12,230,150,212,10,36,150,245,255,198,213,183,27,215,203,183,33,98,175,18,220,161,93,55,227,26,251,26,70,152,192,155,192,231,99,31,42,8,147,2,126,30,106,142,242,159,24,137,228,34,133,162,177,132,87,64,255,245,14,216,111,156,237,226,69,49,1,205,23,233,127,176,129,69,227,170,33,64,38,161,114,170,167,79,60,1,5,126,238,131,88,177,94,6,99,153,98,145,120,130,183,13,147,12,36,106,180,27,219,39,236,95,149,4,63,147,74,48,245,151,24,179,167,249,25,167,147,51,29,1,200,219,34,82,92,215,37,201,70,249,162,251,135,89,67,190,155,98,177,141,45,134,68,26,70,172,120,97,126,48,9,250,174,137,196,65,42,34,102,3,145,57,69,156,199,139,12,168,202,13,47,251,82,234,12,247,99,51,35,157,254,176,31,173,103,214,167,80,3,198,4,112,99,181,44,177,134,90,67,183,251,174,249,110,41,110,33,33,65,38,6,140,201,195,238,176,194,133,147,161,185,133,217,230,50,108,75,76,63,214,93,163,229,181,157,119,195,156,192,85,183,116,0,227,184,56,171,131,151,80,225,154,66,36,29,198,192,163,48,209,26,90,200,82,52,247,115,241,199,24,31,51,173,122,236,203,65,96,243,35,148,32,194,72,69,172,92,81,198,46,128,194,226,119,21,189,133,135,237,54,157,150,145,238,0,181,163,112,236,159,227,141,128,104,131,118,186,175,93,112,82,34,22,226,102,251,186,179,197,194,247,62,47,119,166,202,222,193,166,198,72,76,195,55,81,35,211,39,215,184,78,112,150,240,161,68,118,175,120,207,154,225,102,19,2,3,1,0,1,163,81,48,79,48,11,6,3,85,29,15,4,4,3,2,1,134,48,15,6,3,85,29,19,1,1,255,4,5,48,3,1,1,255,48,29,6,3,85,29,14,4,22,4,20,213,246,86,203,143,232,162,92,98,104,209,61,148,144,91,215,206,154,24,196,48,16,6,9,43,6,1,4,1,130,55,21,1,4,3,2,1,0,48,13,6,9,42,134,72,134,247,13,1,1,11,5,0,3,130,2,1,0,172,165,150,140,191,187,174,166,246,215,113,135,67,49,86,136,253,28,50,113,91,53,183,212,240,145,242,175,55,226,20,241,243,2,38,5,62,22,20,127,20,186,184,79,251,137,178,178,231,212,9,204,109,185,91,59,100,101,112,102,183,242,177,90,223,26,2,243,245,81,184,103,109,121,243,191,86,123,228,132,185,43,30,155,64,156,38,52,249,71,24,152,105,216,28,215,182,209,191,143,97,194,103,196,181,239,96,67,142,16,27,54,73,228,32,202,173,167,193,177,39,101,9,248,205,245,91,42,208,132,51,243,239,31,242,245,156,11,88,147,55,160,117,160,222,114,222,108,117,42,102,34,245,140,6,48,86,159,64,185,48,170,64,119,21,130,215,139,236,192,211,178,189,131,197,119,12,30,174,175,25,83,160,77,121,113,159,15,175,48,206,103,249,214,44,204,34,65,122,7,242,151,66,24,206,89,121,16,85,222,111,16,228,184,218,131,102,64,22,9,104,35,91,151,46,38,154,2,187,87,140,197,184,186,105,98,50,128,137,158,161,253,192,146,124,123,43,51,25,132,42,99,197,0,104,98,250,159,71,141,153,122,69,58,167,233,237,238,105,66,181,243,129,155,71,86,16,123,252,112,54,132,24,115,234,239,249,151,77,158,51,35,221,38,11,186,42,183,63,68,220,131,39,255,189,97,89,43,17,183,202,79,219,197,139,12,28,49,174,50,248,248,185,66,247,127,220,97,154,118,177,90,4,225,17,61,102,69,183,24,113,190,201,36,133,214,243,212,186,65,52,93,18,45,37,185,141,166,19,72,109,75,176,7,125,153,147,9,97,129,116,87,38,138,171,105,227,228,217,199,136,204,36,216,236,82,36,92,30,188,145,20,226,150,222,235,10,218,158,221,95,179,91,219,212,130,236,198,32,80,135,37,64,58,251,199,238,205,254,51,229,110,195,132,9,85,3,37,57,192,233,53,93,101,49,168,246,191,160,9,205,41,199,179,54,50,46,220,149,243,131,193,90,207,139,141,246,234,179,33,248,164,237,30,49,14,182,76,17,171,96,11,164,18,35,34,23,163,54,100,130,145,4,18,224,171,111,30,203,80,5,97,180,64,255,89,134,113,209,213,51,105,124,169,115,138,56,215,100,12,241,105)
         $IntArray | Should -BeOfType [System.Int32]
         $X509Certificate = { $IntArray | Get-X509Certificate } | Should -Throw

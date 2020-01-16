@@ -7,23 +7,23 @@ param (
 Import-Module $ModulePath -Force
 
 ## Load Test Helper Functions
-. (Join-Path $PSScriptRoot "TestCommon.ps1")
+. (Join-Path $PSScriptRoot 'TestCommon.ps1')
 
-Describe "ConvertFrom-HexString" {
+Describe 'ConvertFrom-HexString' {
 
-    Context "Hex String Input" {
+    Context 'Hex String Input' {
         class StringOutput {
             [string] $CommandName = 'ConvertFrom-HexString'
             [hashtable] $BoundParameters = @{}
             [type] $ExpectedInputType = [string]
             [hashtable[]] $IO = @(
                 @{
-                    Input = "57 68 61 74 20 69 73 20 61 20 68 65 78 20 73 74 72 69 6E 67 3F"
-                    Output = "What is a hex string?"
+                    Input = '57 68 61 74 20 69 73 20 61 20 68 65 78 20 73 74 72 69 6E 67 3F'
+                    Output = 'What is a hex string?'
                 }
                 @{
-                    Input = "41 53 43 49 49 20 73 74 72 69 6E 67 20 77 69 74 68 20 62 61 73 65 36 34 75 72 6C 20 65 6E 63 6F 64 69 6E 67"
-                    Output = "ASCII string with base64url encoding"
+                    Input = '41 53 43 49 49 20 73 74 72 69 6E 67 20 77 69 74 68 20 62 61 73 65 36 34 75 72 6C 20 65 6E 63 6F 64 69 6E 67'
+                    Output = 'ASCII string with base64url encoding'
                 }
             )
         }
@@ -49,19 +49,19 @@ Describe "ConvertFrom-HexString" {
         TestGroup ByteArrayOutput
     }
 
-    Context "Hex String Input with no delimiter" {
+    Context 'Hex String Input with no delimiter' {
         class StringOutput {
             [string] $CommandName = 'ConvertFrom-HexString'
             [hashtable] $BoundParameters = @{}
             [type] $ExpectedInputType = [string]
             [hashtable[]] $IO = @(
                 @{
-                    Input = "415343494920737472696E6720746F2068657820737472696E67"
-                    Output = "ASCII string to hex string"
+                    Input = '415343494920737472696E6720746F2068657820737472696E67'
+                    Output = 'ASCII string to hex string'
                 }
                 @{
-                    Input = "416E6F7468657220415343494920737472696E6720746F2068657820737472696E67"
-                    Output = "Another ASCII string to hex string"
+                    Input = '416E6F7468657220415343494920737472696E6720746F2068657820737472696E67'
+                    Output = 'Another ASCII string to hex string'
                 }
             )
         }

@@ -7,9 +7,9 @@ param (
 Import-Module $ModulePath -Force
 
 ## Load Test Helper Functions
-. (Join-Path $PSScriptRoot "TestCommon.ps1")
+. (Join-Path $PSScriptRoot 'TestCommon.ps1')
 
-Describe "ConvertTo-QueryString" {
+Describe 'ConvertTo-QueryString' {
 
     class HashtableInput {
         [string] $CommandName = 'ConvertTo-QueryString'
@@ -88,7 +88,7 @@ Describe "ConvertTo-QueryString" {
     TestGroup ObjectInput
 
     Write-Host
-    It "Terminating Errors" {
+    It 'Terminating Errors' {
         $ScriptBlock = { ([ordered]@{ name = 'path/file.json'; index = 10 }),([int]127),([ordered]@{ title = 'convert&prosper'; id = [guid]'352182e6-9ab0-4115-807b-c36c88029fa4' }) | ConvertTo-QueryString -ErrorAction Stop }
         $ScriptBlock | Should -Throw
         try {

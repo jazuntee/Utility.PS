@@ -7,9 +7,9 @@ param (
 Import-Module $ModulePath -Force
 
 ## Load Test Helper Functions
-. (Join-Path $PSScriptRoot "TestCommon.ps1")
+. (Join-Path $PSScriptRoot 'TestCommon.ps1')
 
-Describe "ConvertFrom-SecureStringAsPlainText" {
+Describe 'ConvertFrom-SecureStringAsPlainText' {
 
     class SecureStringInput {
         [string] $CommandName = 'ConvertFrom-SecureStringAsPlainText'

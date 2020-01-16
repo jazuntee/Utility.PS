@@ -27,8 +27,8 @@ function ConvertTo-Base64String {
         [switch] $Base64Url,
         # Output encoding to use for text strings
         [Parameter (Mandatory=$false)]
-        [ValidateSet("Ascii", "UTF32", "UTF7", "UTF8", "BigEndianUnicode", "Unicode")]
-        [string] $Encoding = "Default"
+        [ValidateSet('Ascii', 'UTF32', 'UTF7', 'UTF8', 'BigEndianUnicode', 'Unicode')]
+        [string] $Encoding = 'Default'
     )
 
     begin {
@@ -87,8 +87,8 @@ function ConvertTo-Base64String {
                 else
                 {
                     ## Non-Terminating Error
-                    $Exception = New-Object ArgumentException -ArgumentList ("Cannot convert input of type {0} to Base64 string." -f $InputObject.GetType())
-                    Write-Error -Exception $Exception -Category ([System.Management.Automation.ErrorCategory]::ParserError) -CategoryActivity $MyInvocation.MyCommand -ErrorId "ConvertBase64StringFailureTypeNotSupported" -TargetObject $InputObject
+                    $Exception = New-Object ArgumentException -ArgumentList ('Cannot convert input of type {0} to Base64 string.' -f $InputObject.GetType())
+                    Write-Error -Exception $Exception -Category ([System.Management.Automation.ErrorCategory]::ParserError) -CategoryActivity $MyInvocation.MyCommand -ErrorId 'ConvertBase64StringFailureTypeNotSupported' -TargetObject $InputObject
                 }
 
                 if ($null -ne $InputBytes -and $InputBytes.Count -gt 0) {

@@ -31,7 +31,7 @@ function Invoke-CommandAsSystem {
 
         try {
             ## Register ScheduledTask for ScheduledJob
-            $ScheduledTask = Register-ScheduledTask -TaskName $GUID -Action (New-ScheduledTaskAction -Execute $ScheduledJob.PSExecutionPath -Argument $ScheduledJob.PSExecutionArgs) -Principal (New-ScheduledTaskPrincipal -UserID "NT AUTHORITY\SYSTEM" -LogonType ServiceAccount -RunLevel Highest) -ErrorAction Stop
+            $ScheduledTask = Register-ScheduledTask -TaskName $GUID -Action (New-ScheduledTaskAction -Execute $ScheduledJob.PSExecutionPath -Argument $ScheduledJob.PSExecutionArgs) -Principal (New-ScheduledTaskPrincipal -UserID 'NT AUTHORITY\SYSTEM' -LogonType ServiceAccount -RunLevel Highest) -ErrorAction Stop
 
             ## Execute ScheduledTask Job to Run ScheduledJob Job
             $ScheduledTask | Start-ScheduledTask -AsJob -ErrorAction Stop | Wait-Job | Remove-Job -Force -Confirm:$False
