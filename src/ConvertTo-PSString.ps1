@@ -53,7 +53,8 @@ function ConvertTo-PsString {
             )
 
             [string] $OutputString = ''
-            if ($ObjectType.IsGenericType) {
+            if ($ObjectType.IsGenericType -or ($ObjectType.BaseType -and $ObjectType.BaseType.IsGenericType)) {
+                if (!$ObjectType.IsGenericType) { $ObjectType = $ObjectType.BaseType }
                 if ($ObjectType.FullName.StartsWith('System.Collections.Generic.Dictionary')) {
                     #$OutputString += '[hashtable]'
                     if ($Compact) {
@@ -131,10 +132,10 @@ function ConvertTo-PsString {
                     {$_.Equals([DateTime])} {
                         [void]$OutputString.AppendFormat("'{0}'",$InputObject.ToString('O'))
                         break }
-                    {$_.BaseType.Equals([Enum])} {
+                    {$_.BaseType -and $_.BaseType.Equals([Enum])} {
                         [void]$OutputString.AppendFormat('::{0}',$InputObject)
                         break }
-                    {$_.BaseType.Equals([ValueType])} {
+                    {$_.BaseType -and $_.BaseType.Equals([ValueType])} {
                         [void]$OutputString.AppendFormat('{0}',$InputObject)
                         break }
                     {$_.Equals([System.Xml.XmlDocument])} {
@@ -150,7 +151,7 @@ function ConvertTo-PsString {
                         }
                         [void]$OutputString.Append('}')
                         break }
-                    {$_.FullName.StartsWith('System.Collections.Generic.Dictionary')} {
+                    {$_.FullName.StartsWith('System.Collections.Generic.Dictionary') -or ($_.BaseType -and $_.BaseType.FullName.StartsWith('System.Collections.Generic.Dictionary'))} {
                         $iInput = 0
                         foreach ($enumHashtable in $InputObject.GetEnumerator()) {
                             [void]$OutputString.AppendFormat('; $D.Add({0},{1})',(ConvertTo-PsString $enumHashtable.Key -Compact:$Compact -NoEnumerate),(ConvertTo-PsString $enumHashtable.Value -Compact:$Compact -NoEnumerate))
@@ -158,7 +159,7 @@ function ConvertTo-PsString {
                         }
                         [void]$OutputString.Append('; $D })')
                         break }
-                    {$_.BaseType.Equals([Array])} {
+                    {$_.BaseType -and $_.BaseType.Equals([Array])} {
                         [void]$OutputString.Append('(Write-Output @(')
                         $iInput = 0
                         for ($iInput = 0; $iInput -lt $InputObject.Count; $iInput++) {

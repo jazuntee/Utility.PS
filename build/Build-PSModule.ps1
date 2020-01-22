@@ -81,4 +81,3 @@ $ModuleFileList = Get-RelativePath $ModuleFileListFileInfo.FullName -BaseDirecto
 
 ## Update Module Manifest in Module Output Directory
 Update-ModuleManifest -Path $ModuleManifestOutputFileInfo.FullName -FileList $ModuleFileList -NestedModules $ModuleManifest.NestedModules -CmdletsToExport $ModuleManifest.CmdletsToExport -AliasesToExport $ModuleManifest.AliasesToExport #-RequiredAssemblies $ModuleRequiredAssemblies
-#Write-Warning "PowerShell Core fails to load assembly if net45 dll comes before netcoreapp2.1 dll in the FileList so fix the order before publishing."

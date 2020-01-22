@@ -17,6 +17,10 @@ Describe 'ConvertTo-PsParameterString' {
         [type] $ExpectedInputType
         [hashtable[]] $IO = @(
             @{
+                Input = $PSBoundParameters
+                Output = ''
+            }
+            @{
                 Input = @{
                     NamedParameter1 = 'Value1'
                 }
@@ -40,6 +44,10 @@ Describe 'ConvertTo-PsParameterString' {
         }
         [type] $ExpectedInputType
         [hashtable[]] $IO = @(
+            @{
+                Input = $PSBoundParameters
+                Output = ''
+            }
             @{
                 Input = @{
                     NamedParameter1 = 'Value1'

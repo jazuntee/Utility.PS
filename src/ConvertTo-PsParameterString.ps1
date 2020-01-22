@@ -33,7 +33,7 @@ function ConvertTo-PsParameterString {
             ## Add Value
             switch ($InputObject.GetType())
             {
-                {$_.Equals([Hashtable]) -or $_.Equals([System.Collections.Specialized.OrderedDictionary]) -or $_.FullName.StartsWith('System.Collections.Generic.Dictionary')} {
+                {$_.Equals([Hashtable]) -or $_.Equals([System.Collections.Specialized.OrderedDictionary]) -or $_.FullName.StartsWith('System.Collections.Generic.Dictionary') -or ($_.BaseType -and $_.BaseType.FullName.StartsWith('System.Collections.Generic.Dictionary'))} {
                     foreach ($Parameter in $InputObject.GetEnumerator()) {
                         [string] $ParameterValue = (ConvertTo-PsString $Parameter.Value -Compact:$Compact -NoEnumerate)
                         if ($ParameterValue.StartsWith('[')) { $ParameterValue = '({0})' -f $ParameterValue }

@@ -2,14 +2,14 @@ param
 (
     # Module to Launch
     [parameter(Mandatory=$false)]
-    [string] $ModuleManifestPath = ".\src\Utility.PS.psd1",
+    [string] $ModuleManifestPath = ".\src\*.psd1",
     # Import Module into the same session
     [parameter(Mandatory=$false)]
     [switch] $NoNewWindow
 )
 
 if ($NoNewWindow) {
-    Import-Module $ModuleManifestPath -PassThru
+    Import-Module $ModuleManifestPath -PassThru -Force
 }
 else {
     $strScriptBlock = 'Import-Module {0} -PassThru' -f $ModuleManifestPath

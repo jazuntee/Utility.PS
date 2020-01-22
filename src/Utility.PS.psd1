@@ -80,6 +80,7 @@ NestedModules = @(
     '.\Invoke-CommandAsSystem.ps1'
     '.\New-SecureStringKey.ps1'
     '.\Remove-SensitiveData.ps1'
+    '.\Select-PsBoundParameters.ps1'
     '.\Write-HostPrompt.ps1'
 )
 
@@ -100,6 +101,7 @@ FunctionsToExport = @(
     'Invoke-CommandAsSystem'
     'New-SecureStringKey'
     'Remove-SensitiveData'
+    'Select-PsBoundParameters'
     'Write-HostPrompt'
 )
 
