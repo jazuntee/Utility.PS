@@ -138,6 +138,9 @@ function ConvertTo-PsString {
                     {$_.BaseType -and $_.BaseType.Equals([ValueType])} {
                         [void]$OutputString.AppendFormat('{0}',$InputObject)
                         break }
+                    {$_.BaseType.Equals([System.IO.FileSystemInfo]) -or $_.Equals([System.Uri])} {
+                        [void]$OutputString.AppendFormat("'{0}'",$InputObject.ToString().Replace("'","''")) #.Replace('"','`"')
+                        break }
                     {$_.Equals([System.Xml.XmlDocument])} {
                         [void]$OutputString.AppendFormat("'{0}'",$InputObject.OuterXml.Replace("'","''")) #.Replace('"','""')
                         break }

@@ -246,6 +246,18 @@ Describe 'ConvertTo-PsString' {
         [type] $ExpectedInputType
         [hashtable[]] $IO = @(
             @{
+                Input = [System.IO.FileInfo]'filename.ext'
+                Output = '[System.IO.FileInfo]''filename.ext'''
+            }
+            @{
+                Input = [System.IO.DirectoryInfo]'directory'
+                Output = '[System.IO.DirectoryInfo]''directory'''
+            }
+            @{
+                Input = [System.Uri]'uri'
+                Output = '[System.Uri]''uri'''
+            }
+            @{
                 Input = [hashtable]@{
                     [UInt16]1 = 'value1'
                 }
@@ -376,6 +388,18 @@ Describe 'ConvertTo-PsString' {
         }
         [type] $ExpectedInputType
         [hashtable[]] $IO = @(
+            @{
+                Input = [System.IO.FileInfo]'filename.ext'
+                Output = '[IO.FileInfo]''filename.ext'''
+            }
+            @{
+                Input = [System.IO.DirectoryInfo]'directory'
+                Output = '[IO.DirectoryInfo]''directory'''
+            }
+            @{
+                Input = [System.Uri]'uri'
+                Output = '[uri]''uri'''
+            }
             @{
                 Input = [hashtable]@{
                     [byte]1 = 'value1'

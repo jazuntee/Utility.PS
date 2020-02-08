@@ -56,6 +56,9 @@ function Test-ComparisionAssertions ($Reference,$Difference,[switch]$ArrayBaseTy
     elseif ($Reference -is [xml]) {
         $Difference.OuterXml | Should -BeExactly $Reference.OuterXml
     }
+    elseif ($Reference -is [System.IO.FileSystemInfo]) {
+        $Difference.ToString() | Should -BeExactly $Reference.ToString()
+    }
     elseif ($Reference -is [psobject]) {
         $ReferenceProperty = $Reference | Get-Member -MemberType Property,NoteProperty
         $DifferenceProperty = $Difference | Get-Member -MemberType Property,NoteProperty
