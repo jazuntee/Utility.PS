@@ -1,16 +1,16 @@
 param
 (
     # Directory used to base all relative paths
-    [parameter(Mandatory=$false)]
+    [Parameter(Mandatory=$false)]
     [string] $BaseDirectory = "..\",
     #
-    [parameter(Mandatory=$false)]
+    [Parameter(Mandatory=$false)]
     [string] $ModuleDirectory = ".\build\release\Utility.PS",
     #
-    [parameter(Mandatory=$false)]
+    [Parameter(Mandatory=$false)]
     [string] $ModuleManifestPath,
     #
-    [parameter(Mandatory=$false)]
+    [Parameter(Mandatory=$false)]
     [string] $ModuleTestsDirectory = ".\tests",
     #
     [Parameter(Mandatory=$false)]
@@ -20,7 +20,7 @@ param
         'D:\Software\PowerShell-6.2.4-win-x64\pwsh.exe'
     ),
     #
-    [parameter(Mandatory=$false)]
+    [Parameter(Mandatory=$false)]
     [switch] $NoNewWindow
 )
 

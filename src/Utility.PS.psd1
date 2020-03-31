@@ -10,7 +10,7 @@
 RootModule = 'Utility.PS.psm1'
 
 # Version number of this module.
-ModuleVersion = '1.0.0.3'
+ModuleVersion = '1.0.0.4'
 
 # Supported PSEditions
 CompatiblePSEditions = 'Core','Desktop'
@@ -86,6 +86,8 @@ NestedModules = @(
     '.\New-SecureStringKey.ps1'
     '.\Remove-SensitiveData.ps1'
     '.\Select-PsBoundParameters.ps1'
+    '.\Test-IpAddressInSubnet.ps1'
+    '.\Use-Progress.ps1'
     '.\Write-HostPrompt.ps1'
 )
 
@@ -112,6 +114,8 @@ FunctionsToExport = @(
     'New-SecureStringKey'
     'Remove-SensitiveData'
     'Select-PsBoundParameters'
+    'Test-IpAddressInSubnet'
+    'Use-Progress'
     'Write-HostPrompt'
 )
 
