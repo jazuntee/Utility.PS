@@ -11,10 +11,10 @@ function Invoke-CommandAsSystem {
     [CmdletBinding()]
     param (
         #
-        [Parameter(Mandatory=$true, ValueFromPipeline=$true, Position=1)]
+        [Parameter(Mandatory = $true, ValueFromPipeline = $true, Position = 1)]
         [ScriptBlock] $ScriptBlock,
         #
-        [Parameter(Mandatory=$false, Position=2)]
+        [Parameter(Mandatory = $false, Position = 2)]
         [string[]] $ArgumentList
     )
 
@@ -37,7 +37,7 @@ function Invoke-CommandAsSystem {
             $ScheduledTask | Start-ScheduledTask -AsJob -ErrorAction Stop | Wait-Job | Remove-Job -Force -Confirm:$False
 
             ## Wait for ScheduledTask to finish
-            While (($ScheduledTask | Get-ScheduledTaskInfo).LastTaskResult -eq 267009) {Start-Sleep -Milliseconds 150}
+            While (($ScheduledTask | Get-ScheduledTaskInfo).LastTaskResult -eq 267009) { Start-Sleep -Milliseconds 150 }
 
             ## Find ScheduledJob and get the result
             $Job = Get-Job -Name $GUID -ErrorAction SilentlyContinue | Wait-Job

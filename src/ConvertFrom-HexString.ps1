@@ -16,26 +16,25 @@ function ConvertFrom-HexString {
     [CmdletBinding()]
     param (
         # Value to convert
-        [Parameter(Mandatory=$true, Position=0, ValueFromPipeline=$true)]
+        [Parameter(Mandatory = $true, Position = 0, ValueFromPipeline = $true)]
         [string[]] $InputObject,
         # Delimiter between Hex pairs
-        [Parameter (Mandatory=$false)]
+        [Parameter (Mandatory = $false)]
         [string] $Delimiter = ' ',
         # Output raw byte array
-        [Parameter (Mandatory=$false)]
+        [Parameter (Mandatory = $false)]
         [switch] $RawBytes,
         # Encoding to use for text strings
-        [Parameter (Mandatory=$false)]
+        [Parameter (Mandatory = $false)]
         [ValidateSet('Ascii', 'UTF32', 'UTF7', 'UTF8', 'BigEndianUnicode', 'Unicode')]
         [string] $Encoding = 'Default'
     )
 
-    process
-    {
+    process {
         $listBytes = New-Object object[] $InputObject.Count
         for ($iString = 0; $iString -lt $InputObject.Count; $iString++) {
             [string] $strHex = $InputObject[$iString]
-            if ($strHex.Substring(2,1) -eq $Delimiter) {
+            if ($strHex.Substring(2, 1) -eq $Delimiter) {
                 [string[]] $listHex = $strHex -split $Delimiter
             }
             else {
@@ -46,9 +45,8 @@ function ConvertFrom-HexString {
             }
 
             [byte[]] $outBytes = New-Object byte[] $listHex.Count
-            for ($iByte = 0; $iByte -lt $listHex.Count; $iByte++)
-            {
-                $outBytes[$iByte] = [byte]::Parse($listHex[$iByte],[System.Globalization.NumberStyles]::HexNumber)
+            for ($iByte = 0; $iByte -lt $listHex.Count; $iByte++) {
+                $outBytes[$iByte] = [byte]::Parse($listHex[$iByte], [System.Globalization.NumberStyles]::HexNumber)
             }
 
             if ($RawBytes) { $listBytes[$iString] = $outBytes }

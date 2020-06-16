@@ -11,27 +11,26 @@
 .INPUTS
     System.Object
 #>
-function Remove-SensitiveData
-{
+function Remove-SensitiveData {
     [CmdletBinding()]
     [OutputType([object])]
     param (
         # Object from which to remove sensitive data.
-        [Parameter(Mandatory=$true, Position=0, ValueFromPipeline=$true)]
+        [Parameter(Mandatory = $true, Position = 0, ValueFromPipeline = $true)]
         [object] $InputObjects,
         # Sensitive string values to remove from input object.
-        [Parameter(Mandatory=$true)]
+        [Parameter(Mandatory = $true)]
         [AllowNull()]
         [AllowEmptyString()]
         [string[]] $FilterValues,
         # Replacement value for senstive data.
-        [Parameter(Mandatory=$false)]
+        [Parameter(Mandatory = $false)]
         [string] $ReplacementValue = '********',
         # Copy the input object rather than remove data directly from input.
-        [Parameter(Mandatory=$false)]
+        [Parameter(Mandatory = $false)]
         [switch] $Clone,
         # Output object with sensitive data removed.
-        [Parameter(Mandatory=$false)]
+        [Parameter(Mandatory = $false)]
         [switch] $PassThru
     )
 
@@ -50,7 +49,7 @@ function Remove-SensitiveData
 
         if ($OutputObjects.Value -is [string]) {
             foreach ($FilterValue in $FilterValues) {
-                if ($OutputObjects.Value -and $FilterValue) { $OutputObjects.Value = $OutputObjects.Value.Replace($FilterValue,$ReplacementValue) }
+                if ($OutputObjects.Value -and $FilterValue) { $OutputObjects.Value = $OutputObjects.Value.Replace($FilterValue, $ReplacementValue) }
             }
         }
         elseif ($OutputObjects.Value -is [array] -or $OutputObjects.Value -is [System.Collections.ArrayList] -or $OutputObjects.Value.GetType().FullName.StartsWith('System.Collections.Generic.List')) {
@@ -68,9 +67,8 @@ function Remove-SensitiveData
                 }
             }
         }
-        elseif ($OutputObjects.Value -is [object] -and $OutputObjects.Value -isnot [ValueType])
-        {
-            [array] $PropertyNames = $OutputObjects.Value | Get-Member -MemberType Property,NoteProperty
+        elseif ($OutputObjects.Value -is [object] -and $OutputObjects.Value -isnot [ValueType]) {
+            [array] $PropertyNames = $OutputObjects.Value | Get-Member -MemberType Property, NoteProperty
             for ($ii = 0; $ii -lt $PropertyNames.Count; $ii++) {
                 $PropertyName = $PropertyNames[$ii].Name
                 if ($null -ne $OutputObjects.Value.$PropertyName -and $OutputObjects.Value.$PropertyName -isnot [ValueType]) {
@@ -78,8 +76,7 @@ function Remove-SensitiveData
                 }
             }
         }
-        else
-        {
+        else {
             ## Non-Terminating Error
             $Exception = New-Object ArgumentException -ArgumentList ('Cannot remove senstive data from input of type {0}.' -f $OutputObjects.Value.GetType())
             Write-Error -Exception $Exception -Category ([System.Management.Automation.ErrorCategory]::ParserError) -CategoryActivity $MyInvocation.MyCommand -ErrorId 'RemoveSensitiveDataFailureTypeNotSupported' -TargetObject $OutputObjects.Value

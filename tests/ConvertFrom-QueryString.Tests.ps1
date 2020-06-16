@@ -1,6 +1,6 @@
 [CmdletBinding()]
 param (
-    [Parameter(Mandatory=$false)]
+    [Parameter(Mandatory = $false)]
     [string] $ModulePath = "..\src\*.psd1"
 )
 
@@ -14,15 +14,15 @@ Describe 'ConvertFrom-QueryString' {
     Context 'Query String Input' {
         class PSObjectOutput {
             [string] $CommandName = 'ConvertFrom-QueryString'
-            [hashtable] $BoundParameters = @{}
+            [hashtable] $BoundParameters = @{ }
             [type] $ExpectedInputType = [string]
             [hashtable[]] $IO = @(
                 @{
-                    Input = 'index=10&name=path%2Ffile.json'
+                    Input  = 'index=10&name=path%2Ffile.json'
                     Output = New-Module -AsCustomObject { $index = [string]10; $name = 'path/file.json'; Export-ModuleMember -Variable * }
                 }
                 @{
-                    Input = 'id=352182e6-9ab0-4115-807b-c36c88029fa4&title=convert%26prosper'
+                    Input  = 'id=352182e6-9ab0-4115-807b-c36c88029fa4&title=convert%26prosper'
                     Output = New-Module -AsCustomObject { $id = [string]'352182e6-9ab0-4115-807b-c36c88029fa4'; $title = 'convert&prosper'; Export-ModuleMember -Variable * }
                 }
             )

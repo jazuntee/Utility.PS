@@ -1,6 +1,6 @@
 [CmdletBinding()]
 param (
-    [Parameter(Mandatory=$false)]
+    [Parameter(Mandatory = $false)]
     [string] $ModulePath = "..\src\*.psd1"
 )
 
@@ -16,21 +16,21 @@ Describe 'Test-IpAddressInSubnet' {
         class SubnetOutput {
             [string] $CommandName = 'Test-IpAddressInSubnet'
             [hashtable] $BoundParameters = @{
-                Subnets = '192.168.1.1/32','192.168.1.0/24','0.0.0.0/0'
+                Subnets               = '192.168.1.1/32', '192.168.1.0/24', '0.0.0.0/0'
                 ReturnMatchingSubnets = $true
             }
             [type] $ExpectedInputType = [string]
             [hashtable[]] $IO = @(
                 @{
-                    Input = '192.168.1.1'
-                    Output = '192.168.1.1/32','192.168.1.0/24','0.0.0.0/0'
+                    Input  = '192.168.1.1'
+                    Output = '192.168.1.1/32', '192.168.1.0/24', '0.0.0.0/0'
                 }
                 @{
-                    Input = '192.168.1.10'
-                    Output = '192.168.1.0/24','0.0.0.0/0'
+                    Input  = '192.168.1.10'
+                    Output = '192.168.1.0/24', '0.0.0.0/0'
                 }
                 @{
-                    Input = '192.168.2.1'
+                    Input  = '192.168.2.1'
                     Output = '0.0.0.0/0'
                 }
             )
@@ -40,14 +40,14 @@ Describe 'Test-IpAddressInSubnet' {
         class NoMatchingSubnetOutput {
             [string] $CommandName = 'Test-IpAddressInSubnet'
             [hashtable] $BoundParameters = @{
-                Subnets = '192.168.1.1/32','192.168.1.0/24'
+                Subnets               = '192.168.1.1/32', '192.168.1.0/24'
                 ReturnMatchingSubnets = $true
             }
             [type] $ExpectedInputType = [string]
             [hashtable[]] $IO = @(
                 @{
-                    Input = '192.168.1.1'
-                    Output = '192.168.1.1/32','192.168.1.0/24'
+                    Input  = '192.168.1.1'
+                    Output = '192.168.1.1/32', '192.168.1.0/24'
                 }
                 @{
                     Input = '192.168.5.1'
@@ -58,7 +58,7 @@ Describe 'Test-IpAddressInSubnet' {
                     Error = $true
                 }
                 @{
-                    Input = '192.168.1.10'
+                    Input  = '192.168.1.10'
                     Output = '192.168.1.0/24'
                 }
             )
@@ -68,20 +68,20 @@ Describe 'Test-IpAddressInSubnet' {
         class BooleanOutput {
             [string] $CommandName = 'Test-IpAddressInSubnet'
             [hashtable] $BoundParameters = @{
-                Subnets = '192.168.1.1/32','192.168.1.0/24'
+                Subnets = '192.168.1.1/32', '192.168.1.0/24'
             }
             [type] $ExpectedInputType = [string]
             [hashtable[]] $IO = @(
                 @{
-                    Input = '192.168.1.1'
+                    Input  = '192.168.1.1'
                     Output = $true
                 }
                 @{
-                    Input = '192.168.1.10'
+                    Input  = '192.168.1.10'
                     Output = $true
                 }
                 @{
-                    Input = '192.168.5.1'
+                    Input  = '192.168.5.1'
                     Output = $false
                 }
             )

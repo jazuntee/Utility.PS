@@ -1,6 +1,6 @@
 [CmdletBinding()]
 param (
-    [Parameter(Mandatory=$false)]
+    [Parameter(Mandatory = $false)]
     [string] $ModulePath = "..\src\*.psd1"
 )
 
@@ -19,12 +19,12 @@ Describe 'Select-PsBoundParameters' {
         [type] $ExpectedInputType = [hashtable]
         [hashtable[]] $IO = @(
             @{
-                Input = @{
-                    ExcludeParameters='Valid'
-                    NotAParameter='Remove'
+                Input  = @{
+                    ExcludeParameters = 'Valid'
+                    NotAParameter     = 'Remove'
                 }
                 Output = @{
-                    ExcludeParameters='Valid'
+                    ExcludeParameters = 'Valid'
                 }
             }
         )
@@ -34,14 +34,14 @@ Describe 'Select-PsBoundParameters' {
     class ExcludeParameters {
         [string] $CommandName = 'Select-PsBoundParameters'
         [hashtable] $BoundParameters = @{
-            ExcludeParameters = 'Verbose','NotAParameter'
+            ExcludeParameters = 'Verbose', 'NotAParameter'
         }
         [type] $ExpectedInputType = [hashtable]
         [hashtable[]] $IO = @(
             @{
-                Input = @{
-                    Name = 'Valid'
-                    Verbose = $true
+                Input  = @{
+                    Name          = 'Valid'
+                    Verbose       = $true
                     NotAParameter = 'Remove'
                 }
                 Output = @{

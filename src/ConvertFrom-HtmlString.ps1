@@ -14,7 +14,7 @@ function ConvertFrom-HtmlString {
     [OutputType([string])]
     param (
         # Value to convert
-        [Parameter(Mandatory=$true, Position=0, ValueFromPipeline=$true)]
+        [Parameter(Mandatory = $true, Position = 0, ValueFromPipeline = $true)]
         [string[]] $InputStrings
     )
 

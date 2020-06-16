@@ -1,6 +1,6 @@
 [CmdletBinding()]
 param (
-    [Parameter(Mandatory=$false)]
+    [Parameter(Mandatory = $false)]
     [string] $ModulePath = "..\src\*.psd1"
 )
 
@@ -13,21 +13,21 @@ Describe 'ConvertTo-PsParameterString' {
 
     class FullOutput {
         [string] $CommandName = 'ConvertTo-PsParameterString'
-        [hashtable] $BoundParameters = @{}
+        [hashtable] $BoundParameters = @{ }
         [type] $ExpectedInputType
         [hashtable[]] $IO = @(
             @{
-                Input = $PSBoundParameters
+                Input  = $PSBoundParameters
                 Output = ''
             }
             @{
-                Input = @{
+                Input  = @{
                     NamedParameter1 = 'Value1'
                 }
                 Output = ' -NamedParameter1 ([System.String]''Value1'')'
             }
             @{
-                Input = [ordered]@{
+                Input  = [ordered]@{
                     NamedParameter1 = 'Value1'
                     NamedParameter2 = 2
                 }
@@ -45,17 +45,17 @@ Describe 'ConvertTo-PsParameterString' {
         [type] $ExpectedInputType
         [hashtable[]] $IO = @(
             @{
-                Input = $PSBoundParameters
+                Input  = $PSBoundParameters
                 Output = ''
             }
             @{
-                Input = @{
+                Input  = @{
                     NamedParameter1 = 'Value1'
                 }
                 Output = ' -NamedParameter1 ''Value1'''
             }
             @{
-                Input = [ordered]@{
+                Input  = [ordered]@{
                     NamedParameter1 = 'Value1'
                     NamedParameter2 = 2
                 }

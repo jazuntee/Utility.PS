@@ -1,34 +1,46 @@
 <#
 .SYNOPSIS
-    Convert Hashtable to Query String.
+    Convert Query String to object.
 .DESCRIPTION
 
 .EXAMPLE
-    PS C:\>ConvertTo-QueryString @{ name = 'path/file.json'; index = 10 }
-    Convert hashtable to query string.
+    PS C:\>ConvertFrom-QueryString '?name=path/file.json&index=10'
+    Convert query string to object.
 .EXAMPLE
-    PS C:\>[ordered]@{ title = 'convert&prosper'; id = [guid]'352182e6-9ab0-4115-807b-c36c88029fa4' } | ConvertTo-QueryString
-    Convert ordered dictionary to query string.
+    PS C:\>'name=path/file.json&index=10' | ConvertFrom-QueryString -AsHashtable
+    Convert query string to hashtable.
 .INPUTS
     System.String
 #>
 function ConvertFrom-QueryString {
     [CmdletBinding()]
     [OutputType([psobject])]
+    [OutputType([hashtable])]
     param (
         # Value to convert
-        [Parameter(Mandatory=$true, Position=0, ValueFromPipeline=$true)]
-        [string[]] $InputStrings
+        [Parameter(Mandatory = $true, Position = 0, ValueFromPipeline = $true)]
+        [string[]] $InputStrings,
+        # Converts to hash table object
+        [Parameter(Mandatory = $false)]
+        [switch] $AsHashtable
     )
 
     process {
         foreach ($InputString in $InputStrings) {
-            [psobject] $OutputObject = New-Object psobject
+            if ($AsHashtable) { [hashtable] $OutputObject = @{ } }
+            else { [psobject] $OutputObject = New-Object psobject }
+
             if ($InputString[0] -eq '?') { $InputString = $InputString.Substring(1) }
             [string[]] $QueryParameters = $InputString.Split('&')
             foreach ($QueryParameter in $QueryParameters) {
                 [string[]] $QueryParameterPair = $QueryParameter.Split('=')
-                $OutputObject | Add-Member $QueryParameterPair[0] -MemberType NoteProperty -Value ([System.Net.WebUtility]::UrlDecode($QueryParameterPair[1]))
+                if ($OutputObject -is [hashtable]) {
+                    $OutputObject.Add($QueryParameterPair[0], [System.Net.WebUtility]::UrlDecode($QueryParameterPair[1]))
+                }
+                else {
+                    $OutputObject | Add-Member $QueryParameterPair[0] -MemberType NoteProperty -Value ([System.Net.WebUtility]::UrlDecode($QueryParameterPair[1]))
+                }
+
             }
             Write-Output $OutputObject
         }

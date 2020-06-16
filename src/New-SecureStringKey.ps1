@@ -18,8 +18,8 @@ function New-SecureStringKey {
     param
     (
         # Key length
-        [Parameter(Mandatory=$false, Position=0, ValueFromPipeline=$true)]
-        [ValidateSet(16,24,32)]
+        [Parameter(Mandatory = $false, Position = 0, ValueFromPipeline = $true)]
+        [ValidateSet(16, 24, 32)]
         [int] $Length = 16
     )
 

@@ -22,10 +22,10 @@ function Get-X509Certificate {
     [OutputType([System.Security.Cryptography.X509Certificates.X509Certificate2])]
     param (
         # X.509 certificate that is binary (DER) encoded or Base64-encoded
-        [Parameter(Mandatory=$true, ValueFromPipeline=$true, Position=0)]
+        [Parameter(Mandatory = $true, ValueFromPipeline = $true, Position = 0)]
         [object] $InputObjects,
         # Input encoding to use for text strings
-        [Parameter (Mandatory=$false)]
+        [Parameter (Mandatory = $false)]
         [ValidateSet('Ascii', 'UTF32', 'UTF7', 'UTF8', 'BigEndianUnicode', 'Unicode')]
         [string] $Encoding = 'Default'
     )
@@ -36,9 +36,8 @@ function Get-X509Certificate {
     }
 
     process {
-        if ($InputObjects -is [byte[]])
-        {
-            [System.Security.Cryptography.X509Certificates.X509Certificate2] $X509Certificate = New-Object System.Security.Cryptography.X509Certificates.X509Certificate2 -ArgumentList (,$InputObjects)
+        if ($InputObjects -is [byte[]]) {
+            [System.Security.Cryptography.X509Certificates.X509Certificate2] $X509Certificate = New-Object System.Security.Cryptography.X509Certificates.X509Certificate2 -ArgumentList (, $InputObjects)
             Write-Output $X509Certificate
         }
         else {
@@ -52,17 +51,14 @@ function Get-X509Certificate {
                     }
                     $listBytes.Add($InputObject)
                 }
-                elseif ($InputObject -is [byte[]])
-                {
+                elseif ($InputObject -is [byte[]]) {
                     $inputBytes = $InputObject
                 }
-                elseif ($InputObject -is [string])
-                {
+                elseif ($InputObject -is [string]) {
                     Write-Verbose ('Encoding string [{0}] to byte array.' -f $Encoding)
                     $inputBytes = [Text.Encoding]::$Encoding.GetBytes($InputObject)
                 }
-                elseif ($InputObject -is [System.IO.FileSystemInfo])
-                {
+                elseif ($InputObject -is [System.IO.FileSystemInfo]) {
                     Write-Verbose 'Encoding file content to byte array.'
                     if ($PSVersionTable.PSVersion -ge [version]'6.0') {
                         $inputBytes = Get-Content $InputObject.FullName -Raw -AsByteStream
@@ -79,7 +75,7 @@ function Get-X509Certificate {
 
                 ## Only write output if the input is not a byte stream.
                 if ($listBytes.Count -eq 0) {
-                    [System.Security.Cryptography.X509Certificates.X509Certificate2] $X509Certificate = New-Object System.Security.Cryptography.X509Certificates.X509Certificate2 -ArgumentList (,$inputBytes)
+                    [System.Security.Cryptography.X509Certificates.X509Certificate2] $X509Certificate = New-Object System.Security.Cryptography.X509Certificates.X509Certificate2 -ArgumentList (, $inputBytes)
                     Write-Output $X509Certificate
                 }
             }
@@ -89,7 +85,7 @@ function Get-X509Certificate {
     end {
         ## Output captured byte stream from piped input.
         if ($listBytes.Count -gt 0) {
-            [System.Security.Cryptography.X509Certificates.X509Certificate2] $X509Certificate = New-Object System.Security.Cryptography.X509Certificates.X509Certificate2 -ArgumentList (,$listBytes)
+            [System.Security.Cryptography.X509Certificates.X509Certificate2] $X509Certificate = New-Object System.Security.Cryptography.X509Certificates.X509Certificate2 -ArgumentList (, $listBytes)
             Write-Output $X509Certificate
         }
     }

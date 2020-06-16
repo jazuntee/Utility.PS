@@ -1,30 +1,29 @@
 # .ExternalHelp Utility.PS-help.xml
 function ConvertFrom-SecureString {
-    [CmdletBinding(DefaultParameterSetName='Secure', HelpUri='https://go.microsoft.com/fwlink/?LinkID=113287')]
+    [CmdletBinding(DefaultParameterSetName = 'Secure', HelpUri = 'https://go.microsoft.com/fwlink/?LinkID=113287')]
     param(
-        [Parameter(Mandatory=$true, Position=0, ValueFromPipeline=$true)]
+        [Parameter(Mandatory = $true, Position = 0, ValueFromPipeline = $true)]
         [securestring]
         ${SecureString},
 
-        [Parameter(ParameterSetName='PlainText')]
+        [Parameter(ParameterSetName = 'PlainText')]
         [switch]
         ${AsPlainText},
 
-        [Parameter(ParameterSetName='PlainText')]
+        [Parameter(ParameterSetName = 'PlainText')]
         [switch]
         ${Force},
 
-        [Parameter(ParameterSetName='Secure', Position=1)]
+        [Parameter(ParameterSetName = 'Secure', Position = 1)]
         [securestring]
         ${SecureKey},
 
-        [Parameter(ParameterSetName='Open')]
+        [Parameter(ParameterSetName = 'Open')]
         [byte[]]
         ${Key}
     )
 
-    begin
-    {
+    begin {
         ## Command Extension
         if (${AsPlainText}) {
             if (!${Force}) {
@@ -42,21 +41,20 @@ function ConvertFrom-SecureString {
         ## Resume Command
         try {
             $outBuffer = $null
-            if ($PSBoundParameters.TryGetValue('OutBuffer', [ref]$outBuffer))
-            {
+            if ($PSBoundParameters.TryGetValue('OutBuffer', [ref]$outBuffer)) {
                 $PSBoundParameters['OutBuffer'] = 1
             }
             $wrappedCmd = $ExecutionContext.InvokeCommand.GetCommand('Microsoft.PowerShell.Security\ConvertFrom-SecureString', [System.Management.Automation.CommandTypes]::Cmdlet)
-            $scriptCmd = {& $wrappedCmd @PSBoundParameters }
+            $scriptCmd = { & $wrappedCmd @PSBoundParameters }
             $steppablePipeline = $scriptCmd.GetSteppablePipeline($myInvocation.CommandOrigin)
             $steppablePipeline.Begin($PSCmdlet)
-        } catch {
+        }
+        catch {
             throw
         }
     }
 
-    process
-    {
+    process {
         ## Command Extension
         if (${AsPlainText}) {
             if (${Force}) {
@@ -74,20 +72,21 @@ function ConvertFrom-SecureString {
         ## Resume Command
         try {
             $steppablePipeline.Process($_)
-        } catch {
+        }
+        catch {
             throw
         }
     }
 
-    end
-    {
+    end {
         ## Command Extension
         if (${AsPlainText}) { return }
 
         ## Resume Command
         try {
             $steppablePipeline.End()
-        } catch {
+        }
+        catch {
             throw
         }
     }

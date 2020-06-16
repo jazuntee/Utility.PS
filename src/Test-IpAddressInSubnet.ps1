@@ -9,16 +9,16 @@
 #>
 function Test-IpAddressInSubnet {
     [CmdletBinding()]
-    [OutputType([bool],[string[]])]
+    [OutputType([bool], [string[]])]
     param (
         # IP Address to test against provided subnets.
-        [Parameter(Mandatory=$true, ValueFromPipeline=$true, Position=1)]
+        [Parameter(Mandatory = $true, ValueFromPipeline = $true, Position = 1)]
         [ipaddress[]] $IpAddresses,
         # List of subnets.
-        [Parameter(Mandatory=$true)]
+        [Parameter(Mandatory = $true)]
         [string[]] $Subnets,
         # Return list of matching subnets rather than a boolean result.
-        [Parameter(Mandatory=$false)]
+        [Parameter(Mandatory = $false)]
         [switch] $ReturnMatchingSubnets
     )
 

@@ -1,6 +1,6 @@
 [CmdletBinding()]
 param (
-    [Parameter(Mandatory=$false)]
+    [Parameter(Mandatory = $false)]
     [string] $ModulePath = "..\src\*.psd1"
 )
 
@@ -21,7 +21,7 @@ function TestGroup ([type]$TestClass, [int]$StartIndex = 0) {
                 $TestInput = GetInput $TestIO[0] -AssertType $TestValues.ExpectedInputType
                 $PSString = & $TestValues.CommandName $TestInput @BoundParameters
                 #Write-Host ($PSString -join "`r`n")
-                if ($TestIO[0].ContainsKey('Output'))  { Test-ComparisionAssertions $TestIO[0].Output $PSString }
+                if ($TestIO[0].ContainsKey('Output')) { Test-ComparisionAssertions $TestIO[0].Output $PSString }
                 $PSString = [string[]]$PSString
                 $TestInputArray = [array]$TestInput
                 for ($ii = 0; $ii -lt $PSString.Count; $ii++) {
@@ -40,7 +40,7 @@ function TestGroup ([type]$TestClass, [int]$StartIndex = 0) {
                 $PSString = $TestInput | & $TestValues.CommandName -WarningAction SilentlyContinue @BoundParameters
                 #Write-Host ($PSString -join "`r`n")
                 if ($TestIO[0].ContainsKey('PipeOutput')) { Test-ComparisionAssertions $TestIO[0].PipeOutput $PSString }
-                elseif ($TestIO[0].ContainsKey('Output'))  { Test-ComparisionAssertions $TestIO[0].Output $PSString }
+                elseif ($TestIO[0].ContainsKey('Output')) { Test-ComparisionAssertions $TestIO[0].Output $PSString }
                 $PSString = [string[]]$PSString
                 $TestInputArray = [array]$TestInput
                 for ($ii = 0; $ii -lt $PSString.Count; $ii++) {
@@ -107,7 +107,7 @@ Describe 'ConvertTo-PsString' {
     ## Reference: https://docs.microsoft.com/en-us/dotnet/csharp/language-reference/keywords/value-types-table
     class ValueTypeInput {
         [string] $CommandName = 'ConvertTo-PsString'
-        [hashtable] $BoundParameters = @{}
+        [hashtable] $BoundParameters = @{ }
         [type] $ExpectedInputType
         [hashtable[]] $IO = @(
             ## Integral numeric types
@@ -174,7 +174,7 @@ Describe 'ConvertTo-PsString' {
     class ValueTypeInputCompactNoEnumerate {
         [string] $CommandName = 'ConvertTo-PsString'
         [hashtable] $BoundParameters = @{
-            Compact = $true
+            Compact     = $true
             NoEnumerate = $true
         }
         [type] $ExpectedInputType
@@ -242,35 +242,35 @@ Describe 'ConvertTo-PsString' {
 
     class ObjectInput {
         [string] $CommandName = 'ConvertTo-PsString'
-        [hashtable] $BoundParameters = @{}
+        [hashtable] $BoundParameters = @{ }
         [type] $ExpectedInputType
         [hashtable[]] $IO = @(
             @{
-                Input = [System.IO.FileInfo]'filename.ext'
+                Input  = [System.IO.FileInfo]'filename.ext'
                 Output = '[System.IO.FileInfo]''filename.ext'''
             }
             @{
-                Input = [System.IO.DirectoryInfo]'directory'
+                Input  = [System.IO.DirectoryInfo]'directory'
                 Output = '[System.IO.DirectoryInfo]''directory'''
             }
             @{
-                Input = [System.Uri]'uri'
+                Input  = [System.Uri]'uri'
                 Output = '[System.Uri]''uri'''
             }
             @{
-                Input = [hashtable]@{
+                Input  = [hashtable]@{
                     [UInt16]1 = 'value1'
                 }
                 Output = '[System.Collections.Hashtable]@{[System.UInt16]1=[System.String]''value1''}'
             }
             @{
-                Input = [hashtable]@{
+                Input  = [hashtable]@{
                     key2 = [int]3
                 }
                 Output = '[System.Collections.Hashtable]@{[System.String]''key2''=[System.Int32]3}'
             }
             @{
-                Input = [ordered]@{
+                Input  = [ordered]@{
                     key1 = 'value1'
                     key2 = 2
                     key3 = [UInt16]3
@@ -278,11 +278,11 @@ Describe 'ConvertTo-PsString' {
                 Output = '[ordered]@{[System.String]''key1''=[System.String]''value1'';[System.String]''key2''=[System.Int32]2;[System.String]''key3''=[System.UInt16]3}'
             }
             @{
-                Input = [Array]@()
+                Input  = [Array]@()
                 Output = $null
             }
             @{
-                Input = [string[]]@(
+                Input  = [string[]]@(
                     'arrayValue1'
                     'arrayValue2'
                 )
@@ -292,7 +292,7 @@ Describe 'ConvertTo-PsString' {
                 )
             }
             @{
-                Input = [int[]]@(
+                Input  = [int[]]@(
                     1
                     2
                 )
@@ -302,7 +302,7 @@ Describe 'ConvertTo-PsString' {
                 )
             }
             @{
-                Input = [object[]]@(
+                Input  = [object[]]@(
                     'arrayValue1'
                     'arrayValue2'
                     3
@@ -316,11 +316,11 @@ Describe 'ConvertTo-PsString' {
                 )
             }
             @{
-                Input = [object[]]@(
-                    Write-Output ([string[]]('arrayValue1','arrayValue2')) -NoEnumerate
-                    Write-Output ([int[]](1,2)) -NoEnumerate
+                Input  = [object[]]@(
+                    Write-Output ([string[]]('arrayValue1', 'arrayValue2')) -NoEnumerate
+                    Write-Output ([int[]](1, 2)) -NoEnumerate
                     $null
-                    Write-Output ([hashtable[]](@{h1k1='v1'},@{h2k2='v2'})) -NoEnumerate
+                    Write-Output ([hashtable[]](@{h1k1 = 'v1' }, @{h2k2 = 'v2' })) -NoEnumerate
                 )
                 Output = [object[]]@(
                     '[System.String[]](Write-Output @([System.String]''arrayValue1'',[System.String]''arrayValue2'') -NoEnumerate)'
@@ -330,7 +330,7 @@ Describe 'ConvertTo-PsString' {
                 )
             }
             @{
-                Input = [System.Collections.ArrayList]@(
+                Input  = [System.Collections.ArrayList]@(
                     'arrayListValue1'
                     'arrayListValue2'
                     3
@@ -344,7 +344,7 @@ Describe 'ConvertTo-PsString' {
                 )
             }
             @{
-                Input = [System.Collections.Generic.List[string]]@(
+                Input  = [System.Collections.Generic.List[string]]@(
                     'listValue1'
                     'listValue2'
                 )
@@ -354,7 +354,7 @@ Describe 'ConvertTo-PsString' {
                 )
             }
             @{
-                Input = [System.Collections.Generic.List[int]]@(
+                Input  = [System.Collections.Generic.List[int]]@(
                     1
                     2
                 )
@@ -364,11 +364,11 @@ Describe 'ConvertTo-PsString' {
                 )
             }
             @{
-                Input = [System.Collections.Generic.Dictionary[string,int]](Invoke-Command { $D = New-Object 'System.Collections.Generic.Dictionary[string,int]'; $D.Add('key1',1); $D.Add('key2',2); $D })
+                Input  = [System.Collections.Generic.Dictionary[string, int]](Invoke-Command { $D = New-Object 'System.Collections.Generic.Dictionary[string,int]'; $D.Add('key1', 1); $D.Add('key2', 2); $D })
                 Output = '(Invoke-Command { $D = New-Object ''System.Collections.Generic.Dictionary[[System.String],[System.Int32]]''; $D.Add([System.String]''key1'',[System.Int32]1); $D.Add([System.String]''key2'',[System.Int32]2); $D })'
             }
             @{
-                Input = [xml]@'
+                Input  = [xml]@'
     <nodeRoot>
     <nodeChild>'singleQuote'</nodeChild>
     <nodeChild>"doubleQuote"</nodeChild>
@@ -383,37 +383,37 @@ Describe 'ConvertTo-PsString' {
     class ObjectInputCompactNoEnumerate {
         [string] $CommandName = 'ConvertTo-PsString'
         [hashtable] $BoundParameters = @{
-            Compact = $true
+            Compact     = $true
             NoEnumerate = $true
         }
         [type] $ExpectedInputType
         [hashtable[]] $IO = @(
             @{
-                Input = [System.IO.FileInfo]'filename.ext'
+                Input  = [System.IO.FileInfo]'filename.ext'
                 Output = '[IO.FileInfo]''filename.ext'''
             }
             @{
-                Input = [System.IO.DirectoryInfo]'directory'
+                Input  = [System.IO.DirectoryInfo]'directory'
                 Output = '[IO.DirectoryInfo]''directory'''
             }
             @{
-                Input = [System.Uri]'uri'
+                Input  = [System.Uri]'uri'
                 Output = '[uri]''uri'''
             }
             @{
-                Input = [hashtable]@{
+                Input  = [hashtable]@{
                     [byte]1 = 'value1'
                 }
                 Output = '[hashtable]@{[byte]1=''value1''}'
             }
             @{
-                Input = [hashtable]@{
+                Input  = [hashtable]@{
                     key2 = [int]3
                 }
                 Output = '[hashtable]@{''key2''=3}'
             }
             @{
-                Input = [ordered]@{
+                Input  = [ordered]@{
                     key1 = 'value1'
                     key2 = 2
                     key3 = $null
@@ -421,78 +421,78 @@ Describe 'ConvertTo-PsString' {
                 Output = '[ordered]@{''key1''=''value1'';''key2''=2;''key3''=$null}'
             }
             @{
-                Input = [Array]@()
-                Output = '[Object[]](Write-Output @() -NoEnumerate)'
+                Input      = [Array]@()
+                Output     = '[Object[]](Write-Output @() -NoEnumerate)'
                 PipeOutput = '(Write-Output @() -NoEnumerate)'
             }
             @{
-                Input = [string[]]@(
+                Input      = [string[]]@(
                     'arrayValue1'
                     'arrayValue2'
                 )
-                Output = '[String[]](Write-Output @(''arrayValue1'',''arrayValue2'') -NoEnumerate)'
+                Output     = '[String[]](Write-Output @(''arrayValue1'',''arrayValue2'') -NoEnumerate)'
                 PipeOutput = '(Write-Output @(''arrayValue1'',''arrayValue2'') -NoEnumerate)'
             }
             @{
-                Input = [int[]]@(
+                Input      = [int[]]@(
                     1
                     2
                 )
-                Output = '[Int32[]](Write-Output @(1,2) -NoEnumerate)'
+                Output     = '[Int32[]](Write-Output @(1,2) -NoEnumerate)'
                 PipeOutput = '(Write-Output @(1,2) -NoEnumerate)'
             }
             @{
-                Input = [object[]]@(
+                Input      = [object[]]@(
                     'arrayValue1'
                     'arrayValue2'
                     3
                     4
                 )
-                Output = '[Object[]](Write-Output @([string]''arrayValue1'',[string]''arrayValue2'',[int]3,[int]4) -NoEnumerate)'
+                Output     = '[Object[]](Write-Output @([string]''arrayValue1'',[string]''arrayValue2'',[int]3,[int]4) -NoEnumerate)'
                 PipeOutput = '(Write-Output @(''arrayValue1'',''arrayValue2'',3,4) -NoEnumerate)'
             }
             @{
-                Input = [object[]]@(
-                    Write-Output ([string[]]('arrayValue1','arrayValue2')) -NoEnumerate
-                    Write-Output ([int[]](1,2)) -NoEnumerate
+                Input      = [object[]]@(
+                    Write-Output ([string[]]('arrayValue1', 'arrayValue2')) -NoEnumerate
+                    Write-Output ([int[]](1, 2)) -NoEnumerate
                     $null
-                    Write-Output ([hashtable[]](@{h1k1='v1'},@{h2k2='v2'})) -NoEnumerate
+                    Write-Output ([hashtable[]](@{h1k1 = 'v1' }, @{h2k2 = 'v2' })) -NoEnumerate
                 )
-                Output = '[Object[]](Write-Output @([String[]](Write-Output @(''arrayValue1'',''arrayValue2'') -NoEnumerate),[Int32[]](Write-Output @(1,2) -NoEnumerate),$null,[Collections.Hashtable[]](Write-Output @(@{''h1k1''=''v1''},@{''h2k2''=''v2''}) -NoEnumerate)) -NoEnumerate)'
+                Output     = '[Object[]](Write-Output @([String[]](Write-Output @(''arrayValue1'',''arrayValue2'') -NoEnumerate),[Int32[]](Write-Output @(1,2) -NoEnumerate),$null,[Collections.Hashtable[]](Write-Output @(@{''h1k1''=''v1''},@{''h2k2''=''v2''}) -NoEnumerate)) -NoEnumerate)'
                 PipeOutput = '(Write-Output @([String[]](Write-Output @(''arrayValue1'',''arrayValue2'') -NoEnumerate),[Int32[]](Write-Output @(1,2) -NoEnumerate),$null,[Collections.Hashtable[]](Write-Output @(@{''h1k1''=''v1''},@{''h2k2''=''v2''}) -NoEnumerate)) -NoEnumerate)'
             }
             @{
-                Input = [System.Collections.ArrayList]@(
+                Input      = [System.Collections.ArrayList]@(
                     'arrayListValue1'
                     'arrayListValue2'
                     3
                     4
                 )
-                Output = '[Collections.ArrayList]@(''arrayListValue1'',''arrayListValue2'',3,4)'
+                Output     = '[Collections.ArrayList]@(''arrayListValue1'',''arrayListValue2'',3,4)'
                 PipeOutput = '(Write-Output @(''arrayListValue1'',''arrayListValue2'',3,4) -NoEnumerate)'
             }
             @{
-                Input = [System.Collections.Generic.List[string]]@(
+                Input      = [System.Collections.Generic.List[string]]@(
                     'listValue1'
                     'listValue2'
                 )
-                Output = '[Collections.Generic.List[[string]]]@(''listValue1'',''listValue2'')'
+                Output     = '[Collections.Generic.List[[string]]]@(''listValue1'',''listValue2'')'
                 PipeOutput = '(Write-Output @(''listValue1'',''listValue2'') -NoEnumerate)'
             }
             @{
-                Input = [System.Collections.Generic.List[int]]@(
+                Input      = [System.Collections.Generic.List[int]]@(
                     1
                     2
                 )
-                Output = '[Collections.Generic.List[[int]]]@(1,2)'
+                Output     = '[Collections.Generic.List[[int]]]@(1,2)'
                 PipeOutput = '(Write-Output @(1,2) -NoEnumerate)'
             }
             @{
-                Input = [System.Collections.Generic.Dictionary[string,int]](Invoke-Command { $D = New-Object 'System.Collections.Generic.Dictionary[string,int]'; $D.Add('key1',1); $D.Add('key2',2); $D })
+                Input  = [System.Collections.Generic.Dictionary[string, int]](Invoke-Command { $D = New-Object 'System.Collections.Generic.Dictionary[string,int]'; $D.Add('key1', 1); $D.Add('key2', 2); $D })
                 Output = '(Invoke-Command { $D = New-Object ''Collections.Generic.Dictionary[[string],[int]]''; $D.Add(''key1'',1); $D.Add(''key2'',2); $D })'
             }
             @{
-                Input = [xml]@'
+                Input  = [xml]@'
     <nodeRoot>
     <nodeChild>'singleQuote'</nodeChild>
     <nodeChild>"doubleQuote"</nodeChild>

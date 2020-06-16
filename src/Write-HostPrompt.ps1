@@ -28,19 +28,19 @@ function Write-HostPrompt {
     param
     (
         # Caption to preceed or title the prompt.
-        [Parameter(Mandatory=$true, Position=1)]
+        [Parameter(Mandatory = $true, Position = 1)]
         [string] $Caption,
         # A message that describes the prompt.
-        [Parameter(Mandatory=$true, Position=2)]
+        [Parameter(Mandatory = $true, Position = 2)]
         [string] $Message,
         # The fields in the prompt.
-        [Parameter(Mandatory=$true, ParameterSetName='Fields', Position=3, ValueFromPipeline=$true)]
+        [Parameter(Mandatory = $true, ParameterSetName = 'Fields', Position = 3, ValueFromPipeline = $true)]
         [System.Management.Automation.Host.FieldDescription[]] $Fields,
         # The choices the shown in the prompt.
-        [Parameter(Mandatory=$true, ParameterSetName='Choices', Position=3, ValueFromPipeline=$true)]
+        [Parameter(Mandatory = $true, ParameterSetName = 'Choices', Position = 3, ValueFromPipeline = $true)]
         [System.Management.Automation.Host.ChoiceDescription[]] $Choices,
         # The index of the label in the choices to make default.
-        [Parameter(Mandatory=$false, ParameterSetName='Choices', Position=4)]
+        [Parameter(Mandatory = $false, ParameterSetName = 'Choices', Position = 4)]
         [int] $DefaultChoice = -1
     )
 
@@ -63,8 +63,8 @@ function Write-HostPrompt {
 
     end {
         switch ($PSCmdlet.ParameterSetName) {
-            'Fields' { return $Host.UI.Prompt($Caption,$Message,$listFields.ToArray()) }
-            'Choices' { return $Host.UI.PromptForChoice($Caption,$Message,$listChoices.ToArray(),$DefaultChoice) }
+            'Fields' { return $Host.UI.Prompt($Caption, $Message, $listFields.ToArray()) }
+            'Choices' { return $Host.UI.PromptForChoice($Caption, $Message, $listChoices.ToArray(), $DefaultChoice) }
         }
     }
 }

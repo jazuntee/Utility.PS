@@ -1,6 +1,6 @@
 [CmdletBinding()]
 param (
-    [Parameter(Mandatory=$false)]
+    [Parameter(Mandatory = $false)]
     [string] $ModulePath = "..\src\*.psd1"
 )
 
@@ -14,15 +14,15 @@ Describe 'ConvertTo-Base64String' {
     Context 'Base64-Encoded String Output' {
         class StringInput {
             [string] $CommandName = 'ConvertTo-Base64String'
-            [hashtable] $BoundParameters = @{}
+            [hashtable] $BoundParameters = @{ }
             [type] $ExpectedInputType = [string]
             [hashtable[]] $IO = @(
                 @{
-                    Input = 'A string with base64 encoding'
+                    Input  = 'A string with base64 encoding'
                     Output = 'QSBzdHJpbmcgd2l0aCBiYXNlNjQgZW5jb2Rpbmc='
                 }
                 @{
-                    Input = 'Another base64-encoded string'
+                    Input  = 'Another base64-encoded string'
                     Output = 'QW5vdGhlciBiYXNlNjQtZW5jb2RlZCBzdHJpbmc='
                 }
             )
@@ -37,11 +37,11 @@ Describe 'ConvertTo-Base64String' {
             [type] $ExpectedInputType = [byte[]]
             [hashtable[]] $IO = @(
                 @{
-                    Input = [byte[]]@(230, 130, 33, 53, 176, 154, 21, 65, 128, 123, 195, 108, 136, 2, 159, 164)
+                    Input  = [byte[]]@(230, 130, 33, 53, 176, 154, 21, 65, 128, 123, 195, 108, 136, 2, 159, 164)
                     Output = '5oIhNbCaFUGAe8NsiAKfpA=='
                 }
                 @{
-                    Input = [byte[]]@(57, 48, 0, 0)
+                    Input  = [byte[]]@(57, 48, 0, 0)
                     Output = 'OTAAAA=='
                 }
             )
@@ -50,55 +50,55 @@ Describe 'ConvertTo-Base64String' {
 
         class ValueTypeInput {
             [string] $CommandName = 'ConvertTo-Base64String'
-            [hashtable] $BoundParameters = @{}
+            [hashtable] $BoundParameters = @{ }
             [type] $ExpectedInputType
             [hashtable[]] $IO = @(
                 @{
-                    Input = [bool]$true
+                    Input  = [bool]$true
                     Output = 'AQ=='
                 }
                 @{
-                    Input = [bool]$false
+                    Input  = [bool]$false
                     Output = 'AA=='
                 }
                 @{
-                    Input = [char]'a'
+                    Input  = [char]'a'
                     Output = 'YQA='
                 }
                 @{
-                    Input = [int]0
+                    Input  = [int]0
                     Output = 'AAAAAA=='
                 }
                 @{
-                    Input = [Int16]127
+                    Input  = [Int16]127
                     Output = 'fwA='
                 }
                 @{
-                    Input = [UInt16]127
+                    Input  = [UInt16]127
                     Output = 'fwA='
                 }
                 @{
-                    Input = [Int32]127
+                    Input  = [Int32]127
                     Output = 'fwAAAA=='
                 }
                 @{
-                    Input = [UInt32]127
+                    Input  = [UInt32]127
                     Output = 'fwAAAA=='
                 }
                 @{
-                    Input = [Int64]127
+                    Input  = [Int64]127
                     Output = 'fwAAAAAAAAA='
                 }
                 @{
-                    Input = [UInt64]127
+                    Input  = [UInt64]127
                     Output = 'fwAAAAAAAAA='
                 }
                 @{
-                    Input = [Single]127
+                    Input  = [Single]127
                     Output = 'AAD+Qg=='
                 }
                 @{
-                    Input = [Double]127
+                    Input  = [Double]127
                     Output = 'AAAAAADAX0A='
                 }
                 @{
@@ -106,7 +106,7 @@ Describe 'ConvertTo-Base64String' {
                     Error = $true
                 }
                 @{
-                    Input = [guid]'352182e6-9ab0-4115-807b-c36c88029fa4'
+                    Input  = [guid]'352182e6-9ab0-4115-807b-c36c88029fa4'
                     Output = '5oIhNbCaFUGAe8NsiAKfpA=='
                 }
             )
@@ -115,11 +115,11 @@ Describe 'ConvertTo-Base64String' {
 
         class FileInput {
             [string] $CommandName = 'ConvertTo-Base64String'
-            [hashtable] $BoundParameters = @{}
+            [hashtable] $BoundParameters = @{ }
             [type] $ExpectedInputType = [System.IO.FileInfo]
             [hashtable[]] $IO = @(
                 @{
-                    Input = &{ $Path = 'TestDrive:\TextFile.txt'; Set-Content $Path -Value 'A string with base64 encoding'; Get-Item $Path }
+                    Input  = & { $Path = 'TestDrive:\TextFile.txt'; Set-Content $Path -Value 'A string with base64 encoding'; Get-Item $Path }
                     Output = 'QSBzdHJpbmcgd2l0aCBiYXNlNjQgZW5jb2RpbmcNCg=='
                 }
             )
@@ -136,11 +136,11 @@ Describe 'ConvertTo-Base64String' {
             [type] $ExpectedInputType = [string]
             [hashtable[]] $IO = @(
                 @{
-                    Input = 'ASCII string with base64url encoding'
+                    Input  = 'ASCII string with base64url encoding'
                     Output = 'QVNDSUkgc3RyaW5nIHdpdGggYmFzZTY0dXJsIGVuY29kaW5n'
                 }
                 @{
-                    Input = 'Another base64url-encoded string with ASCII encoding'
+                    Input  = 'Another base64url-encoded string with ASCII encoding'
                     Output = 'QW5vdGhlciBiYXNlNjR1cmwtZW5jb2RlZCBzdHJpbmcgd2l0aCBBU0NJSSBlbmNvZGluZw'
                 }
             )
@@ -150,7 +150,7 @@ Describe 'ConvertTo-Base64String' {
 
     Write-Host
     It 'Terminating Errors' {
-        $ScriptBlock = { ([int]127),([decimal]127),([long]127) | ConvertTo-Base64String -ErrorAction Stop }
+        $ScriptBlock = { ([int]127), ([decimal]127), ([long]127) | ConvertTo-Base64String -ErrorAction Stop }
         $ScriptBlock | Should -Throw
         try {
             $Output = & $ScriptBlock

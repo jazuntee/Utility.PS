@@ -1,17 +1,17 @@
 # .ExternalHelp Utility.PS-help.xml
 function ConvertTo-Csv {
-    [CmdletBinding(DefaultParameterSetName='DelimiterPath', HelpUri='https://go.microsoft.com/fwlink/?LinkID=135203', RemotingCapability='None')]
+    [CmdletBinding(DefaultParameterSetName = 'DelimiterPath', HelpUri = 'https://go.microsoft.com/fwlink/?LinkID=135203', RemotingCapability = 'None')]
     param(
-        [Parameter(Mandatory=$true, Position=0, ValueFromPipeline=$true, ValueFromPipelineByPropertyName=$true)]
+        [Parameter(Mandatory = $true, Position = 0, ValueFromPipeline = $true, ValueFromPipelineByPropertyName = $true)]
         [psobject]
         ${InputObject},
 
-        [Parameter(ParameterSetName='Delimiter', Position=1)]
+        [Parameter(ParameterSetName = 'Delimiter', Position = 1)]
         [ValidateNotNull()]
         [char]
         ${Delimiter},
 
-        [Parameter(ParameterSetName='UseCulture')]
+        [Parameter(ParameterSetName = 'UseCulture')]
         [switch]
         ${UseCulture},
 
@@ -26,17 +26,16 @@ function ConvertTo-Csv {
         [ValidateNotNull()]
         [string]
         ${ArrayDelimiter} = "`r`n"
-        )
+    )
 
-    begin
-    {
+    begin {
         function Transform (${InputObject}, ${ArrayDelimiter}) {
             [bool] $ContainsArray = $false
             [System.Collections.Generic.List[object]] $SelectProperties = New-Object System.Collections.Generic.List[object]
-            $Properties = ${InputObject} | Select-Object -First 1 | Get-Member -MemberType NoteProperty,Property,ScriptProperty
+            $Properties = ${InputObject} | Select-Object -First 1 | Get-Member -MemberType NoteProperty, Property, ScriptProperty
             foreach ($Property in $Properties) {
                 if ($Property.Definition -like ("*``[``] {0}*" -f $Property.Name) -or $Property.Definition -like ("*List``[*``] {0}*" -f $Property.Name)) {
-                    $SelectProperties.Add(@{ Name = $Property.Name; Expression = [scriptblock]::Create(('$_.{0} -join "{1}"' -f $Property.Name,${ArrayDelimiter})) })
+                    $SelectProperties.Add(@{ Name = $Property.Name; Expression = [scriptblock]::Create(('$_.{0} -join "{1}"' -f $Property.Name, ${ArrayDelimiter})) })
                     $ContainsArray = $true
                 }
                 else {
@@ -58,23 +57,22 @@ function ConvertTo-Csv {
         ## Resume Command
         try {
             $outBuffer = $null
-            if ($PSBoundParameters.TryGetValue('OutBuffer', [ref]$outBuffer))
-            {
+            if ($PSBoundParameters.TryGetValue('OutBuffer', [ref]$outBuffer)) {
                 $PSBoundParameters['OutBuffer'] = 1
             }
 
             $wrappedCmd = $ExecutionContext.InvokeCommand.GetCommand('Microsoft.PowerShell.Utility\ConvertTo-Csv', [System.Management.Automation.CommandTypes]::Cmdlet)
-            $scriptCmd = {& $wrappedCmd @PSBoundParameters }
+            $scriptCmd = { & $wrappedCmd @PSBoundParameters }
 
             $steppablePipeline = $scriptCmd.GetSteppablePipeline($myInvocation.CommandOrigin)
             $steppablePipeline.Begin($PSCmdlet)
-        } catch {
+        }
+        catch {
             throw
         }
     }
 
-    process
-    {
+    process {
         ## Command Extension
         if ($null -ne ${InputObject}) {
             $_ = Transform ${InputObject} ${ArrayDelimiter}
@@ -83,16 +81,17 @@ function ConvertTo-Csv {
         ## Resume Command
         try {
             $steppablePipeline.Process($_)
-        } catch {
+        }
+        catch {
             throw
         }
     }
 
-    end
-    {
+    end {
         try {
             $steppablePipeline.End()
-        } catch {
+        }
+        catch {
             throw
         }
     }

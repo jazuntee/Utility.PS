@@ -14,27 +14,27 @@ function ConvertTo-PsString {
     [OutputType([string])]
     param (
         #
-        [Parameter(Mandatory=$true, ValueFromPipeline=$true, Position=0)]
+        [Parameter(Mandatory = $true, ValueFromPipeline = $true, Position = 0)]
         [AllowNull()]
         [object] $InputObjects,
         #
-        [Parameter(Mandatory=$false)]
+        [Parameter(Mandatory = $false)]
         [switch] $Compact,
         #
-        [Parameter(Mandatory=$false, Position=1)]
-        [type[]] $RemoveTypes = ([string],[bool],[int],[long]),
+        [Parameter(Mandatory = $false, Position = 1)]
+        [type[]] $RemoveTypes = ([string], [bool], [int], [long]),
         #
-        [Parameter(Mandatory=$false)]
+        [Parameter(Mandatory = $false)]
         [switch] $NoEnumerate
     )
 
     begin {
         if ($Compact) {
-            [System.Collections.Generic.Dictionary[string,type]] $TypeAccelerators = [psobject].Assembly.GetType('System.Management.Automation.TypeAccelerators')::get
-            [System.Collections.Generic.Dictionary[type,string]] $TypeAcceleratorsLookup = New-Object 'System.Collections.Generic.Dictionary[type,string]'
+            [System.Collections.Generic.Dictionary[string, type]] $TypeAccelerators = [psobject].Assembly.GetType('System.Management.Automation.TypeAccelerators')::get
+            [System.Collections.Generic.Dictionary[type, string]] $TypeAcceleratorsLookup = New-Object 'System.Collections.Generic.Dictionary[type,string]'
             foreach ($TypeAcceleratorKey in $TypeAccelerators.Keys) {
                 if (!$TypeAcceleratorsLookup.ContainsKey($TypeAccelerators[$TypeAcceleratorKey])) {
-                    $TypeAcceleratorsLookup.Add($TypeAccelerators[$TypeAcceleratorKey],$TypeAcceleratorKey)
+                    $TypeAcceleratorsLookup.Add($TypeAccelerators[$TypeAcceleratorKey], $TypeAcceleratorKey)
                 }
             }
         }
@@ -42,13 +42,13 @@ function ConvertTo-PsString {
         function Resolve-Type {
             param (
                 #
-                [Parameter(Mandatory=$true, ValueFromPipeline=$true, Position=0)]
+                [Parameter(Mandatory = $true, ValueFromPipeline = $true, Position = 0)]
                 [type] $ObjectType,
                 #
-                [Parameter(Mandatory=$false, Position=1)]
+                [Parameter(Mandatory = $false, Position = 1)]
                 [switch] $Compact,
                 #
-                [Parameter(Mandatory=$false, Position=1)]
+                [Parameter(Mandatory = $false, Position = 1)]
                 [type[]] $RemoveTypes
             )
 
@@ -118,60 +118,70 @@ function ConvertTo-PsString {
                 [void]$OutputString.Append((Resolve-Type $InputObject.GetType() -Compact:$Compact -RemoveTypes $RemoveTypes))
 
                 ## Add Value
-                switch ($InputObject.GetType())
-                {
-                    {$_.Equals([String])} {
-                        [void]$OutputString.AppendFormat("'{0}'",$InputObject.Replace("'","''")) #.Replace('"','`"')
-                        break }
-                    {$_.Equals([Char])} {
-                        [void]$OutputString.AppendFormat("'{0}'",([string]$InputObject).Replace("'","''"))
-                        break }
-                    {$_.Equals([Boolean]) -or $_.Equals([switch])} {
-                        [void]$OutputString.AppendFormat('${0}',$InputObject)
-                        break }
-                    {$_.Equals([DateTime])} {
-                        [void]$OutputString.AppendFormat("'{0}'",$InputObject.ToString('O'))
-                        break }
-                    {$_.BaseType -and $_.BaseType.Equals([Enum])} {
-                        [void]$OutputString.AppendFormat('::{0}',$InputObject)
-                        break }
-                    {$_.BaseType -and $_.BaseType.Equals([ValueType])} {
-                        [void]$OutputString.AppendFormat('{0}',$InputObject)
-                        break }
-                    {$_.BaseType.Equals([System.IO.FileSystemInfo]) -or $_.Equals([System.Uri])} {
-                        [void]$OutputString.AppendFormat("'{0}'",$InputObject.ToString().Replace("'","''")) #.Replace('"','`"')
-                        break }
-                    {$_.Equals([System.Xml.XmlDocument])} {
-                        [void]$OutputString.AppendFormat("'{0}'",$InputObject.OuterXml.Replace("'","''")) #.Replace('"','""')
-                        break }
-                    {$_.Equals([Hashtable]) -or $_.Equals([System.Collections.Specialized.OrderedDictionary])} {
+                switch ($InputObject.GetType()) {
+                    { $_.Equals([String]) } {
+                        [void]$OutputString.AppendFormat("'{0}'", $InputObject.Replace("'", "''")) #.Replace('"','`"')
+                        break
+                    }
+                    { $_.Equals([Char]) } {
+                        [void]$OutputString.AppendFormat("'{0}'", ([string]$InputObject).Replace("'", "''"))
+                        break
+                    }
+                    { $_.Equals([Boolean]) -or $_.Equals([switch]) } {
+                        [void]$OutputString.AppendFormat('${0}', $InputObject)
+                        break
+                    }
+                    { $_.Equals([DateTime]) } {
+                        [void]$OutputString.AppendFormat("'{0}'", $InputObject.ToString('O'))
+                        break
+                    }
+                    { $_.BaseType -and $_.BaseType.Equals([Enum]) } {
+                        [void]$OutputString.AppendFormat('::{0}', $InputObject)
+                        break
+                    }
+                    { $_.BaseType -and $_.BaseType.Equals([ValueType]) } {
+                        [void]$OutputString.AppendFormat('{0}', $InputObject)
+                        break
+                    }
+                    { $_.BaseType.Equals([System.IO.FileSystemInfo]) -or $_.Equals([System.Uri]) } {
+                        [void]$OutputString.AppendFormat("'{0}'", $InputObject.ToString().Replace("'", "''")) #.Replace('"','`"')
+                        break
+                    }
+                    { $_.Equals([System.Xml.XmlDocument]) } {
+                        [void]$OutputString.AppendFormat("'{0}'", $InputObject.OuterXml.Replace("'", "''")) #.Replace('"','""')
+                        break
+                    }
+                    { $_.Equals([Hashtable]) -or $_.Equals([System.Collections.Specialized.OrderedDictionary]) } {
                         [void]$OutputString.Append('@{')
                         $iInput = 0
                         foreach ($enumHashtable in $InputObject.GetEnumerator()) {
                             if ($iInput -gt 0) { [void]$OutputString.Append(';') }
-                            [void]$OutputString.AppendFormat('{0}={1}',(ConvertTo-PsString $enumHashtable.Key -Compact:$Compact -NoEnumerate),(ConvertTo-PsString $enumHashtable.Value -Compact:$Compact -NoEnumerate))
+                            [void]$OutputString.AppendFormat('{0}={1}', (ConvertTo-PsString $enumHashtable.Key -Compact:$Compact -NoEnumerate), (ConvertTo-PsString $enumHashtable.Value -Compact:$Compact -NoEnumerate))
                             $iInput++
                         }
                         [void]$OutputString.Append('}')
-                        break }
-                    {$_.FullName.StartsWith('System.Collections.Generic.Dictionary') -or ($_.BaseType -and $_.BaseType.FullName.StartsWith('System.Collections.Generic.Dictionary'))} {
+                        break
+                    }
+                    { $_.FullName.StartsWith('System.Collections.Generic.Dictionary') -or ($_.BaseType -and $_.BaseType.FullName.StartsWith('System.Collections.Generic.Dictionary')) } {
                         $iInput = 0
                         foreach ($enumHashtable in $InputObject.GetEnumerator()) {
-                            [void]$OutputString.AppendFormat('; $D.Add({0},{1})',(ConvertTo-PsString $enumHashtable.Key -Compact:$Compact -NoEnumerate),(ConvertTo-PsString $enumHashtable.Value -Compact:$Compact -NoEnumerate))
+                            [void]$OutputString.AppendFormat('; $D.Add({0},{1})', (ConvertTo-PsString $enumHashtable.Key -Compact:$Compact -NoEnumerate), (ConvertTo-PsString $enumHashtable.Value -Compact:$Compact -NoEnumerate))
                             $iInput++
                         }
                         [void]$OutputString.Append('; $D })')
-                        break }
-                    {$_.BaseType -and $_.BaseType.Equals([Array])} {
+                        break
+                    }
+                    { $_.BaseType -and $_.BaseType.Equals([Array]) } {
                         [void]$OutputString.Append('(Write-Output @(')
                         $iInput = 0
                         for ($iInput = 0; $iInput -lt $InputObject.Count; $iInput++) {
                             if ($iInput -gt 0) { [void]$OutputString.Append(',') }
-                            [void]$OutputString.Append((ConvertTo-PsString $InputObject[$iInput] -Compact:$Compact -RemoveTypes $InputObject.GetType().DeclaredMembers.Where({$_.Name -eq 'Set'})[0].GetParameters()[1].ParameterType -NoEnumerate))
+                            [void]$OutputString.Append((ConvertTo-PsString $InputObject[$iInput] -Compact:$Compact -RemoveTypes $InputObject.GetType().DeclaredMembers.Where( { $_.Name -eq 'Set' })[0].GetParameters()[1].ParameterType -NoEnumerate))
                         }
                         [void]$OutputString.Append(') -NoEnumerate)')
-                        break }
-                    {$_.Equals([System.Collections.ArrayList])} {
+                        break
+                    }
+                    { $_.Equals([System.Collections.ArrayList]) } {
                         [void]$OutputString.Append('@(')
                         $iInput = 0
                         for ($iInput = 0; $iInput -lt $InputObject.Count; $iInput++) {
@@ -179,8 +189,9 @@ function ConvertTo-PsString {
                             [void]$OutputString.Append((ConvertTo-PsString $InputObject[$iInput] -Compact:$Compact -NoEnumerate))
                         }
                         [void]$OutputString.Append(')')
-                        break }
-                    {$_.FullName.StartsWith('System.Collections.Generic.List')} {
+                        break
+                    }
+                    { $_.FullName.StartsWith('System.Collections.Generic.List') } {
                         [void]$OutputString.Append('@(')
                         $iInput = 0
                         for ($iInput = 0; $iInput -lt $InputObject.Count; $iInput++) {
@@ -188,19 +199,21 @@ function ConvertTo-PsString {
                             [void]$OutputString.Append((ConvertTo-PsString $InputObject[$iInput] -Compact:$Compact -RemoveTypes $_.GenericTypeArguments -NoEnumerate))
                         }
                         [void]$OutputString.Append(')')
-                        break }
+                        break
+                    }
                     ## Convert objects with object initializers
-                    {$_ -is [object] -and ($_.GetConstructors() | foreach { if ($_.IsPublic -and !$_.GetParameters()) { $true } })} {
+                    { $_ -is [object] -and ($_.GetConstructors() | foreach { if ($_.IsPublic -and !$_.GetParameters()) { $true } }) } {
                         [void]$OutputString.Append('@{')
                         $iInput = 0
-                        foreach ($Item in ($InputObject | Get-Member -MemberType Property,NoteProperty)) {
+                        foreach ($Item in ($InputObject | Get-Member -MemberType Property, NoteProperty)) {
                             if ($iInput -gt 0) { [void]$OutputString.Append(';') }
                             $PropertyName = $Item.Name
-                            [void]$OutputString.AppendFormat('{0}={1}',(ConvertTo-PsString $PropertyName -Compact:$Compact -NoEnumerate),(ConvertTo-PsString $InputObject.$PropertyName -Compact:$Compact -NoEnumerate))
+                            [void]$OutputString.AppendFormat('{0}={1}', (ConvertTo-PsString $PropertyName -Compact:$Compact -NoEnumerate), (ConvertTo-PsString $InputObject.$PropertyName -Compact:$Compact -NoEnumerate))
                             $iInput++
                         }
                         [void]$OutputString.Append('}')
-                        break }
+                        break
+                    }
                     Default {
                         $Exception = New-Object ArgumentException -ArgumentList ('Cannot convert input of type {0} to PowerShell string.' -f $InputObject.GetType())
                         Write-Error -Exception $Exception -Category ([System.Management.Automation.ErrorCategory]::ParserError) -CategoryActivity $MyInvocation.MyCommand -ErrorId 'ConvertPowerShellStringFailureTypeNotSupported' -TargetObject $InputObject
@@ -239,7 +252,7 @@ function ConvertTo-PsString {
                 $OutputArray = New-Object System.Text.StringBuilder
                 [void]$OutputArray.Append('(Write-Output @(')
                 if ($PSVersionTable.PSVersion -ge [version]'6.0') {
-                    [void]$OutputArray.AppendJoin(',',$listOutputString)
+                    [void]$OutputArray.AppendJoin(',', $listOutputString)
                 }
                 else {
                     [void]$OutputArray.Append(($listOutputString -join ','))

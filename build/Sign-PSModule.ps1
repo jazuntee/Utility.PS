@@ -1,22 +1,22 @@
 param
 (
     # Directory used to base all relative paths
-    [Parameter(Mandatory=$false)]
+    [Parameter(Mandatory = $false)]
     [string] $BaseDirectory = "..\",
     #
-    [Parameter(Mandatory=$false)]
+    [Parameter(Mandatory = $false)]
     [string] $OutputDirectory = ".\build\release\",
     #
-    [Parameter(Mandatory=$false)]
+    [Parameter(Mandatory = $false)]
     [string] $SourceDirectory = ".\src\",
     #
-    [Parameter(Mandatory=$false)]
+    [Parameter(Mandatory = $false)]
     [string] $ModuleManifestPath,
     #
-    [Parameter(Mandatory=$false)]
+    [Parameter(Mandatory = $false)]
     [X509Certificate] $SigningCertificate = (Get-ChildItem Cert:\CurrentUser\My\E7413D745138A6DC584530AECE27CEFDDA9D9CD6 -CodeSigningCert),
     #
-    [Parameter(Mandatory=$false)]
+    [Parameter(Mandatory = $false)]
     [string] $TimestampServer = 'http://timestamp.digicert.com'
 )
 
@@ -36,7 +36,7 @@ Import-Module "$PSScriptRoot\CommonFunctions.psm1" -Force -WarningAction Silentl
 [System.IO.FileInfo] $ModuleManifestFileInfo = Get-PathInfo $ModuleManifestPath -DefaultDirectory $SourceDirectoryInfo.FullName -DefaultFilename "*.psd1" -ErrorAction Stop
 
 ## Read Module Manifest
-$ModuleManifest = Import-PowershellDataFile $ModuleManifestFileInfo.FullName
+$ModuleManifest = Import-PowerShellDataFile $ModuleManifestFileInfo.FullName
 [System.IO.DirectoryInfo] $ModuleOutputDirectoryInfo = Join-Path $OutputDirectoryInfo.FullName (Join-Path $ModuleManifestFileInfo.BaseName $ModuleManifest.ModuleVersion)
 
 ## Sign PowerShell Files

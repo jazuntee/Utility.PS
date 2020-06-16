@@ -1,6 +1,6 @@
 [CmdletBinding()]
 param (
-    [Parameter(Mandatory=$false)]
+    [Parameter(Mandatory = $false)]
     [string] $ModulePath = "..\src\*.psd1"
 )
 
@@ -19,7 +19,7 @@ Describe 'ConvertFrom-SecureStringAsPlainText' {
         [type] $ExpectedInputType = [securestring]
         [hashtable[]] $IO = @(
             @{
-                Input = (ConvertTo-SecureString 'SuperSecretString' -AsPlainText -Force)
+                Input  = (ConvertTo-SecureString 'SuperSecretString' -AsPlainText -Force)
                 Output = 'SuperSecretString'
             }
         )

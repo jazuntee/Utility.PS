@@ -12,17 +12,17 @@ function ConvertTo-PsParameterString {
     [OutputType([string])]
     param (
         #
-        [Parameter(Mandatory=$true, ValueFromPipeline=$true, Position=0)]
+        [Parameter(Mandatory = $true, ValueFromPipeline = $true, Position = 0)]
         [AllowNull()]
         [object] $InputObjects,
         #
-        [Parameter(Mandatory=$false)]
+        [Parameter(Mandatory = $false)]
         [switch] $Compact,
         #
-        [Parameter(Mandatory=$false, Position=1)]
-        [type[]] $RemoveTypes = ([string],[bool],[int],[long]),
+        [Parameter(Mandatory = $false, Position = 1)]
+        [type[]] $RemoveTypes = ([string], [bool], [int], [long]),
         #
-        [Parameter(Mandatory=$false)]
+        [Parameter(Mandatory = $false)]
         [switch] $NoEnumerate
     )
 
@@ -31,22 +31,23 @@ function ConvertTo-PsParameterString {
             $OutputString = New-Object System.Text.StringBuilder
 
             ## Add Value
-            switch ($InputObject.GetType())
-            {
-                {$_.Equals([Hashtable]) -or $_.Equals([System.Collections.Specialized.OrderedDictionary]) -or $_.FullName.StartsWith('System.Collections.Generic.Dictionary') -or ($_.BaseType -and $_.BaseType.FullName.StartsWith('System.Collections.Generic.Dictionary'))} {
+            switch ($InputObject.GetType()) {
+                { $_.Equals([Hashtable]) -or $_.Equals([System.Collections.Specialized.OrderedDictionary]) -or $_.FullName.StartsWith('System.Collections.Generic.Dictionary') -or ($_.BaseType -and $_.BaseType.FullName.StartsWith('System.Collections.Generic.Dictionary')) } {
                     foreach ($Parameter in $InputObject.GetEnumerator()) {
                         [string] $ParameterValue = (ConvertTo-PsString $Parameter.Value -Compact:$Compact -NoEnumerate)
                         if ($ParameterValue.StartsWith('[')) { $ParameterValue = '({0})' -f $ParameterValue }
-                        [void]$OutputString.AppendFormat(' -{0} {1}',$Parameter.Key,$ParameterValue)
+                        [void]$OutputString.AppendFormat(' -{0} {1}', $Parameter.Key, $ParameterValue)
                     }
-                    break }
-                {$_.BaseType.Equals([Array]) -or $_.Equals([System.Collections.ArrayList]) -or $_.FullName.StartsWith('System.Collections.Generic.List')} {
+                    break
+                }
+                { $_.BaseType.Equals([Array]) -or $_.Equals([System.Collections.ArrayList]) -or $_.FullName.StartsWith('System.Collections.Generic.List') } {
                     foreach ($Parameter in $InputObject) {
                         [string] $ParameterValue = (ConvertTo-PsString $Parameter -Compact:$Compact -NoEnumerate)
                         if ($ParameterValue.StartsWith('[')) { $ParameterValue = '({0})' -f $ParameterValue }
-                        [void]$OutputString.AppendFormat(' {0}',$ParameterValue)
+                        [void]$OutputString.AppendFormat(' {0}', $ParameterValue)
                     }
-                    break }
+                    break
+                }
                 Default {
                     $Exception = New-Object ArgumentException -ArgumentList ('Cannot convert input of type {0} to PowerShell parameter string. Use -NoEnumerate if providing a single splatable array.' -f $InputObject.GetType())
                     Write-Error -Exception $Exception -Category ([System.Management.Automation.ErrorCategory]::ParserError) -CategoryActivity $MyInvocation.MyCommand -ErrorId 'ConvertPowerShellParameterStringFailureTypeNotSupported' -TargetObject $InputObject -ErrorAction Stop
@@ -81,7 +82,7 @@ function ConvertTo-PsParameterString {
         if ($NoEnumerate) {
             $OutputArray = New-Object System.Text.StringBuilder
             if ($PSVersionTable.PSVersion -ge [version]'6.0') {
-                [void]$OutputArray.AppendJoin('',$listOutputString)
+                [void]$OutputArray.AppendJoin('', $listOutputString)
             }
             else {
                 [void]$OutputArray.Append(($listOutputString -join ''))

@@ -1,6 +1,6 @@
 
 function AutoEnumerate ($Output) {
-    if ($null -eq $Output) {}
+    if ($null -eq $Output) { }
     elseif ($Output -is [array] -or $Output -is [System.Collections.ArrayList] -or $Output.GetType().FullName.StartsWith('System.Collections.Generic.List')) { Write-Output $Output -NoEnumerate }
     else { Write-Output $Output }
 }
@@ -20,7 +20,7 @@ function GetInput ([hashtable[]]$TestIO, [type]$AssertType) {
     }
 }
 
-function Test-ComparisionAssertions ($Reference,$Difference,[switch]$ArrayBaseTypeMatch) {
+function Test-ComparisionAssertions ($Reference, $Difference, [switch]$ArrayBaseTypeMatch) {
     ## Check Type
     # if ($Reference -is [array] -or $Reference -is [System.Collections.ArrayList] -or $Reference.GetType().FullName.StartsWith('System.Collections.Generic.List')) {
     #     Write-Output $Difference -NoEnumerate | Should -BeOfType $Reference.GetType()
@@ -43,7 +43,7 @@ function Test-ComparisionAssertions ($Reference,$Difference,[switch]$ArrayBaseTy
     }
     elseif ($Reference -is [array] -or $Reference -is [System.Collections.ArrayList] -or $Reference.GetType().FullName.StartsWith('System.Collections.Generic.List')) {
         $Difference | Should -HaveCount $Reference.Count
-        for ($i=0; $i -lt $Reference.Count; $i++) {
+        for ($i = 0; $i -lt $Reference.Count; $i++) {
             Test-ComparisionAssertions $Reference[$i] $Difference[$i]
         }
     }
@@ -60,10 +60,10 @@ function Test-ComparisionAssertions ($Reference,$Difference,[switch]$ArrayBaseTy
         $Difference.ToString() | Should -BeExactly $Reference.ToString()
     }
     elseif ($Reference -is [psobject]) {
-        $ReferenceProperty = $Reference | Get-Member -MemberType Property,NoteProperty
-        $DifferenceProperty = $Difference | Get-Member -MemberType Property,NoteProperty
+        $ReferenceProperty = $Reference | Get-Member -MemberType Property, NoteProperty
+        $DifferenceProperty = $Difference | Get-Member -MemberType Property, NoteProperty
         $ReferenceProperty | Should -HaveCount $DifferenceProperty.Count
-        for ($i=0; $i -lt $ReferenceProperty.Count; $i++) {
+        for ($i = 0; $i -lt $ReferenceProperty.Count; $i++) {
             $ReferencePropertyName = $ReferenceProperty[$i].Name
             $DifferencePropertyName = $DifferenceProperty[$i].Name
             Test-ComparisionAssertions $Reference.$ReferencePropertyName $Difference.$DifferencePropertyName
@@ -78,7 +78,7 @@ function Test-ComparisionAssertions ($Reference,$Difference,[switch]$ArrayBaseTy
     }
 }
 
-function Test-ErrorOutput ($ErrorRecord,[switch]$SkipCategory,[switch]$SkipErrorId,[switch]$SkipTargetObject) {
+function Test-ErrorOutput ($ErrorRecord, [switch]$SkipCategory, [switch]$SkipErrorId, [switch]$SkipTargetObject) {
     $ErrorRecord | Should -BeOfType [System.Management.Automation.ErrorRecord]
     $ErrorRecord.Exception | Should -Not -BeOfType [Microsoft.PowerShell.Commands.WriteErrorException]
     $ErrorRecord.Exception.Message | Should -Not -BeNullOrEmpty
@@ -88,20 +88,20 @@ function Test-ErrorOutput ($ErrorRecord,[switch]$SkipCategory,[switch]$SkipError
     if (!$SkipTargetObject) { $ErrorRecord.TargetObject | Should -Not -BeNullOrEmpty }
 }
 
-    # It 'Non-Terminating Errors' {
-    #     $ScriptBlock = { ([int]127),([decimal]127),([long]127) | ConvertTo-HexString -ErrorAction SilentlyContinue }
-    #     $ScriptBlock | Should -Not -Throw
-    #     $Output = Invoke-Expression $ScriptBlock.ToString() -ErrorVariable ErrorObjects
-    #     $ErrorObjects | Should -HaveCount 1
-    #     $Output | Should -HaveCount (3 - $ErrorObjects.Count)
-    #     foreach ($ErrorObject in $ErrorObjects) {
-    #         [System.Management.Automation.ErrorRecord] $ErrorRecord = $null
-    #         if ($ErrorObject -is [System.Management.Automation.ErrorRecord]) { $ErrorRecord = $ErrorObject }
-    #         else { $ErrorRecord = $ErrorObject.ErrorRecord }
+# It 'Non-Terminating Errors' {
+#     $ScriptBlock = { ([int]127),([decimal]127),([long]127) | ConvertTo-HexString -ErrorAction SilentlyContinue }
+#     $ScriptBlock | Should -Not -Throw
+#     $Output = Invoke-Expression $ScriptBlock.ToString() -ErrorVariable ErrorObjects
+#     $ErrorObjects | Should -HaveCount 1
+#     $Output | Should -HaveCount (3 - $ErrorObjects.Count)
+#     foreach ($ErrorObject in $ErrorObjects) {
+#         [System.Management.Automation.ErrorRecord] $ErrorRecord = $null
+#         if ($ErrorObject -is [System.Management.Automation.ErrorRecord]) { $ErrorRecord = $ErrorObject }
+#         else { $ErrorRecord = $ErrorObject.ErrorRecord }
 
-    #         Test-ErrorOutput $ErrorRecord
-    #     }
-    # }
+#         Test-ErrorOutput $ErrorRecord
+#     }
+# }
 
 function TestGroup ([type]$TestClass, [int]$StartIndex = 0) {
     Context $TestClass.Name {
@@ -115,7 +115,7 @@ function TestGroup ([type]$TestClass, [int]$StartIndex = 0) {
                 $Input = GetInput $TestIO -AssertType $TestValues.ExpectedInputType
                 $Output = & $TestValues.CommandName $Input -ErrorAction SilentlyContinue -ErrorVariable ErrorObjects @BoundParameters
                 $ErrorObjects | Should -HaveCount $TestIO.Error.Count
-                AutoEnumerate $Output | Should -HaveCount (1-$TestIO.Error.Count)
+                AutoEnumerate $Output | Should -HaveCount (1 - $TestIO.Error.Count)
                 if ($TestIO.ContainsKey('Error')) {
                     Test-ErrorOutput $ErrorObjects
                 }
@@ -130,7 +130,7 @@ function TestGroup ([type]$TestClass, [int]$StartIndex = 0) {
                 $Input = GetInput $TestIO -AssertType $TestValues.ExpectedInputType
                 $Output = $Input | & $TestValues.CommandName -ErrorAction SilentlyContinue -ErrorVariable ErrorObjects @BoundParameters
                 $ErrorObjects | Should -HaveCount $TestIO.Error.Count
-                AutoEnumerate $Output | Should -HaveCount (1-$TestIO.Error.Count)
+                AutoEnumerate $Output | Should -HaveCount (1 - $TestIO.Error.Count)
                 if ($TestIO.ContainsKey('Error')) {
                     Test-ErrorOutput $ErrorObjects
                 }
@@ -151,7 +151,7 @@ function TestGroup ([type]$TestClass, [int]$StartIndex = 0) {
                 $Input = GetInput $TestIO -AssertType $TestValues.ExpectedInputType
                 $Output = & $TestValues.CommandName $Input -ErrorAction SilentlyContinue -ErrorVariable ErrorObjects @BoundParameters
                 $ErrorObjects | Should -HaveCount $TestIO.Error.Count
-                $Output | Should -HaveCount ($TestIO.Count-$TestIO.Error.Count)
+                $Output | Should -HaveCount ($TestIO.Count - $TestIO.Error.Count)
                 [int] $iError = 0
                 for ($i = 0; $i -lt $TestIO.Count; $i++) {
                     if ($TestIO[$i].ContainsKey('Error')) {
@@ -161,7 +161,7 @@ function TestGroup ([type]$TestClass, [int]$StartIndex = 0) {
                     else {
                         #AutoEnumerate $Output[$i-$iError] | Should -BeOfType $TestIO[$i].Output.GetType()
                         #$Output[$i] | Should -BeExactly $TestIO[$i].Output
-                        Test-ComparisionAssertions $TestIO[$i].Output $Output[$i-$iError]
+                        Test-ComparisionAssertions $TestIO[$i].Output $Output[$i - $iError]
                     }
                 }
             }
@@ -170,7 +170,7 @@ function TestGroup ([type]$TestClass, [int]$StartIndex = 0) {
                 $Input = GetInput $TestIO -AssertType $TestValues.ExpectedInputType
                 $Output = $Input | & $TestValues.CommandName -ErrorAction SilentlyContinue -ErrorVariable ErrorObjects @BoundParameters
                 $ErrorObjects | Should -HaveCount $TestIO.Error.Count
-                $Output | Should -HaveCount ($TestIO.Count-$TestIO.Error.Count)
+                $Output | Should -HaveCount ($TestIO.Count - $TestIO.Error.Count)
                 [int] $iError = 0
                 for ($i = 0; $i -lt $TestIO.Count; $i++) {
                     if ($TestIO[$i].ContainsKey('Error')) {
@@ -180,7 +180,7 @@ function TestGroup ([type]$TestClass, [int]$StartIndex = 0) {
                     else {
                         #AutoEnumerate $Output[$i-$iError] | Should -BeOfType $TestIO[$i].Output.GetType()
                         #$Output[$i] | Should -BeExactly $TestIO[$i].Output
-                        Test-ComparisionAssertions $TestIO[$i].Output $Output[$i-$iError]
+                        Test-ComparisionAssertions $TestIO[$i].Output $Output[$i - $iError]
                     }
                 }
             }
