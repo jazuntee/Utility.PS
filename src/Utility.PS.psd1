@@ -10,7 +10,7 @@
 RootModule = 'Utility.PS.psm1'
 
 # Version number of this module.
-ModuleVersion = '1.0.3'
+ModuleVersion = '1.0.4'
 
 # Supported PSEditions
 CompatiblePSEditions = 'Core','Desktop'
@@ -81,6 +81,7 @@ NestedModules = @(
     '.\ConvertTo-PsString.ps1'
     '.\ConvertTo-QueryString.ps1'
     '.\ConvertTo-UrlString.ps1'
+    '.\Get-RelativePath.ps1'
     '.\Get-X509Certificate.ps1'
     '.\Invoke-CommandAsSystem.ps1'
     '.\New-SecureStringKey.ps1'
@@ -109,6 +110,7 @@ FunctionsToExport = @(
     'ConvertTo-PsString'
     'ConvertTo-QueryString'
     'ConvertTo-UrlString'
+    'Get-RelativePath'
     'Get-X509Certificate'
     'Invoke-CommandAsSystem'
     'New-SecureStringKey'

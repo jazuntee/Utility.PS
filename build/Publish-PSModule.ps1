@@ -2,7 +2,7 @@ param
 (
     # Path to Module
     [Parameter(Mandatory = $false)]
-    [string] $ModulePath = ".\release\Utility.PS\1.0.3",
+    [string] $ModulePath = ".\release\Utility.PS\1.0.4",
     # API Key for PowerShell Gallery
     [Parameter(Mandatory = $true)]
     [string] $NuGetApiKey
