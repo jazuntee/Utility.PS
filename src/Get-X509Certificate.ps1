@@ -19,26 +19,32 @@
 #>
 function Get-X509Certificate {
     [CmdletBinding()]
-    [OutputType([System.Security.Cryptography.X509Certificates.X509Certificate2])]
+    [OutputType([System.Security.Cryptography.X509Certificates.X509Certificate2], [System.Security.Cryptography.X509Certificates.X509Certificate2Collection])]
     param (
         # X.509 certificate that is binary (DER) encoded or Base64-encoded
         [Parameter(Mandatory = $true, ValueFromPipeline = $true, Position = 0)]
         [object] $InputObjects,
-        # Input encoding to use for text strings
-        [Parameter (Mandatory = $false)]
-        [ValidateSet('Ascii', 'UTF32', 'UTF7', 'UTF8', 'BigEndianUnicode', 'Unicode')]
-        [string] $Encoding = 'Default'
+        # Only return the end-entity certificate
+        [Parameter(Mandatory = $false)]
+        [switch] $EndEntityCertificateOnly
     )
-
+    parameter
     begin {
         ## Create list to capture byte stream from piped input.
         [System.Collections.Generic.List[byte]] $listBytes = New-Object System.Collections.Generic.List[byte]
+
+        function Transform ([byte[]]$InputBytes) {
+            $X509CertificateCollection = New-Object System.Security.Cryptography.X509Certificates.X509Certificate2Collection
+            $X509CertificateCollection.Import($InputBytes, $null, [System.Security.Cryptography.X509Certificates.X509KeyStorageFlags]::EphemeralKeySet)
+            Write-Output $X509CertificateCollection -NoEnumerate
+        }
     }
 
     process {
         if ($InputObjects -is [byte[]]) {
-            [System.Security.Cryptography.X509Certificates.X509Certificate2] $X509Certificate = New-Object System.Security.Cryptography.X509Certificates.X509Certificate2 -ArgumentList (, $InputObjects)
-            Write-Output $X509Certificate
+            $X509CertificateCollection = Transform $InputObjects
+            if ($EndEntityCertificateOnly) { Write-Output $X509CertificateCollection[-1] }
+            else { Write-Output $X509CertificateCollection }
         }
         else {
             foreach ($InputObject in $InputObjects) {
@@ -55,11 +61,11 @@ function Get-X509Certificate {
                     $inputBytes = $InputObject
                 }
                 elseif ($InputObject -is [string]) {
-                    Write-Verbose ('Encoding string [{0}] to byte array.' -f $Encoding)
-                    $inputBytes = [Text.Encoding]::$Encoding.GetBytes($InputObject)
+                    Write-Verbose 'Decoding Base64 string to byte array.'
+                    $inputBytes = [System.Convert]::FromBase64String($InputObject)
                 }
                 elseif ($InputObject -is [System.IO.FileSystemInfo]) {
-                    Write-Verbose 'Encoding file content to byte array.'
+                    Write-Verbose 'Decoding file content to byte array.'
                     if ($PSVersionTable.PSVersion -ge [version]'6.0') {
                         $inputBytes = Get-Content $InputObject.FullName -Raw -AsByteStream
                     }
@@ -75,8 +81,9 @@ function Get-X509Certificate {
 
                 ## Only write output if the input is not a byte stream.
                 if ($listBytes.Count -eq 0) {
-                    [System.Security.Cryptography.X509Certificates.X509Certificate2] $X509Certificate = New-Object System.Security.Cryptography.X509Certificates.X509Certificate2 -ArgumentList (, $inputBytes)
-                    Write-Output $X509Certificate
+                    $X509CertificateCollection = Transform $inputBytes
+                    if ($EndEntityCertificateOnly) { Write-Output $X509CertificateCollection[-1] }
+                    else { Write-Output $X509CertificateCollection }
                 }
             }
         }
@@ -85,8 +92,9 @@ function Get-X509Certificate {
     end {
         ## Output captured byte stream from piped input.
         if ($listBytes.Count -gt 0) {
-            [System.Security.Cryptography.X509Certificates.X509Certificate2] $X509Certificate = New-Object System.Security.Cryptography.X509Certificates.X509Certificate2 -ArgumentList (, $listBytes)
-            Write-Output $X509Certificate
+            $X509CertificateCollection = Transform $listBytes
+            if ($EndEntityCertificateOnly) { Write-Output $X509CertificateCollection[-1] }
+            else { Write-Output $X509CertificateCollection }
         }
     }
 }
