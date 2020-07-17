@@ -28,7 +28,7 @@ function Get-X509Certificate {
         [Parameter(Mandatory = $false)]
         [switch] $EndEntityCertificateOnly
     )
-    parameter
+
     begin {
         ## Create list to capture byte stream from piped input.
         [System.Collections.Generic.List[byte]] $listBytes = New-Object System.Collections.Generic.List[byte]
