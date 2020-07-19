@@ -26,12 +26,12 @@ function ConvertFrom-SecureString {
     begin {
         ## Command Extension
         if (${AsPlainText}) {
-            if (!${Force}) {
-                ## Non-Terminating Error
-                $Exception = New-Object ArgumentException -ArgumentList 'The system cannot protect plain text output. To suppress this warning and convert a SecureString to plain text, reissue the command specifying the Force parameter.'
-                Write-Error -Exception $Exception -Category ([System.Management.Automation.ErrorCategory]::InvalidArgument) -CategoryActivity $MyInvocation.MyCommand -ErrorId 'ConvertSecureStringFailureForceRequired' -TargetObject ${SecureString} #-ErrorAction Stop
+            if ($PSVersionTable.PSVersion -ge [version]'7.0') {
+                Write-Warning 'PowerShell 7 introduced an AsPlainText parameter to the ConvertFrom-SecureString cmdlet.'
             }
-            return
+            if (!${Force}) {
+                Write-Warning 'The system cannot protect plain text output. To suppress this warning, reissue the command specifying the Force parameter.'
+            }
         }
 
         ## Remove extra parameters (not needed because with these parameters the original command never executes)
