@@ -60,6 +60,15 @@ function Get-X509Certificate {
                 elseif ($InputObject -is [byte[]]) {
                     $inputBytes = $InputObject
                 }
+                elseif ($InputObject -is [SecureString]) {
+                    Write-Verbose 'Decrypting SecureString and decoding Base64 string to byte array.'
+                    if ($PSVersionTable.PSVersion -ge [version]'7.0') {
+                        $inputBytes = [System.Convert]::FromBase64String((ConvertFrom-SecureString $InputObject -AsPlainText))
+                    }
+                    else {
+                        $inputBytes = [System.Convert]::FromBase64String((ConvertFrom-SecureStringAsPlainText $InputObject -Force))
+                    }
+                }
                 elseif ($InputObject -is [string]) {
                     Write-Verbose 'Decoding Base64 string to byte array.'
                     $inputBytes = [System.Convert]::FromBase64String($InputObject)
