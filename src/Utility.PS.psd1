@@ -65,6 +65,7 @@ PowerShellVersion = '5.1'
 
 # Modules to import as nested modules of the module specified in RootModule/ModuleToProcess
 NestedModules = @(
+    '.\Compress-Data.ps1'
     '.\ConvertFrom-Base64String.ps1'
     '.\ConvertFrom-HexString.ps1'
     '.\ConvertFrom-HtmlString.ps1'
@@ -81,6 +82,7 @@ NestedModules = @(
     '.\ConvertTo-PsString.ps1'
     '.\ConvertTo-QueryString.ps1'
     '.\ConvertTo-UrlString.ps1'
+    '.\Expand-Data.ps1'
     '.\Get-RelativePath.ps1'
     '.\Get-X509Certificate.ps1'
     '.\Invoke-CommandAsSystem.ps1'
@@ -94,6 +96,7 @@ NestedModules = @(
 
 # Functions to export from this module
 FunctionsToExport = @(
+    'Compress-Data'
     'ConvertFrom-Base64String'
     'ConvertFrom-HexString'
     'ConvertFrom-HtmlString'
@@ -110,6 +113,7 @@ FunctionsToExport = @(
     'ConvertTo-PsString'
     'ConvertTo-QueryString'
     'ConvertTo-UrlString'
+    'Expand-Data'
     'Get-RelativePath'
     'Get-X509Certificate'
     'Invoke-CommandAsSystem'
@@ -128,7 +132,11 @@ CmdletsToExport = @()
 VariablesToExport = @()
 
 # Aliases to export from this module
-AliasesToExport = @()
+AliasesToExport = @(
+    'Deflate-Data'
+    'Decompress-Data'
+    'Inflate-Data'
+)
 
 # DSC resources to export from this module
 # DscResourcesToExport = @()
