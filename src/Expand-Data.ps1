@@ -50,9 +50,9 @@ function Expand-Data {
                         Write-Error -Exception $_.Exception.InnerException -Category ([System.Management.Automation.ErrorCategory]::InvalidData) -CategoryActivity $MyInvocation.MyCommand -ErrorId 'ExpandDataFailureInvalidData' -TargetObject $InputBytes -ErrorAction Stop
                     }
                     finally { $streamCompression.Dispose() }
+                    [byte[]] $OutputBytes = $streamOutput.ToArray()
                 }
                 finally { $streamInput.Dispose() }
-                [byte[]] $OutputBytes = $streamOutput.ToArray()
             }
             finally { $streamOutput.Dispose() }
 
