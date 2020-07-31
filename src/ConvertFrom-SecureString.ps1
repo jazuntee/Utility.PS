@@ -32,6 +32,7 @@ function ConvertFrom-SecureString {
             if (!${Force}) {
                 Write-Warning 'The system cannot protect plain text output. To suppress this warning, reissue the command specifying the Force parameter.'
             }
+            return
         }
 
         ## Remove extra parameters (not needed because with these parameters the original command never executes)
