@@ -58,7 +58,7 @@ function ConvertFrom-SecureString {
     process {
         ## Command Extension
         if (${AsPlainText}) {
-            if (${Force}) {
+            #if (${Force}) {
                 try {
                     [IntPtr] $BSTR = [System.Runtime.InteropServices.Marshal]::SecureStringToBSTR($SecureString)
                     Write-Output ([System.Runtime.InteropServices.Marshal]::PtrToStringBSTR($BSTR))
@@ -66,7 +66,7 @@ function ConvertFrom-SecureString {
                 finally {
                     [System.Runtime.InteropServices.Marshal]::ZeroFreeBSTR($BSTR)
                 }
-            }
+            #}
             return
         }
 
