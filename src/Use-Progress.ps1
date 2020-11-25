@@ -26,7 +26,13 @@ function Use-Progress {
         [string] $Activity,
         # Script block to execute for each object in array.
         [Parameter(Mandatory = $true)]
-        [scriptblock] $ScriptBlock
+        [scriptblock] $ScriptBlock,
+        # Property name to use for current operation
+        [Parameter(Mandatory = $false)]
+        [string] $Property,
+        # Minimum timespan between each progress update.
+        [Parameter(Mandatory = $false)]
+        [timespan] $MinimumUpdateFrequency = (New-Timespan -Seconds 1)
     )
 
     begin {
@@ -54,17 +60,23 @@ function Use-Progress {
             $stackProgressId.Push($Id)
             [System.Diagnostics.Stopwatch] $stopwatch = [System.Diagnostics.Stopwatch]::StartNew()
             for ($iObject = 0; $iObject -lt $total; $iObject++) {
-                [timespan] $TimeElapsed = $stopwatch.Elapsed
-                $PercentComplete = $iObject/$total
-                if ($PercentComplete -gt 0) { $SecondsRemaining = $TimeElapsed.TotalSeconds/$PercentComplete - $TimeElapsed.TotalSeconds }
-                Write-Progress -CurrentOperation $InputObjects[$iObject] -Status ("{0:P0} Completed ({1} of {2}) in {3:c}" -f $PercentComplete, $iObject, $total, $TimeElapsed.Subtract($TimeElapsed.Ticks % [TimeSpan]::TicksPerSecond)) -PercentComplete ($PercentComplete*100) -SecondsRemaining $SecondsRemaining @paramWriteProgress
+                if ($iObject -eq 0 -or ($stopwatch.Elapsed - $TimeElapsed) -gt $MinimumUpdateFrequency) {
+                    [timespan] $TimeElapsed = $stopwatch.Elapsed
+                    $PercentComplete = $iObject / $total
+                    if ($PercentComplete -gt 0) { $SecondsRemaining = $TimeElapsed.TotalSeconds / $PercentComplete - $TimeElapsed.TotalSeconds }
+                    if ($Property) { $CurrentOperation = $InputObjects[$iObject].$Property }
+                    else { $CurrentOperation = $InputObjects[$iObject] }
+                    Write-Progress -CurrentOperation $CurrentOperation -Status ("{0:P0} Completed ({1} of {2}) in {3:c}" -f $PercentComplete, $iObject, $total, $TimeElapsed.Subtract($TimeElapsed.Ticks % [TimeSpan]::TicksPerSecond)) -PercentComplete ($PercentComplete * 100) -SecondsRemaining $SecondsRemaining @paramWriteProgress
+                }
                 Invoke-Command -ScriptBlock $ScriptBlock -ArgumentList $InputObjects[$iObject]
             }
-            Write-Progress -Id $Id -Activity $Activity -Completed
             $stopwatch.Stop()
+            Write-Progress -Status ("{0:P0} Completed ({1} of {2}) in {3:c}" -f 1, $total, $total, $TimeElapsed.Subtract($TimeElapsed.Ticks % [TimeSpan]::TicksPerSecond)) -PercentComplete 100 -SecondsRemaining 0 @paramWriteProgress
         }
         finally {
             [void] $stackProgressId.Pop()
+            #Start-Sleep -Seconds 1
+            Write-Progress -Id $Id -Activity $Activity -Completed
         }
     }
 }
