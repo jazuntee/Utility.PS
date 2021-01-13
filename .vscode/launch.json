@@ -5,11 +5,76 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "PowerShell: Launch Current File",
+            "name": "PowerShell Launch Module",
+            "type": "PowerShell",
+            "request": "launch",
+            "preLaunchTask": "",
+            "script": "${workspaceRoot}/Launch-PSModule.ps1",
+            "cwd": "${workspaceRoot}",
+            "args": [
+                "-NoNewWindow"
+            ]
+        },
+        {
+            "name": "PowerShell Launch Module and Current Function",
+            "type": "PowerShell",
+            "request": "launch",
+            "script": "${workspaceRoot}/Launch-PSModule.ps1",
+            "cwd": "${workspaceRoot}",
+            "args": [
+                "-PostImportScriptBlock { ${fileBasenameNoExtension} }",
+                "-NoNewWindow"
+            ]
+        },
+        {
+            "name": "PowerShell Launch Module in New External Consoles",
+            "type": "PowerShell",
+            "request": "launch",
+            "preLaunchTask": "",
+            "script": "${workspaceRoot}/Launch-PSModule.ps1",
+            "cwd": "${workspaceRoot}",
+            "args": [
+                "-PowerShellPaths 'pwsh','powershell'",
+                "-NoNewWindow:$false"
+            ]
+        },
+        {
+            "name": "PowerShell Test Module in New External Consoles",
+            "type": "PowerShell",
+            "request": "launch",
+            "preLaunchTask": "",
+            "script": "${workspaceRoot}/build/Test-PSModule.ps1",
+            "cwd": "${workspaceRoot}/build",
+            "args": [
+                "-PowerShellPaths 'pwsh','powershell'",
+                "-NoNewWindow:$false"
+            ]
+        },
+        {
+            "name": "PowerShell Test Current Function in New External Consoles",
+            "type": "PowerShell",
+            "request": "launch",
+            "preLaunchTask": "",
+            "script": "${workspaceRoot}/build/Test-PSModule.ps1",
+            "cwd": "${workspaceRoot}/build",
+            "args": [
+                "-ModuleTestFileName '${fileBasenameNoExtension}.Tests.ps1'"
+                "-PowerShellPaths 'pwsh','powershell'",
+                "-NoNewWindow:$false"
+            ]
+        },
+        {
+            "name": "PowerShell Launch Current File",
             "type": "PowerShell",
             "request": "launch",
             "script": "${file}",
             "cwd": "${file}"
+        },
+        {
+            "name": "PowerShell Attach to Host Process",
+            "type": "PowerShell",
+            "request": "attach",
+            "runspaceId": 1
         }
     ]
 }

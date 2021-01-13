@@ -10,7 +10,7 @@
 RootModule = 'Utility.PS.psm1'
 
 # Version number of this module.
-ModuleVersion = '1.0.7'
+ModuleVersion = '1.0.8'
 
 # Supported PSEditions
 CompatiblePSEditions = 'Core','Desktop'
@@ -87,6 +87,8 @@ NestedModules = @(
     '.\Get-X509Certificate.ps1'
     '.\Invoke-CommandAsSystem.ps1'
     '.\New-SecureStringKey.ps1'
+    '.\Remove-Diacritics.ps1'
+    '.\Remove-InvalidFileNameCharacters.ps1'
     '.\Remove-SensitiveData.ps1'
     '.\Select-PsBoundParameters.ps1'
     '.\Test-IpAddressInSubnet.ps1'
@@ -118,6 +120,8 @@ FunctionsToExport = @(
     'Get-X509Certificate'
     'Invoke-CommandAsSystem'
     'New-SecureStringKey'
+    'Remove-Diacritics'
+    'Remove-InvalidFileNameCharacters'
     'Remove-SensitiveData'
     'Select-PsBoundParameters'
     'Test-IpAddressInSubnet'
