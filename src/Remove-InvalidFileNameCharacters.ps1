@@ -31,7 +31,7 @@ function Remove-InvalidFileNameCharacters {
     process {
         foreach ($InputString in $InputStrings) {
             [string] $OutputString = $InputString
-            if ($RemoveDiacritics) { $OutputString = Remove-Diacritics $OutputString }
+            if ($RemoveDiacritics) { $OutputString = Remove-Diacritics $OutputString -CompatibilityDecomposition }
             $OutputString = [regex]::Replace($OutputString, ('[{0}]' -f [regex]::Escape([System.IO.Path]::GetInvalidFileNameChars() -join '')), $ReplacementCharacter)
             Write-Output $OutputString
         }

@@ -10,7 +10,7 @@
 RootModule = 'Utility.PS.psm1'
 
 # Version number of this module.
-ModuleVersion = '1.0.8'
+ModuleVersion = '1.0.9'
 
 # Supported PSEditions
 CompatiblePSEditions = 'Core','Desktop'
