@@ -13,7 +13,7 @@
     PS C:\>Write-HostPrompt "Prompt Caption" "Prompt Message" -DefaultChoice 0 -Choices @(
         New-Object System.Management.Automation.Host.ChoiceDescription -ArgumentList "Choice &1 Label","Choice 1 Help Message"
         New-Object System.Management.Automation.Host.ChoiceDescription -ArgumentList "&Yes","Yes Help Message"
-        New-Object System.Management.Automation.Host.ChoiceDescription -ArgumentList "$No","No Help Message"
+        New-Object System.Management.Automation.Host.ChoiceDescription -ArgumentList "&No","No Help Message"
     )
     Display prompt with 3 choices.
 .INPUTS
