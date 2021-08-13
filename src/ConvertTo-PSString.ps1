@@ -135,6 +135,10 @@ function ConvertTo-PsString {
                         [void]$OutputString.AppendFormat("'{0}'", $InputObject.ToString('O'))
                         break
                     }
+                    { $_.Equals([guid]) } {
+                        [void]$OutputString.AppendFormat("'{0}'", $InputObject)
+                        break
+                    }
                     { $_.BaseType -and $_.BaseType.Equals([Enum]) } {
                         [void]$OutputString.AppendFormat('::{0}', $InputObject)
                         break
