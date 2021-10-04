@@ -25,6 +25,10 @@ Describe 'ConvertFrom-QueryString' {
                     Input  = 'id=352182e6-9ab0-4115-807b-c36c88029fa4&title=convert%26prosper'
                     Output = New-Module -AsCustomObject { $id = [string]'352182e6-9ab0-4115-807b-c36c88029fa4'; $title = 'convert&prosper'; Export-ModuleMember -Variable * }
                 }
+                @{
+                    Input  = ''
+                    Output = New-Module -AsCustomObject { }
+                }
             )
         }
         TestGroup PSObjectOutput
@@ -41,6 +45,10 @@ Describe 'ConvertFrom-QueryString' {
                 @{
                     Input  = 'id=352182e6-9ab0-4115-807b-c36c88029fa4&title=convert%26prosper'
                     Output = @{ id = [string]'352182e6-9ab0-4115-807b-c36c88029fa4'; title = 'convert&prosper' }
+                }
+                @{
+                    Input  = ''
+                    Output = @{}
                 }
             )
         }
