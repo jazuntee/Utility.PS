@@ -25,15 +25,7 @@
 <dev:defaultValue>None</dev:defaultValue>
 </command:parameter>
 <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="1" aliases="none"><maml:name>AsPlainText</maml:name>
-<maml:Description><maml:para>Specifies a secure string to convert to a plain text string. The secure string cmdlets help protect confidential text. The text is encrypted for privacy and is deleted from computer memory after it is used. If you use this parameter to return the plain text value, the system cannot protect that value in this manner. To use this parameter, you must also specify the Force parameter.
-</maml:para>
-</maml:Description>
-<dev:type><maml:name>SwitchParameter</maml:name>
-<maml:uri /></dev:type>
-<dev:defaultValue>False</dev:defaultValue>
-</command:parameter>
-<command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="2" aliases="none"><maml:name>Force</maml:name>
-<maml:Description><maml:para>Confirms that you understand the implications of using the AsPlainText parameter and still want to use it.
+<maml:Description><maml:para>Specifies a secure string to convert to a plain text string. The secure string cmdlets help protect confidential text. The text is encrypted for privacy and is deleted from computer memory after it is used. If you use this parameter to return the plain text value, the system cannot protect that value in this manner.
 </maml:para>
 </maml:Description>
 <dev:type><maml:name>SwitchParameter</maml:name>
@@ -83,16 +75,7 @@
 </command:syntaxItem>
 </command:syntax>
 <command:parameters><command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="1" aliases="none"><maml:name>AsPlainText</maml:name>
-<maml:Description><maml:para>Specifies a secure string to convert to a plain text string. The secure string cmdlets help protect confidential text. The text is encrypted for privacy and is deleted from computer memory after it is used. If you use this parameter to return the plain text value, the system cannot protect that value in this manner. To use this parameter, you must also specify the Force parameter.
-</maml:para>
-</maml:Description>
-<command:parameterValue required="false" variableLength="false">SwitchParameter</command:parameterValue>
-<dev:type><maml:name>SwitchParameter</maml:name>
-<maml:uri /></dev:type>
-<dev:defaultValue>False</dev:defaultValue>
-</command:parameter>
-<command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="2" aliases="none"><maml:name>Force</maml:name>
-<maml:Description><maml:para>Confirms that you understand the implications of using the AsPlainText parameter and still want to use it.
+<maml:Description><maml:para>Specifies a secure string to convert to a plain text string. The secure string cmdlets help protect confidential text. The text is encrypted for privacy and is deleted from computer memory after it is used. If you use this parameter to return the plain text value, the system cannot protect that value in this manner.
 </maml:para>
 </maml:Description>
 <command:parameterValue required="false" variableLength="false">SwitchParameter</command:parameterValue>
