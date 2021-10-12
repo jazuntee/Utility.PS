@@ -28,6 +28,8 @@
 .OUTPUTS
     System.Collections.Generic.Dictionary[System.String,System.Management.Automation.PSObject]
     System.Int32
+.LINK
+    https://github.com/jasoth/Utility.PS
 #>
 function Write-HostPrompt {
     [CmdletBinding()]
@@ -47,7 +49,7 @@ function Write-HostPrompt {
         [System.Management.Automation.Host.ChoiceDescription[]] $Choices,
         # The index of the label in the choices to make default.
         [Parameter(Mandatory = $false, ParameterSetName = 'Choices', Position = 4)]
-        [int] $DefaultChoice = 0
+        [int] $DefaultChoice
     )
 
     begin {
