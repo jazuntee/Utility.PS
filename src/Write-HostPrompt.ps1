@@ -23,8 +23,8 @@
     )
     Display prompt with 2 choices and help messages that defaults to the second choice.
 .EXAMPLE
-    PS C:\>Write-HostPrompt "Prompt Caption" "Choose a number" -Choices "Menu Item A", "Menu Item B" -HelpMessages "Menu Item A Needs Help", "Menu Item B Needs More Help" -NumberedHotKeys
-    Display prompt with 2 choices and help message that are automatically numbered.
+    PS C:\>Write-HostPrompt "Prompt Caption" "Choose a number" -Choices "Menu Item A", "Menu Item B", "Menu Item C" -HelpMessages "Menu Item A Needs Help", "Menu Item B Needs More Help",, "Menu Item C Needs Crazy Help" -NumberedHotKeys
+    Display prompt with 3 choices and help message that are automatically numbered.
 .INPUTS
     System.Management.Automation.Host.FieldDescription
     System.Management.Automation.Host.ChoiceDescription
