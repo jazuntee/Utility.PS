@@ -52,7 +52,7 @@ function Write-HostPrompt {
         [System.Management.Automation.Host.ChoiceDescription[]] $Choices,
         # Specifies a help message for each field or choice.
         [Parameter(Mandatory = $false, Position = 4)]
-        [string[]] $HelpMessages,
+        [string[]] $HelpMessages = @(),
         # The index of the label in the choices to make default.
         [Parameter(Mandatory = $false, ParameterSetName = 'Choices', Position = 5)]
         [int] $DefaultChoice,
@@ -71,7 +71,7 @@ function Write-HostPrompt {
         switch ($PSCmdlet.ParameterSetName) {
             'Fields' {
                 for ($iField = 0; $iField -lt $Fields.Count; $iField++) {
-                    if ($iField -lt $HelpMessages -and $HelpMessages[$iField]) { $Fields[$iField].HelpMessage = $HelpMessages[$iField] }
+                    if ($iField -lt $HelpMessages.Count -and $HelpMessages[$iField]) { $Fields[$iField].HelpMessage = $HelpMessages[$iField] }
                     $listFields.Add($Fields[$iField])
                 }
             }
@@ -79,7 +79,7 @@ function Write-HostPrompt {
                 for ($iChoice = 0; $iChoice -lt $Choices.Count; $iChoice++) {
                     if ($NumberedHotKeys) { $Choices[$iChoice] = New-Object System.Management.Automation.Host.ChoiceDescription -ArgumentList "&$($iChoice+1)`b$($Choices[$iChoice].Label)" -Property @{ HelpMessage = $Choices[$iChoice].HelpMessage } }
                     #elseif (!$Choices[$iChoice].Label.Contains('&')) { $Choices[$iChoice] = New-Object System.Management.Automation.Host.ChoiceDescription -ArgumentList "&$($Choices[$iChoice].Label)" -Property @{ HelpMessage = $Choices[$iChoice].HelpMessage } }
-                    if ($iChoice -lt $HelpMessages -and $HelpMessages[$iChoice]) { $Choices[$iChoice].HelpMessage = $HelpMessages[$iChoice] }
+                    if ($iChoice -lt $HelpMessages.Count -and $HelpMessages[$iChoice]) { $Choices[$iChoice].HelpMessage = $HelpMessages[$iChoice] }
                     $listChoices.Add($Choices[$iChoice])
                 }
             }
