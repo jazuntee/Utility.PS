@@ -8,11 +8,11 @@
     Display simple prompt for 2 fields.
 .EXAMPLE
     PS C:\>$IntegerField = New-Object System.Management.Automation.Host.FieldDescription -ArgumentList "Integer Field" -Property @{ HelpMessage = "Help Message for Integer Field" }
-    PS C:\>$IntegerField.SetParameterType([int])
+    PS C:\>$IntegerField.SetParameterType([int[]])
     PS C:\>$DateTimeField = New-Object System.Management.Automation.Host.FieldDescription -ArgumentList "DateTime Field" -Property @{ HelpMessage = "Help Message for DateTime Field" }
     PS C:\>$DateTimeField.SetParameterType([datetime])
     PS C:\>Write-HostPrompt "Prompt Caption" "Prompt Message" -Fields $IntegerField, $DateTimeField
-    Display prompt for 2 type-specific fields.
+    Display prompt for 2 type-specific fields, with int field being an array.
 .EXAMPLE
     PS C:\>Write-HostPrompt "Prompt Caption" -Choices "Choice &1", "Choice &2"
     Display simple prompt with 2 choices.
