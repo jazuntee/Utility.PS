@@ -8,6 +8,8 @@
     Convert plain text to SecureString and then convert it back.
 .INPUTS
     System.Security.SecureString
+.LINK
+    https://github.com/jasoth/Utility.PS
 #>
 function ConvertFrom-SecureStringAsPlainText {
     [CmdletBinding()]

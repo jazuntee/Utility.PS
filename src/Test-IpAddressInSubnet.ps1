@@ -6,6 +6,8 @@
     Determine if the IP address exists in the specified subnet.
 .INPUTS
     System.Net.IPAddress
+.LINK
+    https://github.com/jasoth/Utility.PS
 #>
 function Test-IpAddressInSubnet {
     [CmdletBinding()]

@@ -8,6 +8,8 @@
     Compress string using Deflate.
 .INPUTS
     System.String
+.LINK
+    https://github.com/jasoth/Utility.PS
 #>
 function Compress-Data {
     [CmdletBinding()]

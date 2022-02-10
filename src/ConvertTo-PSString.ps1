@@ -8,6 +8,8 @@
     Convert hashtable to PowerShell string.
 .INPUTS
     System.String
+.LINK
+    https://github.com/jasoth/Utility.PS
 #>
 function ConvertTo-PsString {
     [CmdletBinding()]

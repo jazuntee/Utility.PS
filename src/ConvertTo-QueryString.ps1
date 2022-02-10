@@ -11,6 +11,8 @@
     Convert ordered dictionary to query string.
 .INPUTS
     System.Collections.Hashtable
+.LINK
+    https://github.com/jasoth/Utility.PS
 #>
 function ConvertTo-QueryString {
     [CmdletBinding()]

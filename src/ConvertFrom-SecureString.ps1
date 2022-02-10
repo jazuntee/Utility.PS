@@ -44,6 +44,8 @@
     ConvertTo-SecureString
 .LINK
     Read-Host
+.LINK
+    https://github.com/jasoth/Utility.PS
 #>
 function ConvertFrom-SecureString {
     [CmdletBinding(DefaultParameterSetName = 'Secure', HelpUri = 'https://go.microsoft.com/fwlink/?LinkID=113287')]

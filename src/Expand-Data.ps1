@@ -9,6 +9,8 @@
     Decompress string using Deflate.
 .INPUTS
     System.String
+.LINK
+    https://github.com/jasoth/Utility.PS
 #>
 function Expand-Data {
     [CmdletBinding()]

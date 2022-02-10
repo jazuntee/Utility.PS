@@ -14,6 +14,8 @@
     Convert GUID to Base64 String.
 .INPUTS
     System.Object
+.LINK
+    https://github.com/jasoth/Utility.PS
 #>
 function ConvertTo-Base64String {
     [CmdletBinding()]

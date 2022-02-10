@@ -16,6 +16,8 @@
     Get certificate details from .cer file.
 .INPUTS
     System.Object
+.LINK
+    https://github.com/jasoth/Utility.PS
 #>
 function Get-X509Certificate {
     [CmdletBinding()]

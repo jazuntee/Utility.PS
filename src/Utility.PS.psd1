@@ -92,6 +92,7 @@ NestedModules = @(
     '.\Remove-SensitiveData.ps1'
     '.\Select-PsBoundParameters.ps1'
     '.\Test-IpAddressInSubnet.ps1'
+    '.\Test-PsElevation.ps1'
     '.\Use-Progress.ps1'
     '.\Write-HostPrompt.ps1'
 )
@@ -125,6 +126,7 @@ FunctionsToExport = @(
     'Remove-SensitiveData'
     'Select-PsBoundParameters'
     'Test-IpAddressInSubnet'
+    'Test-PsElevation'
     'Use-Progress'
     'Write-HostPrompt'
 )

@@ -12,10 +12,10 @@ param
     #
     [Parameter(Mandatory = $false)]
     [string] $ModuleManifestPath,
-    #
+    # Specifies the certificate that will be used to sign the script or file.
     [Parameter(Mandatory = $false)]
     [X509Certificate] $SigningCertificate = (Get-ChildItem Cert:\CurrentUser\My\E7413D745138A6DC584530AECE27CEFDDA9D9CD6 -CodeSigningCert),
-    #
+    # Uses the specified time stamp server to add a time stamp to the signature.
     [Parameter(Mandatory = $false)]
     [string] $TimestampServer = 'http://timestamp.digicert.com'
 )

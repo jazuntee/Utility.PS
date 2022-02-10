@@ -11,6 +11,8 @@
     Convert query string to hashtable.
 .INPUTS
     System.String
+.LINK
+    https://github.com/jasoth/Utility.PS
 #>
 function ConvertFrom-QueryString {
     [CmdletBinding()]

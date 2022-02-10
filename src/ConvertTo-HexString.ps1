@@ -11,6 +11,8 @@
     Convert ASCII string to hex byte string with no seperation.
 .INPUTS
     System.Object
+.LINK
+    https://github.com/jasoth/Utility.PS
 #>
 function ConvertTo-HexString {
     [CmdletBinding()]

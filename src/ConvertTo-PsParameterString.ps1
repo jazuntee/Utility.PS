@@ -6,6 +6,8 @@
     Convert hashtable to PowerShell parameters string.
 .INPUTS
     System.String
+.LINK
+    https://github.com/jasoth/Utility.PS
 #>
 function ConvertTo-PsParameterString {
     [CmdletBinding()]
