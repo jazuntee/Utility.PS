@@ -24,6 +24,7 @@ function Skip-NullValue {
     param (
         # Values to coalesce
         [Parameter(Mandatory = $true, Position = 0, ValueFromPipeline = $true)]
+        [AllowNull()]
         [object] $InputObject,
         # Skip over empty values
         [Parameter(Mandatory = $false)]
