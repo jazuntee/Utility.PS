@@ -37,6 +37,13 @@ function ConvertFrom-HexString {
         $listBytes = New-Object object[] $InputObject.Count
         for ($iString = 0; $iString -lt $InputObject.Count; $iString++) {
             [string] $strHex = $InputObject[$iString]
+
+            if ($strHex -notmatch '^[A-Fa-f0-9\r\n]+$') {
+                $Exception = New-Object System.Management.Automation.MethodInvocationException 'The input is not a valid hex string as it contains a non-hex character.'
+                Write-Error -Exception $Exception -Category ([System.Management.Automation.ErrorCategory]::InvalidData) -CategoryActivity $MyInvocation.MyCommand -ErrorId 'ConvertFromHexFailureInvalidData' -TargetObject $InputObject
+                return
+            }
+
             if ($strHex.Substring(2, 1) -eq $Delimiter) {
                 [string[]] $listHex = $strHex -split $Delimiter
             }
