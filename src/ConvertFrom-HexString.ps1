@@ -33,6 +33,7 @@ function ConvertFrom-HexString {
     )
 
     process {
+        $InputObject = $InputObject -replace '\s', ''
         $listBytes = New-Object object[] $InputObject.Count
         for ($iString = 0; $iString -lt $InputObject.Count; $iString++) {
             [string] $strHex = $InputObject[$iString]
@@ -40,9 +41,9 @@ function ConvertFrom-HexString {
                 [string[]] $listHex = $strHex -split $Delimiter
             }
             else {
-                [string[]] $listHex = New-Object string[] ($strHex.Length/2)
+                [string[]] $listHex = New-Object string[] ($strHex.Length / 2)
                 for ($iByte = 0; $iByte -lt $strHex.Length; $iByte += 2) {
-                    $listHex[[System.Math]::Truncate($iByte/2)] = $strHex.Substring($iByte, 2)
+                    $listHex[[System.Math]::Truncate($iByte / 2)] = $strHex.Substring($iByte, 2)
                 }
             }
 
