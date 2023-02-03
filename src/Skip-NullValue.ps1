@@ -8,7 +8,7 @@
     Return the first non-null value which is 'winner'.
 
 .EXAMPLE
-    PS > Skip-NullValue $null, '', ([guid]::Empty), 0, ([int]-1), 'winner', 'loser' -SkipEmpty -SkipZero -SkipNegativeNumber
+    PS > Skip-NullValue $null, '', ([guid]::Empty), 0, ([int]-1), 'winner', 'loser' -SkipEmpty -SkipZero -SkipNegative
 
     Return the first non-null, non-empty, non-zero, and non-negative value which is 'winner'.
 
@@ -34,7 +34,7 @@ function Skip-NullValue {
         [switch] $SkipZero,
         # Skip over negative values
         [Parameter(Mandatory = $false)]
-        [switch] $SkipNegativeNumber,
+        [switch] $SkipNegative,
         # Default value when no other values 
         [Parameter(Mandatory = $false)]
         [object] $DefaultValue = $null
@@ -49,11 +49,11 @@ function Skip-NullValue {
 
                 [bool]$TestEmpty = try { $SkipEmpty -and $Object -eq ($Object.GetType())::Empty } catch { $false }
                 [bool]$TestZero = try { $SkipZero -and $Object -eq 0 } catch { $false }
-                [bool]$TestNegativeNumber = try { $SkipNegativeNumber -and $Object -lt 0 } catch { $false }
+                [bool]$TestNegative = try { $SkipNegative -and $Object -lt 0 } catch { $false }
 
-                Write-Debug "TestEmpty: $TestEmpty | TestZero: $TestZero | TestNegativeNumber: $TestNegativeNumber"
+                Write-Debug "TestEmpty: $TestEmpty | TestZero: $TestZero | TestNegative: $TestNegative"
 
-                if (!($TestEmpty -or $TestZero -or $TestNegativeNumber)) {
+                if (!($TestEmpty -or $TestZero -or $TestNegative)) {
                     return $Object
                 }
 
