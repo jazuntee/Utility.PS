@@ -20,6 +20,9 @@ function ConvertTo-ClixmlString {
         # Value to convert
         [Parameter(Mandatory = $true, Position = 0, ValueFromPipeline = $true)]
         [object] $InputObject,
+        # Omits white space and indented formatting in the output string.
+        [Parameter(Mandatory = $false)]
+        [switch] $Compress,
         # Specifies how many levels of nested objects are included.
         [Parameter(Mandatory = $false)]
         [int] $Depth
@@ -28,11 +31,15 @@ function ConvertTo-ClixmlString {
     process {
         #foreach ($_InputObject in $InputObject) {
             if ($Depth) {
-                [System.Management.Automation.PSSerializer]::Serialize($InputObject, $Depth)
+                $OutputString = [System.Management.Automation.PSSerializer]::Serialize($InputObject, $Depth)
             }
             else {
-                [System.Management.Automation.PSSerializer]::Serialize($InputObject)
+                $OutputString = [System.Management.Automation.PSSerializer]::Serialize($InputObject)
             }
+
+            if ($Compress) { $OutputString = $OutputString -replace '\r?\n\s*', '' }
+
+            return $OutputString
         #}
     }
 }
