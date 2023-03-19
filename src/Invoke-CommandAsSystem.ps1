@@ -1,21 +1,25 @@
 <#
 .SYNOPSIS
     Run PowerShell commands under system context.
+
 .EXAMPLE
-    PS C:\>Invoke-CommandAsSystem { [System.Security.Principal.WindowsIdentity]::GetCurrent().Name }
+    PS >Invoke-CommandAsSystem { [System.Security.Principal.WindowsIdentity]::GetCurrent().Name }
+
     Run the ScriptBlock under the system context.
+
 .INPUTS
     System.Management.Automation.ScriptBlock
+
 .LINK
     https://github.com/jasoth/Utility.PS
 #>
 function Invoke-CommandAsSystem {
     [CmdletBinding()]
     param (
-        #
+        # Specifies the ScriptBlock to run under the system context.
         [Parameter(Mandatory = $true, ValueFromPipeline = $true, Position = 1)]
         [ScriptBlock] $ScriptBlock,
-        #
+        # Specifies the arguments to pass to the ScriptBlock.
         [Parameter(Mandatory = $false, Position = 2)]
         [string[]] $ArgumentList
     )

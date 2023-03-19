@@ -1,21 +1,26 @@
 ﻿<#
 .SYNOPSIS
     Decompose characters to their base character equivilents and remove diacritics.
-.DESCRIPTION
 
 .EXAMPLE
-    PS C:\>Remove-Diacritics 'àáâãäåÀÁÂÃÄÅﬁ⁵ẛ'
+    PS >Remove-Diacritics 'àáâãäåÀÁÂÃÄÅﬁ⁵ẛ'
+
     Decompose characters to their base character equivilents and remove diacritics.
+
 .EXAMPLE
-    PS C:\>Remove-Diacritics 'àáâãäåÀÁÂÃÄÅﬁ⁵ẛ' -CompatibilityDecomposition
+    PS >Remove-Diacritics 'àáâãäåÀÁÂÃÄÅﬁ⁵ẛ' -CompatibilityDecomposition
+
     Decompose composite characters to their base character equivilents and remove diacritics.
+
 .INPUTS
     System.String
+
+.LINK
+    https://github.com/jasoth/Utility.PS
 #>
 function Remove-Diacritics {
     [CmdletBinding()]
-    param
-    (
+    param (
         # String value to transform.
         [Parameter(Mandatory = $true, Position = 0, ValueFromPipeline = $true, ValueFromPipelineByPropertyName = $true)]
         [AllowEmptyString()]

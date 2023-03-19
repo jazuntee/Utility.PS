@@ -1,19 +1,25 @@
 <#
 .SYNOPSIS
     Convert Byte Array or Plain Text String to Base64 String.
-.DESCRIPTION
 
 .EXAMPLE
-    PS C:\>ConvertTo-Base64String "A string with base64 encoding"
+    PS >ConvertTo-Base64String "A string with base64 encoding"
+
     Convert String with Default Encoding to Base64 String.
+
 .EXAMPLE
-    PS C:\>"ASCII string with base64url encoding" | ConvertTo-Base64String -Base64Url -Encoding Ascii
+    PS >"ASCII string with base64url encoding" | ConvertTo-Base64String -Base64Url -Encoding Ascii
+
     Convert String with Ascii Encoding to Base64Url String.
+
 .EXAMPLE
-    PS C:\>ConvertTo-Base64String ([guid]::NewGuid())
+    PS >ConvertTo-Base64String ([guid]::NewGuid())
+
     Convert GUID to Base64 String.
+
 .INPUTS
     System.Object
+    
 .LINK
     https://github.com/jasoth/Utility.PS
 #>

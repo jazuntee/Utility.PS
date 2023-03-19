@@ -1,11 +1,15 @@
 <#
 .SYNOPSIS
     Test if current PowerShell process is elevated to local administrator privileges.
-.DESCRIPTION
-    Test if current PowerShell process is elevated to local administrator privileges.
+
 .EXAMPLE
-    PS C:\>Test-PsElevation
+    PS >Test-PsElevation
+
     Test is current PowerShell process is elevated.
+
+.INPUTS
+    None
+
 .LINK
     https://github.com/jasoth/Utility.PS
 #>

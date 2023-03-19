@@ -1,14 +1,22 @@
 <#
 .SYNOPSIS
     Filters a hashtable or PSBoundParameters containing PowerShell command parameters to only those valid for specified command.
+
 .EXAMPLE
-    PS C:\>Select-PsBoundParameters @{Name='Valid'; Verbose=$true; NotAParameter='Remove'} -CommandName Get-Process -ExcludeParameters 'Verbose'
+    PS >Select-PsBoundParameters @{Name='Valid'; Verbose=$true; NotAParameter='Remove'} -CommandName Get-Process -ExcludeParameters 'Verbose'
+
     Filters the parameter hashtable to only include valid parameters for the Get-Process command and exclude the Verbose parameter.
+
 .EXAMPLE
-    PS C:\>Select-PsBoundParameters @{Name='Valid'; Verbose=$true; NotAParameter='Remove'} -CommandName Get-Process -CommandParameterSets NameWithUserName
+    PS >Select-PsBoundParameters @{Name='Valid'; Verbose=$true; NotAParameter='Remove'} -CommandName Get-Process -CommandParameterSets NameWithUserName
+
     Filters the parameter hashtable to only include valid parameters for the Get-Process command in the "NameWithUserName" ParameterSet.
+
 .INPUTS
     System.String
+
+.LINK
+    https://github.com/jasoth/Utility.PS
 #>
 function Select-PsBoundParameters {
     [CmdletBinding()]

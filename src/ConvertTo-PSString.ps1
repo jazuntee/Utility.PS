@@ -1,13 +1,15 @@
 <#
 .SYNOPSIS
     Convert PowerShell data types to PowerShell string syntax.
-.DESCRIPTION
 
 .EXAMPLE
-    PS C:\>ConvertTo-PsString @{ key1='value1'; key2='value2' }
+    PS >ConvertTo-PsString @{ key1='value1'; key2='value2' }
+
     Convert hashtable to PowerShell string.
+
 .INPUTS
     System.String
+
 .LINK
     https://github.com/jasoth/Utility.PS
 #>
@@ -15,17 +17,17 @@ function ConvertTo-PsString {
     [CmdletBinding()]
     [OutputType([string])]
     param (
-        #
+        # Specifies the object to convert to PowerShell string.
         [Parameter(Mandatory = $true, ValueFromPipeline = $true, Position = 0)]
         [AllowNull()]
         [object] $InputObjects,
-        #
+        # Abbrivate types where possible
         [Parameter(Mandatory = $false)]
         [switch] $Compact,
-        #
+        # Remove types
         [Parameter(Mandatory = $false, Position = 1)]
         [type[]] $RemoveTypes = ([string], [bool], [int], [long]),
-        #
+        # Do not enumerate output objects
         [Parameter(Mandatory = $false)]
         [switch] $NoEnumerate
     )
@@ -92,6 +94,9 @@ function ConvertTo-PsString {
             elseif ($ObjectType -eq [System.Collections.Specialized.OrderedDictionary]) {
                 $OutputString += '[ordered]'  # Explicit cast does not work with full name. Only [ordered] works.
             }
+            elseif ($ObjectType -eq [System.Management.Automation.PSCustomObject]) {
+                $OutputString += '[pscustomobject]'  # Explicit cast does not work with full name. Only [pscustomobject] works.
+            }
             elseif ($Compact) {
                 if ($ObjectType -notin $RemoveTypes) {
                     if ($TypeAcceleratorsLookup.ContainsKey($ObjectType)) {
@@ -111,7 +116,7 @@ function ConvertTo-PsString {
             return $OutputString
         }
 
-        function GetPSString ($InputObject) {
+        function GetPsString ($InputObject) {
             $OutputString = New-Object System.Text.StringBuilder
 
             if ($null -eq $InputObject) { [void]$OutputString.Append('$null') }
@@ -137,7 +142,11 @@ function ConvertTo-PsString {
                         [void]$OutputString.AppendFormat("'{0}'", $InputObject.ToString('O'))
                         break
                     }
-                    { $_.Equals([guid]) } {
+                    { $_.Equals([guid]) -or $_.Equals([version]) } {
+                        [void]$OutputString.AppendFormat("'{0}'", $InputObject)
+                        break
+                    }
+                    { $PSVersionTable.PSVersion -ge [version]'6.0' -and $_.Equals([semver]) } {
                         [void]$OutputString.AppendFormat("'{0}'", $InputObject)
                         break
                     }
@@ -208,7 +217,19 @@ function ConvertTo-PsString {
                         break
                     }
                     ## Convert objects with object initializers
-                    { $_ -is [object] -and ($_.GetConstructors() | foreach { if ($_.IsPublic -and !$_.GetParameters()) { $true } }) } {
+                    { $_ -is [object] -and ($_.GetConstructors() | ForEach-Object { if ($_.IsPublic -and !$_.GetParameters()) { $true } }) } {
+                        [void]$OutputString.Append('@{')
+                        $iInput = 0
+                        foreach ($Item in ($InputObject | Get-Member -MemberType Property, NoteProperty)) {
+                            if ($iInput -gt 0) { [void]$OutputString.Append(';') }
+                            $PropertyName = $Item.Name
+                            [void]$OutputString.AppendFormat('{0}={1}', (ConvertTo-PsString $PropertyName -Compact:$Compact -NoEnumerate), (ConvertTo-PsString $InputObject.$PropertyName -Compact:$Compact -NoEnumerate))
+                            $iInput++
+                        }
+                        [void]$OutputString.Append('}')
+                        break
+                    }
+                    { $_.Equals([System.Management.Automation.PSCustomObject]) } {
                         [void]$OutputString.Append('@{')
                         $iInput = 0
                         foreach ($Item in ($InputObject | Get-Member -MemberType Property, NoteProperty)) {
@@ -242,11 +263,11 @@ function ConvertTo-PsString {
 
     process {
         if ($PSCmdlet.MyInvocation.ExpectingInput -or $NoEnumerate -or $null -eq $InputObjects) {
-            GetPSString $InputObjects
+            GetPsString $InputObjects
         }
         else {
             foreach ($InputObject in $InputObjects) {
-                GetPSString $InputObject
+                GetPsString $InputObject
             }
         }
     }

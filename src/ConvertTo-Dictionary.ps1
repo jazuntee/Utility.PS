@@ -1,13 +1,17 @@
 <#
 .SYNOPSIS
     Convert hashtable to generic dictionary.
-.DESCRIPTION
 
 .EXAMPLE
-    PS C:\>ConvertTo-Dictionary @{ KeyName = 'StringValue' } -ValueType ([string])
+    PS >ConvertTo-Dictionary @{ KeyName = 'StringValue' } -ValueType ([string])
+
     Convert hashtable to generic dictionary.
+
 .INPUTS
     System.Hashtable
+
+.LINK
+    https://github.com/jasoth/Utility.PS
 #>
 function ConvertTo-Dictionary {
     [CmdletBinding()]

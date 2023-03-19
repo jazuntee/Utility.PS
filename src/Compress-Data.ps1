@@ -1,13 +1,15 @@
 <#
 .SYNOPSIS
     Compress data using DEFLATE (RFC 1951) and optionally GZIP file format (RFC 1952).
-.DESCRIPTION
 
 .EXAMPLE
-    PS C:\>Compress-Data 'A string for compression'
+    PS >Compress-Data 'A string for compression'
+
     Compress string using Deflate.
+
 .INPUTS
     System.String
+    
 .LINK
     https://github.com/jasoth/Utility.PS
 #>

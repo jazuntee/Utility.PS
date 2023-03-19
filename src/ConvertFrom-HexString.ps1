@@ -1,16 +1,20 @@
 <#
 .SYNOPSIS
    Convert from Hex String
-.DESCRIPTION
 
 .EXAMPLE
-    PS C:\>ConvertFrom-HexString "57 68 61 74 20 69 73 20 61 20 68 65 78 20 73 74 72 69 6E 67 3F"
+    PS >ConvertFrom-HexString "57 68 61 74 20 69 73 20 61 20 68 65 78 20 73 74 72 69 6E 67 3F"
+
     Convert hex byte string seperated by spaces to string.
+
 .EXAMPLE
-    PS C:\>"415343494920737472696E6720746F2068657820737472696E67" | ConvertFrom-HexString -Delimiter "" -Encoding Ascii
+    PS >"415343494920737472696E6720746F2068657820737472696E67" | ConvertFrom-HexString -Delimiter "" -Encoding Ascii
+
     Convert hex byte string with no seperation to ASCII string.
+
 .INPUTS
     System.String
+    
 .LINK
     https://github.com/jasoth/Utility.PS
 #>

@@ -1,11 +1,15 @@
 <#
 .SYNOPSIS
     Convert splatable PowerShell paramters to PowerShell parameter string syntax.
+
 .EXAMPLE
-    PS C:\>ConvertTo-PsParameterString @{ key1='value1'; key2='value2' }
+    PS >ConvertTo-PsParameterString @{ key1='value1'; key2='value2' }
+
     Convert hashtable to PowerShell parameters string.
+
 .INPUTS
     System.String
+
 .LINK
     https://github.com/jasoth/Utility.PS
 #>
@@ -13,17 +17,17 @@ function ConvertTo-PsParameterString {
     [CmdletBinding()]
     [OutputType([string])]
     param (
-        #
+        # Specifies the parameter object to convert to PowerShell string.
         [Parameter(Mandatory = $true, ValueFromPipeline = $true, Position = 0)]
         [AllowNull()]
         [object] $InputObjects,
-        #
+        # Abbrivate types where possible
         [Parameter(Mandatory = $false)]
         [switch] $Compact,
-        #
+        # Remove types
         [Parameter(Mandatory = $false, Position = 1)]
         [type[]] $RemoveTypes = ([string], [bool], [int], [long]),
-        #
+        # Do not enumerate output objects
         [Parameter(Mandatory = $false)]
         [switch] $NoEnumerate
     )

@@ -1,13 +1,15 @@
 <#
 .SYNOPSIS
     Convert/Decrypt SecureString to Plain Text String.
-.DESCRIPTION
 
 .EXAMPLE
-    PS C:\>ConvertFrom-SecureStringAsPlainText (ConvertTo-SecureString 'SuperSecretString' -AsPlainText -Force) -Force
+    PS >ConvertFrom-SecureStringAsPlainText (ConvertTo-SecureString 'SuperSecretString' -AsPlainText -Force) -Force
+
     Convert plain text to SecureString and then convert it back.
+
 .INPUTS
     System.Security.SecureString
+
 .LINK
     https://github.com/jasoth/Utility.PS
 #>

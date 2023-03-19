@@ -1,19 +1,25 @@
 <#
 .SYNOPSIS
     Convert Base64 String to Byte Array or Plain Text String.
-.DESCRIPTION
 
 .EXAMPLE
-    PS C:\>ConvertFrom-Base64String "QSBzdHJpbmcgd2l0aCBiYXNlNjQgZW5jb2Rpbmc="
+    PS >ConvertFrom-Base64String "QSBzdHJpbmcgd2l0aCBiYXNlNjQgZW5jb2Rpbmc="
+
     Convert Base64 String to String with Default Encoding.
+
 .EXAMPLE
-    PS C:\>"QVNDSUkgc3RyaW5nIHdpdGggYmFzZTY0dXJsIGVuY29kaW5n" | ConvertFrom-Base64String -Base64Url -Encoding Ascii
+    PS >"QVNDSUkgc3RyaW5nIHdpdGggYmFzZTY0dXJsIGVuY29kaW5n" | ConvertFrom-Base64String -Base64Url -Encoding Ascii
+
     Convert Base64Url String to String with Ascii Encoding.
+
 .EXAMPLE
-    PS C:\>[guid](ConvertFrom-Base64String "5oIhNbCaFUGAe8NsiAKfpA==" -RawBytes)
+    PS >[guid](ConvertFrom-Base64String "5oIhNbCaFUGAe8NsiAKfpA==" -RawBytes)
+
     Convert Base64 String to GUID.
+
 .INPUTS
     System.String
+
 .LINK
     https://github.com/jasoth/Utility.PS
 #>

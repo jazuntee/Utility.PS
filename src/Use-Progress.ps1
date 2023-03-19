@@ -1,8 +1,9 @@
 <#
 .SYNOPSIS
     Display progress bar for processing array of objects.
+
 .EXAMPLE
-    PS C:\>Use-Progress -InputObjects @(1..10) -Activity "Processing Parent Objects" -ScriptBlock {
+    PS >Use-Progress -InputObjects @(1..10) -Activity "Processing Parent Objects" -ScriptBlock {
         $Parent = $args[0]
         Use-Progress -InputObjects @(1..200) -Activity "Processing Child Objects" -ScriptBlock {
             $Child = $args[0]
@@ -10,14 +11,18 @@
             Start-Sleep -Milliseconds 50
         }
     }
+
     Display progress bar for processing array of objects.
+
 .INPUTS
     System.Object[]
+
+.LINK
+    https://github.com/jasoth/Utility.PS
 #>
 function Use-Progress {
     [CmdletBinding()]
-    param
-    (
+    param (
         # Array of objects to loop through.
         [Parameter(Mandatory = $true, ValueFromPipeline = $true)]
         [object[]] $InputObjects,

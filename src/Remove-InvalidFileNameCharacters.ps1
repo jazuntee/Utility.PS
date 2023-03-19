@@ -1,21 +1,26 @@
 ﻿<#
 .SYNOPSIS
     Remove invalid filename characters from string.
-.DESCRIPTION
 
 .EXAMPLE
-    PS C:\>Remove-InvalidFileNameCharacters 'à/1\b?2|ć*3<đ>4 ē'
+    PS >Remove-InvalidFileNameCharacters 'à/1\b?2|ć*3<đ>4 ē'
+
     Remove invalid filename characters from string.
+
 .EXAMPLE
-    PS C:\>Remove-InvalidFileNameCharacters 'à/1\b?2|ć*3<đ>4 ē' -RemoveDiacritics
+    PS >Remove-InvalidFileNameCharacters 'à/1\b?2|ć*3<đ>4 ē' -RemoveDiacritics
+
     Remove invalid filename characters and diacritics from string.
+
 .INPUTS
     System.String
+
+.LINK
+    https://github.com/jasoth/Utility.PS
 #>
 function Remove-InvalidFileNameCharacters {
     [CmdletBinding()]
-    param
-    (
+    param (
         # String value to transform.
         [Parameter(Mandatory = $true, Position = 0, ValueFromPipeline = $true, ValueFromPipelineByPropertyName = $true)]
         [AllowEmptyString()]

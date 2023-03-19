@@ -1,14 +1,20 @@
 <#
 .SYNOPSIS
     Determine if an IP address exists in the specified subnet.
+
 .EXAMPLE
-    PS C:\>Test-IpAddressInSubnet 192.168.1.10 -Subnet '192.168.1.1/32','192.168.1.0/24'
+    PS >Test-IpAddressInSubnet 192.168.1.10 -Subnet '192.168.1.1/32','192.168.1.0/24'
+
     Determine if the IPv4 address exists in the specified subnet.
+
 .EXAMPLE
-    PS C:\>Test-IpAddressInSubnet 2001:db8:1234::1 -Subnet '2001:db8:a::123/64','2001:db8:1234::/48'
+    PS >Test-IpAddressInSubnet 2001:db8:1234::1 -Subnet '2001:db8:a::123/64','2001:db8:1234::/48'
+
     Determine if the IPv6 address exists in the specified subnet.
+
 .INPUTS
     System.Net.IPAddress
+
 .LINK
     https://github.com/jasoth/Utility.PS
 #>

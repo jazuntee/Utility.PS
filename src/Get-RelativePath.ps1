@@ -1,16 +1,22 @@
 <#
 .SYNOPSIS
     Get path relative to working directory.
-.DESCRIPTION
 
 .EXAMPLE
-    PS C:\>Get-RelativePath 'C:\DirectoryA\File1.txt'
+    PS >Get-RelativePath 'C:\DirectoryA\File1.txt'
+
     Get path relative to current directory.
+
 .EXAMPLE
-    PS C:\>Get-RelativePath 'C:\DirectoryA\File1.txt' -WorkingDirectory 'C:\DirectoryB' -CompareCase
+    PS >Get-RelativePath 'C:\DirectoryA\File1.txt' -WorkingDirectory 'C:\DirectoryB' -CompareCase
+
     Get path relative to specified working directory with case-sensitive directory comparison.
+
 .INPUTS
     System.String
+
+.LINK
+    https://github.com/jasoth/Utility.PS
 #>
 function Get-RelativePath {
     [CmdletBinding()]

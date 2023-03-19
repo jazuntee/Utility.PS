@@ -1,13 +1,17 @@
 <#
 .SYNOPSIS
     Convert string to URL encoded string.
-.DESCRIPTION
 
 .EXAMPLE
-    PS C:\>ConvertTo-UrlString 'A string with url encoding'
+    PS >ConvertTo-UrlString 'A string with url encoding'
+
     Convert string to URL encoded string.
+
 .INPUTS
     System.String
+
+.LINK
+    https://github.com/jasoth/Utility.PS
 #>
 function ConvertTo-UrlString {
     [CmdletBinding()]

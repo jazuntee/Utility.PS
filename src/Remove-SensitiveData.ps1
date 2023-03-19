@@ -1,15 +1,23 @@
 <#
 .SYNOPSIS
     Remove sensitive data from object or string.
+
 .EXAMPLE
-    PS C:\>$MyString = 'My password is: "SuperSecretString"'
-    PS C:\>Remove-SensitiveData ([ref]$MyString) -FilterValues "Super","String"
+    PS >$MyString = 'My password is: "SuperSecretString"'
+    PS >Remove-SensitiveData ([ref]$MyString) -FilterValues "Super","String"
+
     This removes the word "Super" and "String" from the input string with no output.
+
 .EXAMPLE
-    PS C:\>Remove-SensitiveData 'My password is: "SuperSecretString"' -FilterValues "Super","String" -PassThru
+    PS >Remove-SensitiveData 'My password is: "SuperSecretString"' -FilterValues "Super","String" -PassThru
+
     This removes the word "Super" and "String" from the input string and return the result.
+
 .INPUTS
     System.Object
+
+.LINK
+    https://github.com/jasoth/Utility.PS
 #>
 function Remove-SensitiveData {
     [CmdletBinding()]
@@ -52,14 +60,14 @@ function Remove-SensitiveData {
                 if ($OutputObjects.Value -and $FilterValue) { $OutputObjects.Value = $OutputObjects.Value.Replace($FilterValue, $ReplacementValue) }
             }
         }
-        elseif ($OutputObjects.Value -is [array] -or $OutputObjects.Value -is [System.Collections.ArrayList] -or $OutputObjects.Value.GetType().FullName.StartsWith('System.Collections.Generic.List')) {
+        elseif ($OutputObjects.Value -is [System.Collections.IList]) {
             for ($ii = 0; $ii -lt $OutputObjects.Value.Count; $ii++) {
                 if ($null -ne $OutputObjects.Value[$ii] -and $OutputObjects.Value[$ii] -isnot [ValueType]) {
                     $OutputObjects.Value[$ii] = Remove-SensitiveData ([ref]$OutputObjects.Value[$ii]) -FilterValues $FilterValues -PassThru
                 }
             }
         }
-        elseif ($OutputObjects.Value -is [hashtable] -or $OutputObjects.Value -is [System.Collections.Specialized.OrderedDictionary] -or $OutputObjects.Value.GetType().FullName.StartsWith('System.Collections.Generic.Dictionary')) {
+        elseif ($OutputObjects.Value -is [System.Collections.IDictionary]) {
             [array] $KeyNames = $OutputObjects.Value.Keys
             for ($ii = 0; $ii -lt $KeyNames.Count; $ii++) {
                 if ($null -ne $OutputObjects.Value[$KeyNames[$ii]] -and $OutputObjects.Value[$KeyNames[$ii]] -isnot [ValueType]) {
@@ -85,7 +93,7 @@ function Remove-SensitiveData {
 
         if ($PassThru -or $Clone) {
             ## Return the object with sensitive data removed.
-            if ($OutputObjects.Value -is [array] -or $OutputObjects.Value -is [System.Collections.ArrayList] -or $OutputObjects.Value.GetType().FullName.StartsWith('System.Collections.Generic.List')) {
+            if ($OutputObjects.Value -is [System.Collections.IList]) {
                 Write-Output $OutputObjects.Value -NoEnumerate
             }
             else {

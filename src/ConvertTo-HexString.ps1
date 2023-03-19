@@ -1,16 +1,20 @@
 ﻿<#
 .SYNOPSIS
-   Convert to Hex String
-.DESCRIPTION
+    Convert to Hex String
 
 .EXAMPLE
-    PS C:\>ConvertTo-HexString "What is a hex string?"
+    PS >ConvertTo-HexString "What is a hex string?"
+
     Convert string to hex byte string seperated by spaces.
+
 .EXAMPLE
-    PS C:\>"ASCII string to hex string" | ConvertTo-HexString -Delimiter "" -Encoding Ascii
+    PS >"ASCII string to hex string" | ConvertTo-HexString -Delimiter "" -Encoding Ascii
+
     Convert ASCII string to hex byte string with no seperation.
+
 .INPUTS
     System.Object
+
 .LINK
     https://github.com/jasoth/Utility.PS
 #>

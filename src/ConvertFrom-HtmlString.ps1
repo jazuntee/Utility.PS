@@ -1,13 +1,17 @@
 <#
 .SYNOPSIS
     Convert HTML encoded string to string.
-.DESCRIPTION
-
+    
 .EXAMPLE
-    PS C:\>ConvertFrom-HtmlString 'A string with &lt;html&gt; encoding'
+    PS >ConvertFrom-HtmlString 'A string with &lt;html&gt; encoding'
+
     Convert HTML encoded string to string.
+
 .INPUTS
     System.String
+
+.LINK
+    https://github.com/jasoth/Utility.PS
 #>
 function ConvertFrom-HtmlString {
     [CmdletBinding()]

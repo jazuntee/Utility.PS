@@ -1,12 +1,13 @@
 <#
 .SYNOPSIS
     Decompress data using DEFLATE (RFC 1951) or GZIP file format (RFC 1952).
-.DESCRIPTION
 
 .EXAMPLE
-    [byte[]] $byteArray = @(115,84,40,46,41,202,204,75,87,72,203,47,82,72,206,207,45,40,74,45,46,206,204,207,3,0)
-    PS C:\>Expand-Data $byteArray
+    PS >[byte[]] $byteArray = @(115,84,40,46,41,202,204,75,87,72,203,47,82,72,206,207,45,40,74,45,46,206,204,207,3,0)
+    PS >Expand-Data $byteArray
+
     Decompress string using Deflate.
+
 .INPUTS
     System.String
 .LINK

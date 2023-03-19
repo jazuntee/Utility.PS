@@ -2,11 +2,8 @@
 .SYNOPSIS
     Get X509 certificate extension 2.5.29.31 for CRL Distribution Points.
 
-.DESCRIPTION
-    
-
 .EXAMPLE
-    PS C:\>Get-X509CertificateCrlDistributionPoints $Certificate
+    PS >Get-X509CertificateCrlDistributionPoints $Certificate
 
     Get certificate CRL Distribution Points extension.
 
