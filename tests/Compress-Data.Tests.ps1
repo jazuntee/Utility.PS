@@ -1,18 +1,27 @@
 [CmdletBinding()]
 param (
     [Parameter(Mandatory = $false)]
-    [string] $ModulePath = "..\src\*.psd1"
+    [string] $ModulePath = ".\src\*.psd1"
 )
 
-Import-Module $ModulePath -Force
-#Import-Module Pester -MaximumVersion 4.99
+BeforeDiscovery {
+    ## Load Test Helper Functions
+    . (Join-Path $PSScriptRoot 'TestCommon.ps1')
+}
 
-## Load Test Helper Functions
-. (Join-Path $PSScriptRoot 'TestCommon.ps1')
+BeforeAll {
+    $CriticalError = $null
+    $PSModule = Import-Module $ModulePath -Force -PassThru -ErrorVariable CriticalError
+    if ($CriticalError) { throw $CriticalError }
+
+    ## Load Test Helper Functions
+    . (Join-Path $PSScriptRoot 'TestCommon.ps1')
+}
 
 Describe 'Compress-Data' {
 
     Context 'DEFLATE Output' {
+
         class StringInput {
             [string] $CommandName = 'Compress-Data'
             [hashtable] $BoundParameters = @{ }
@@ -120,7 +129,7 @@ Describe 'Compress-Data' {
             [type] $ExpectedInputType = [System.IO.FileInfo]
             [hashtable[]] $IO = @(
                 @{
-                    Input  = & { $Path = 'TestDrive:\TextFile.txt'; Set-Content $Path -Value 'A compressed string with DEFLATE'; Get-Item $Path }
+                    Input  = { $Path = 'TestDrive:\TextFile.txt'; Set-Content $Path -Value 'A compressed string with DEFLATE'; Get-Item $Path }
                     Output = [byte[]]@(115, 84, 72, 206, 207, 45, 40, 74, 45, 46, 78, 77, 81, 40, 46, 41, 202, 204, 75, 87, 40, 207, 44, 201, 80, 112, 113, 117, 243, 113, 12, 113, 229, 229, 2, 0)
                 }
             )
@@ -247,7 +256,7 @@ Describe 'Compress-Data' {
             [type] $ExpectedInputType = [System.IO.FileInfo]
             [hashtable[]] $IO = @(
                 @{
-                    Input  = & { $Path = 'TestDrive:\TextFile.txt'; Set-Content $Path -Value 'A compressed string with DEFLATE'; Get-Item $Path }
+                    Input  = { $Path = 'TestDrive:\TextFile.txt'; Set-Content $Path -Value 'A compressed string with DEFLATE'; Get-Item $Path }
                     Output = [byte[]]@(31, 139, 8, 0, 0, 0, 0, 0, 2, 255, 115, 84, 72, 206, 207, 45, 40, 74, 45, 46, 78, 77, 81, 40, 46, 41, 202, 204, 75, 87, 40, 207, 44, 201, 80, 112, 113, 117, 243, 113, 12, 113, 229, 229, 2, 0, 23, 219, 236, 124, 34, 0, 0, 0)
                 }
             )

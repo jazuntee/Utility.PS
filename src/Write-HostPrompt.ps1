@@ -1,43 +1,53 @@
 <#
 .SYNOPSIS
     Displays a PowerShell prompt for multiple fields or multiple choices.
-.DESCRIPTION
-    Displays a PowerShell prompt for multiple fields or multiple choices.
+
 .EXAMPLE
-    PS C:\>Write-HostPrompt "Prompt Caption" -Fields "Field 1", "Field 2"
+    PS >Write-HostPrompt "Prompt Caption" -Fields "Field 1", "Field 2"
+
     Display simple prompt for 2 fields.
+
 .EXAMPLE
-    PS C:\>$IntegerField = New-Object System.Management.Automation.Host.FieldDescription -ArgumentList "Integer Field" -Property @{ HelpMessage = "Help Message for Integer Field" }
-    PS C:\>$IntegerField.SetParameterType([int[]])
-    PS C:\>$DateTimeField = New-Object System.Management.Automation.Host.FieldDescription -ArgumentList "DateTime Field" -Property @{ HelpMessage = "Help Message for DateTime Field" }
-    PS C:\>$DateTimeField.SetParameterType([datetime])
-    PS C:\>Write-HostPrompt "Prompt Caption" "Prompt Message" -Fields $IntegerField, $DateTimeField
+    PS >$IntegerField = New-Object System.Management.Automation.Host.FieldDescription -ArgumentList "Integer Field" -Property @{ HelpMessage = "Help Message for Integer Field" }
+    PS >$IntegerField.SetParameterType([int[]])
+    PS >$DateTimeField = New-Object System.Management.Automation.Host.FieldDescription -ArgumentList "DateTime Field" -Property @{ HelpMessage = "Help Message for DateTime Field" }
+    PS >$DateTimeField.SetParameterType([datetime])
+    PS >Write-HostPrompt "Prompt Caption" "Prompt Message" -Fields $IntegerField, $DateTimeField
+
     Display prompt for 2 type-specific fields, with int field being an array.
+
 .EXAMPLE
-    PS C:\>Write-HostPrompt "Prompt Caption" -Choices "Choice &1", "Choice &2"
+    PS >Write-HostPrompt "Prompt Caption" -Choices "Choice &1", "Choice &2"
+
     Display simple prompt with 2 choices.
+
 .EXAMPLE
-    PS C:\>Write-HostPrompt "Prompt Caption" "Prompt Message" -DefaultChoice 2 -Choices @(
+    PS >Write-HostPrompt "Prompt Caption" "Prompt Message" -DefaultChoice 2 -Choices @(
         New-Object System.Management.Automation.Host.ChoiceDescription -ArgumentList "&1`bChoice one" -Property @{ HelpMessage = "Help Message for Choice 1" }
         New-Object System.Management.Automation.Host.ChoiceDescription -ArgumentList "&2`bChoice two" -Property @{ HelpMessage = "Help Message for Choice 2" }
     )
+
     Display prompt with 2 choices and help messages that defaults to the second choice.
+
 .EXAMPLE
-    PS C:\>Write-HostPrompt "Prompt Caption" "Choose a number" -Choices "Menu Item A", "Menu Item B", "Menu Item C" -HelpMessages "Menu Item A Needs Help", "Menu Item B Needs More Help",, "Menu Item C Needs Crazy Help" -NumberedHotKeys
+    PS >Write-HostPrompt "Prompt Caption" "Choose a number" -Choices "Menu Item A", "Menu Item B", "Menu Item C" -HelpMessages "Menu Item A Needs Help", "Menu Item B Needs More Help",, "Menu Item C Needs Crazy Help" -NumberedHotKeys
+
     Display prompt with 3 choices and help message that are automatically numbered.
+
 .INPUTS
     System.Management.Automation.Host.FieldDescription
     System.Management.Automation.Host.ChoiceDescription
+
 .OUTPUTS
     System.Collections.Generic.Dictionary[System.String,System.Management.Automation.PSObject]
     System.Int32
+    
 .LINK
     https://github.com/jasoth/Utility.PS
 #>
 function Write-HostPrompt {
     [CmdletBinding()]
-    param
-    (
+    param (
         # Caption to preceed or title the prompt.
         [Parameter(Mandatory = $true, Position = 1)]
         [string] $Caption,

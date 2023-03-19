@@ -1,13 +1,22 @@
 [CmdletBinding()]
 param (
     [Parameter(Mandatory = $false)]
-    [string] $ModulePath = "..\src\*.psd1"
+    [string] $ModulePath = ".\src\*.psd1"
 )
 
-Import-Module $ModulePath -Force
+BeforeDiscovery {
+    ## Load Test Helper Functions
+    . (Join-Path $PSScriptRoot 'TestCommon.ps1')
+}
 
-## Load Test Helper Functions
-. (Join-Path $PSScriptRoot 'TestCommon.ps1')
+BeforeAll {
+    $CriticalError = $null
+    $PSModule = Import-Module $ModulePath -Force -PassThru -ErrorVariable CriticalError
+    if ($CriticalError) { throw $CriticalError }
+
+    ## Load Test Helper Functions
+    . (Join-Path $PSScriptRoot 'TestCommon.ps1')
+}
 
 Describe 'New-SecureStringKey' {
 
@@ -15,7 +24,7 @@ Describe 'New-SecureStringKey' {
         $Output = New-SecureStringKey
         AutoEnumerate $Output | Should -HaveCount 1
         AutoEnumerate $Output | Should -BeOfType [securestring]
-        (ConvertFrom-SecureString $Output).Length -eq 524 | Should -BeTrue
+        (ConvertFrom-SecureString $Output).Length | Should -Be 524
     }
 
     It 'as Positional Parameter' {
@@ -23,7 +32,7 @@ Describe 'New-SecureStringKey' {
         $Output = New-SecureStringKey $Input
         AutoEnumerate $Output | Should -HaveCount 1
         AutoEnumerate $Output | Should -BeOfType [securestring]
-        (ConvertFrom-SecureString $Output).Length -eq 556 | Should -BeTrue
+        (ConvertFrom-SecureString $Output).Length | Should -Be 556
     }
 
     It 'as Pipeline Input' {
@@ -31,7 +40,7 @@ Describe 'New-SecureStringKey' {
         $Output = $Input | New-SecureStringKey
         AutoEnumerate $Output | Should -HaveCount 1
         AutoEnumerate $Output | Should -BeOfType [securestring]
-        (ConvertFrom-SecureString $Output).Length -eq 588 | Should -BeTrue
+        (ConvertFrom-SecureString $Output).Length | Should -Be 588
     }
 
 }

@@ -41,13 +41,13 @@ function Test-ComparisionAssertions ($Reference, $Difference, [switch]$ArrayBase
     if ($null -eq $Reference) {
         $null -eq $Difference | Should -BeTrue
     }
-    elseif ($Reference -is [array] -or $Reference -is [System.Collections.ArrayList] -or $Reference.GetType().FullName.StartsWith('System.Collections.Generic.List')) {
+    elseif ($Reference -is [System.Collections.IList]) {
         $Difference | Should -HaveCount $Reference.Count
         for ($i = 0; $i -lt $Reference.Count; $i++) {
             Test-ComparisionAssertions $Reference[$i] $Difference[$i]
         }
     }
-    elseif ($Reference -is [hashtable] -or $Reference -is [System.Collections.Specialized.OrderedDictionary] -or $Reference.GetType().FullName.StartsWith('System.Collections.Generic.Dictionary')) {
+    elseif ($Reference -is [System.Collections.IDictionary]) {
         $Difference.Keys | Should -HaveCount $Reference.Keys.Count
         foreach ($Item in $Reference.GetEnumerator()) {
             Test-ComparisionAssertions $Item.Value $Difference[$Item.Key]
@@ -105,82 +105,100 @@ function Test-ErrorOutput ($ErrorRecord, [switch]$SkipCategory, [switch]$SkipErr
 
 function TestGroup ([type]$TestClass, [int]$StartIndex = 0) {
     Context $TestClass.Name {
-        $TestValues = New-Object $TestClass.Name -ErrorAction Stop
-        $BoundParameters = $TestValues.BoundParameters
+
+        BeforeDiscovery {
+            $TestValues = New-Object $TestClass.Name -ErrorAction Stop
+            $BoundParameters = $TestValues.BoundParameters
+        }
 
         for ($i = $StartIndex; $i -lt $TestValues.IO.Count; $i++) {
-            $TestIO = $TestValues.IO[$i]
+            #$TestIO = $TestValues.IO[$i]
+            
+            Context 'Single Input' -ForEach @(
+                @{ CommandName = $TestValues.CommandName; BoundParameters = $TestValues.BoundParameters; ExpectedInputType = $TestValues.ExpectedInputType; TestIO = $TestValues.IO[$i] }
+            ) {
+                
+                BeforeAll {
+                    if ($TestIO.Input -is [scriptblock]) {
+                        $TestIO.Input = & $TestIO.Input
+                    }
+                }
 
-            It ('Single Input [Index:{0}] of Type [{1}] as Positional Parameter{2}' -f $i, $TestIO.Input.GetType().Name, $(if ($TestIO.Error.Count -gt 0) { ' with Error' })) {
-                $Input = GetInput $TestIO -AssertType $TestValues.ExpectedInputType
-                $Output = & $TestValues.CommandName $Input -ErrorAction SilentlyContinue -ErrorVariable ErrorObjects @BoundParameters
-                $ErrorObjects | Should -HaveCount $TestIO.Error.Count
-                AutoEnumerate $Output | Should -HaveCount (1 - $TestIO.Error.Count)
-                if ($TestIO.ContainsKey('Error')) {
-                    Test-ErrorOutput $ErrorObjects
+                It ('Single Input [Index:{0}] of Type [{1}] as Positional Parameter{2}' -f $i, $TestIO.Input.GetType().Name, $(if ($TestIO.Error.Count -gt 0) { ' with Error' })) {
+                    $Input = GetInput $TestIO -AssertType $ExpectedInputType
+                    $Output = & $CommandName $Input -ErrorAction SilentlyContinue -ErrorVariable ErrorObjects @BoundParameters
+                    $ErrorObjects | Should -HaveCount $TestIO.Error.Count
+                    AutoEnumerate $Output | Should -HaveCount (1 - $TestIO.Error.Count)
+                    if ($TestIO.ContainsKey('Error')) {
+                        Test-ErrorOutput $ErrorObjects
+                    }
+                    else {
+                        #AutoEnumerate $Output | Should -BeOfType $TestIO.Output.GetType()
+                        #$Output | Should -BeExactly $TestIO.Output
+                        Test-ComparisionAssertions $TestIO.Output $Output
+                    }
                 }
-                else {
-                    #AutoEnumerate $Output | Should -BeOfType $TestIO.Output.GetType()
-                    #$Output | Should -BeExactly $TestIO.Output
-                    Test-ComparisionAssertions $TestIO.Output $Output
-                }
-            }
 
-            It ('Single Input [Index:{0}] of Type [{1}] as Pipeline Input{2}' -f $i, $TestIO.Input.GetType().Name, $(if ($TestIO.Error.Count -gt 0) { ' with Error' })) {
-                $Input = GetInput $TestIO -AssertType $TestValues.ExpectedInputType
-                $Output = $Input | & $TestValues.CommandName -ErrorAction SilentlyContinue -ErrorVariable ErrorObjects @BoundParameters
-                $ErrorObjects | Should -HaveCount $TestIO.Error.Count
-                AutoEnumerate $Output | Should -HaveCount (1 - $TestIO.Error.Count)
-                if ($TestIO.ContainsKey('Error')) {
-                    Test-ErrorOutput $ErrorObjects
-                }
-                else {
-                    if ($TestIO.ContainsKey('PipeOutput')) { $TestIOOutput = $TestIO.PipeOutput }
-                    else { $TestIOOutput = $TestIO.Output }
-                    #AutoEnumerate $Output | Should -BeOfType $TestIOOutput.GetType()
-                    #$Output | Should -BeExactly $TestIOOutput
-                    Test-ComparisionAssertions $TestIOOutput $Output
+                It ('Single Input [Index:{0}] of Type [{1}] as Pipeline Input{2}' -f $i, $TestIO.Input.GetType().Name, $(if ($TestIO.Error.Count -gt 0) { ' with Error' })) {
+                    $Input = GetInput $TestIO -AssertType $ExpectedInputType
+                    $Output = $Input | & $CommandName -ErrorAction SilentlyContinue -ErrorVariable ErrorObjects @BoundParameters
+                    $ErrorObjects | Should -HaveCount $TestIO.Error.Count
+                    AutoEnumerate $Output | Should -HaveCount (1 - $TestIO.Error.Count)
+                    if ($TestIO.ContainsKey('Error')) {
+                        Test-ErrorOutput $ErrorObjects
+                    }
+                    else {
+                        if ($TestIO.ContainsKey('PipeOutput')) { $TestIOOutput = $TestIO.PipeOutput }
+                        else { $TestIOOutput = $TestIO.Output }
+                        #AutoEnumerate $Output | Should -BeOfType $TestIOOutput.GetType()
+                        #$Output | Should -BeExactly $TestIOOutput
+                        Test-ComparisionAssertions $TestIOOutput $Output
+                    }
                 }
             }
         }
 
         if ($TestValues.IO.Count -gt 1) {
-            $TestIO = $TestValues.IO
+            #$TestIO = $TestValues.IO
 
-            It ('Multiple Inputs [Total:{0}] as Positional Parameter{1}' -f $TestIO.Count, $(if ($TestIO.Error.Count -gt 0) { ' with Error' })) {
-                $Input = GetInput $TestIO -AssertType $TestValues.ExpectedInputType
-                $Output = & $TestValues.CommandName $Input -ErrorAction SilentlyContinue -ErrorVariable ErrorObjects @BoundParameters
-                $ErrorObjects | Should -HaveCount $TestIO.Error.Count
-                $Output | Should -HaveCount ($TestIO.Count - $TestIO.Error.Count)
-                [int] $iError = 0
-                for ($i = 0; $i -lt $TestIO.Count; $i++) {
-                    if ($TestIO[$i].ContainsKey('Error')) {
-                        Test-ErrorOutput $ErrorObjects[$iError]
-                        $iError++
-                    }
-                    else {
-                        #AutoEnumerate $Output[$i-$iError] | Should -BeOfType $TestIO[$i].Output.GetType()
-                        #$Output[$i] | Should -BeExactly $TestIO[$i].Output
-                        Test-ComparisionAssertions $TestIO[$i].Output $Output[$i - $iError]
+            Context 'Multiple Inputs' -ForEach @(
+                @{ CommandName = $TestValues.CommandName; BoundParameters = $TestValues.BoundParameters; ExpectedInputType = $TestValues.ExpectedInputType; TestIO = $TestValues.IO }
+            ) {
+                It ('Multiple Inputs [Total:{0}] as Positional Parameter{1}' -f $TestIO.Count, $(if ($TestIO.Error.Count -gt 0) { ' with Error' })) {
+                    $Input = GetInput $TestIO -AssertType $ExpectedInputType
+                    $Output = & $CommandName $Input -ErrorAction SilentlyContinue -ErrorVariable ErrorObjects @BoundParameters
+                    $ErrorObjects | Should -HaveCount $TestIO.Error.Count
+                    $Output | Should -HaveCount ($TestIO.Count - $TestIO.Error.Count)
+                    [int] $iError = 0
+                    for ($i = 0; $i -lt $TestIO.Count; $i++) {
+                        if ($TestIO[$i].ContainsKey('Error')) {
+                            Test-ErrorOutput $ErrorObjects[$iError]
+                            $iError++
+                        }
+                        else {
+                            #AutoEnumerate $Output[$i-$iError] | Should -BeOfType $TestIO[$i].Output.GetType()
+                            #$Output[$i] | Should -BeExactly $TestIO[$i].Output
+                            Test-ComparisionAssertions $TestIO[$i].Output $Output[$i - $iError]
+                        }
                     }
                 }
-            }
 
-            It ('Multiple Inputs [Total:{0}] as Pipeline Input{1}' -f $TestIO.Count, $(if ($TestIO.Error.Count -gt 0) { ' with Error' })) {
-                $Input = GetInput $TestIO -AssertType $TestValues.ExpectedInputType
-                $Output = $Input | & $TestValues.CommandName -ErrorAction SilentlyContinue -ErrorVariable ErrorObjects @BoundParameters
-                $ErrorObjects | Should -HaveCount $TestIO.Error.Count
-                $Output | Should -HaveCount ($TestIO.Count - $TestIO.Error.Count)
-                [int] $iError = 0
-                for ($i = 0; $i -lt $TestIO.Count; $i++) {
-                    if ($TestIO[$i].ContainsKey('Error')) {
-                        Test-ErrorOutput $ErrorObjects[$iError]
-                        $iError++
-                    }
-                    else {
-                        #AutoEnumerate $Output[$i-$iError] | Should -BeOfType $TestIO[$i].Output.GetType()
-                        #$Output[$i] | Should -BeExactly $TestIO[$i].Output
-                        Test-ComparisionAssertions $TestIO[$i].Output $Output[$i - $iError]
+                It ('Multiple Inputs [Total:{0}] as Pipeline Input{1}' -f $TestIO.Count, $(if ($TestIO.Error.Count -gt 0) { ' with Error' })) {
+                    $Input = GetInput $TestIO -AssertType $ExpectedInputType
+                    $Output = $Input | & $CommandName -ErrorAction SilentlyContinue -ErrorVariable ErrorObjects @BoundParameters
+                    $ErrorObjects | Should -HaveCount $TestIO.Error.Count
+                    $Output | Should -HaveCount ($TestIO.Count - $TestIO.Error.Count)
+                    [int] $iError = 0
+                    for ($i = 0; $i -lt $TestIO.Count; $i++) {
+                        if ($TestIO[$i].ContainsKey('Error')) {
+                            Test-ErrorOutput $ErrorObjects[$iError]
+                            $iError++
+                        }
+                        else {
+                            #AutoEnumerate $Output[$i-$iError] | Should -BeOfType $TestIO[$i].Output.GetType()
+                            #$Output[$i] | Should -BeExactly $TestIO[$i].Output
+                            Test-ComparisionAssertions $TestIO[$i].Output $Output[$i - $iError]
+                        }
                     }
                 }
             }

@@ -1,93 +1,120 @@
 [CmdletBinding()]
 param (
     [Parameter(Mandatory = $false)]
-    [string] $ModulePath = "..\src\*.psd1"
+    [string] $ModulePath = ".\src\*.psd1"
 )
 
-Import-Module $ModulePath -Force
+BeforeDiscovery {
+    ## Load Test Helper Functions
+    . (Join-Path $PSScriptRoot 'TestCommon.ps1')
+}
 
-## Load Test Helper Functions
-. (Join-Path $PSScriptRoot 'TestCommon.ps1')
+BeforeAll {
+    $CriticalError = $null
+    $PSModule = Import-Module $ModulePath -Force -PassThru -ErrorVariable CriticalError
+    if ($CriticalError) { throw $CriticalError }
+
+    ## Load Test Helper Functions
+    . (Join-Path $PSScriptRoot 'TestCommon.ps1')
+}
 
 function TestGroup ([type]$TestClass, [int]$StartIndex = 0) {
     Context $TestClass.Name {
-        $TestValues = New-Object $TestClass.Name -ErrorAction Stop
-        $BoundParameters = $TestValues.BoundParameters
+
+        BeforeDiscovery {
+            $TestValues = New-Object $TestClass.Name -ErrorAction Stop
+            $BoundParameters = $TestValues.BoundParameters
+        }
 
         for ($i = $StartIndex; $i -lt $TestValues.IO.Count; $i++) {
-            [hashtable[]] $TestIO = $TestValues.IO[$i]
+            #[hashtable[]] $TestIO = $TestValues.IO[$i]
 
-            It ('Single Input [Index:{0}] of Type [{1}] as Positional Parameter' -f $i, $TestIO[0].Input.GetType().Name) {
-                $TestInput = GetInput $TestIO[0] -AssertType $TestValues.ExpectedInputType
-                $PSString = & $TestValues.CommandName $TestInput @BoundParameters
-                #Write-Host ($PSString -join "`r`n")
-                if ($TestIO[0].ContainsKey('Output')) { Test-ComparisionAssertions $TestIO[0].Output $PSString }
-                $PSString = [string[]]$PSString
-                $TestInputArray = [array]$TestInput
-                for ($ii = 0; $ii -lt $PSString.Count; $ii++) {
-                    Invoke-Expression ('$Output = {0}' -f $PSString[$ii])  # Variable set inside expression because arrays, lists, and arraylists do not retain strong type through Invoke-Expression output
-                    if ($PSString.Count -eq 1) {
-                        Test-ComparisionAssertions $TestInput $Output
-                    }
-                    else {
-                        Test-ComparisionAssertions $TestInputArray[$ii] $Output
+            Context 'Single Input' -ForEach @(
+                @{ CommandName = $TestValues.CommandName; BoundParameters = $TestValues.BoundParameters; ExpectedInputType = $TestValues.ExpectedInputType; TestIO = [hashtable[]]$TestValues.IO[$i] }
+            ) {
+                
+                BeforeAll {
+                    if ($TestIO.Input -is [scriptblock]) {
+                        $TestIO.Input = & $TestIO.Input
                     }
                 }
-            }
 
-            It ('Single Input [Index:{0}] of Type [{1}] as Pipeline Input' -f $i, $TestIO[0].Input.GetType().Name) {
-                $TestInput = GetInput $TestIO[0] -AssertType $TestValues.ExpectedInputType
-                $PSString = $TestInput | & $TestValues.CommandName -WarningAction SilentlyContinue @BoundParameters
-                #Write-Host ($PSString -join "`r`n")
-                if ($TestIO[0].ContainsKey('PipeOutput')) { Test-ComparisionAssertions $TestIO[0].PipeOutput $PSString }
-                elseif ($TestIO[0].ContainsKey('Output')) { Test-ComparisionAssertions $TestIO[0].Output $PSString }
-                $PSString = [string[]]$PSString
-                $TestInputArray = [array]$TestInput
-                for ($ii = 0; $ii -lt $PSString.Count; $ii++) {
-                    Invoke-Expression ('$Output = {0}' -f $PSString[$ii])  # Variable set inside expression because arrays, lists, and arraylists do not retain strong type through Invoke-Expression output
-                    if ($PSString.Count -eq 1) {
-                        Test-ComparisionAssertions $TestInput $Output -ArrayBaseTypeMatch
+                It ('Single Input [Index:{0}] of Type [{1}] as Positional Parameter' -f $i, $TestIO[0].Input.GetType().Name) {
+                    $TestInput = GetInput $TestIO[0] -AssertType $ExpectedInputType
+                    $PSString = & $CommandName $TestInput @BoundParameters
+                    #Write-Host ($PSString -join "`r`n")
+                    if ($TestIO[0].ContainsKey('Output')) { Test-ComparisionAssertions $TestIO[0].Output $PSString }
+                    $PSString = [string[]]$PSString
+                    $TestInputArray = [array]$TestInput
+                    for ($ii = 0; $ii -lt $PSString.Count; $ii++) {
+                        Invoke-Expression ('$Output = {0}' -f $PSString[$ii])  # Variable set inside expression because arrays, lists, and arraylists do not retain strong type through Invoke-Expression output
+                        if ($PSString.Count -eq 1) {
+                            Test-ComparisionAssertions $TestInput $Output
+                        }
+                        else {
+                            Test-ComparisionAssertions $TestInputArray[$ii] $Output
+                        }
                     }
-                    else {
-                        Test-ComparisionAssertions $TestInputArray[$ii] $Output
+                }
+
+                It ('Single Input [Index:{0}] of Type [{1}] as Pipeline Input' -f $i, $TestIO[0].Input.GetType().Name) {
+                    $TestInput = GetInput $TestIO[0] -AssertType $ExpectedInputType
+                    $PSString = $TestInput | & $CommandName -WarningAction SilentlyContinue @BoundParameters
+                    #Write-Host ($PSString -join "`r`n")
+                    if ($TestIO[0].ContainsKey('PipeOutput')) { Test-ComparisionAssertions $TestIO[0].PipeOutput $PSString }
+                    elseif ($TestIO[0].ContainsKey('Output')) { Test-ComparisionAssertions $TestIO[0].Output $PSString }
+                    $PSString = [string[]]$PSString
+                    $TestInputArray = [array]$TestInput
+                    for ($ii = 0; $ii -lt $PSString.Count; $ii++) {
+                        Invoke-Expression ('$Output = {0}' -f $PSString[$ii])  # Variable set inside expression because arrays, lists, and arraylists do not retain strong type through Invoke-Expression output
+                        if ($PSString.Count -eq 1) {
+                            Test-ComparisionAssertions $TestInput $Output -ArrayBaseTypeMatch
+                        }
+                        else {
+                            Test-ComparisionAssertions $TestInputArray[$ii] $Output
+                        }
                     }
                 }
             }
         }
 
         if ($TestValues.IO.Count -gt 1) {
-            $TestIO = $TestValues.IO
+            #$TestIO = $TestValues.IO
 
-            It ('Multiple Inputs [Total:{0}] as Positional Parameter' -f $TestIO.Count) {
-                $TestInput = GetInput $TestIO -AssertType $TestValues.ExpectedInputType
-                $PSString = & $TestValues.CommandName $TestInput @BoundParameters
-                #Write-Host ($PSString -join "`r`n")
-                $PSString = [string[]]$PSString
-                $TestInputArray = [array]$TestInput
-                for ($ii = 0; $ii -lt $PSString.Count; $ii++) {
-                    Invoke-Expression ('$Output = {0}' -f $PSString[$ii])  # Variable set inside expression because arrays, lists, and arraylists do not retain strong type through Invoke-Expression output
-                    if ($PSString.Count -eq 1) {
-                        Test-ComparisionAssertions $TestInput $Output
-                    }
-                    else {
-                        Test-ComparisionAssertions $TestInputArray[$ii] $Output
+            Context 'Multiple Inputs' -ForEach @(
+                @{ CommandName = $TestValues.CommandName; BoundParameters = $TestValues.BoundParameters; ExpectedInputType = $TestValues.ExpectedInputType; TestIO = $TestValues.IO }
+            ) {
+                It ('Multiple Inputs [Total:{0}] as Positional Parameter' -f $TestIO.Count) {
+                    $TestInput = GetInput $TestIO -AssertType $ExpectedInputType
+                    $PSString = & $CommandName $TestInput @BoundParameters
+                    #Write-Host ($PSString -join "`r`n")
+                    $PSString = [string[]]$PSString
+                    $TestInputArray = [array]$TestInput
+                    for ($ii = 0; $ii -lt $PSString.Count; $ii++) {
+                        Invoke-Expression ('$Output = {0}' -f $PSString[$ii])  # Variable set inside expression because arrays, lists, and arraylists do not retain strong type through Invoke-Expression output
+                        if ($PSString.Count -eq 1) {
+                            Test-ComparisionAssertions $TestInput $Output
+                        }
+                        else {
+                            Test-ComparisionAssertions $TestInputArray[$ii] $Output
+                        }
                     }
                 }
-            }
 
-            It ('Multiple Inputs [Total:{0}] as Pipeline Input' -f $TestIO.Count) {
-                $TestInput = GetInput $TestIO -AssertType $TestValues.ExpectedInputType
-                $PSString = $TestInput | & $TestValues.CommandName -WarningAction SilentlyContinue @BoundParameters
-                #Write-Host ($PSString -join "`r`n")
-                $PSString = [string[]]$PSString
-                $TestInputArray = [array]$TestInput
-                for ($ii = 0; $ii -lt $PSString.Count; $ii++) {
-                    Invoke-Expression ('$Output = {0}' -f $PSString[$ii])  # Variable set inside expression because arrays, lists, and arraylists do not retain strong type through Invoke-Expression output
-                    if ($PSString.Count -eq 1) {
-                        Test-ComparisionAssertions $TestInput $Output -ArrayBaseTypeMatch
-                    }
-                    else {
-                        Test-ComparisionAssertions $TestInputArray[$ii] $Output
+                It ('Multiple Inputs [Total:{0}] as Pipeline Input' -f $TestIO.Count) {
+                    $TestInput = GetInput $TestIO -AssertType $ExpectedInputType
+                    $PSString = $TestInput | & $CommandName -WarningAction SilentlyContinue @BoundParameters
+                    #Write-Host ($PSString -join "`r`n")
+                    $PSString = [string[]]$PSString
+                    $TestInputArray = [array]$TestInput
+                    for ($ii = 0; $ii -lt $PSString.Count; $ii++) {
+                        Invoke-Expression ('$Output = {0}' -f $PSString[$ii])  # Variable set inside expression because arrays, lists, and arraylists do not retain strong type through Invoke-Expression output
+                        if ($PSString.Count -eq 1) {
+                            Test-ComparisionAssertions $TestInput $Output -ArrayBaseTypeMatch
+                        }
+                        else {
+                            Test-ComparisionAssertions $TestInputArray[$ii] $Output
+                        }
                     }
                 }
             }

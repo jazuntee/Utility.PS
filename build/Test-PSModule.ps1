@@ -1,75 +1,50 @@
 param
 (
-    # Directory used to base all relative paths
-    [Parameter(Mandatory = $false)]
-    [string] $BaseDirectory = "..\",
     #
     [Parameter(Mandatory = $false)]
-    [string] $ModuleDirectory = ".\build\release\Utility.PS",
+    [string] $ModuleManifestPath = ".\src\*.psd1",
     #
     [Parameter(Mandatory = $false)]
-    [string] $ModuleManifestPath,
+    [string] $PSModuleCacheDirectory = ".\build\TestResults\PSModuleCache",
     #
     [Parameter(Mandatory = $false)]
-    [string] $ModuleTestsDirectory = ".\tests",
+    [string] $PesterConfigurationPath = ".\build\PesterConfiguration.psd1",
     #
     [Parameter(Mandatory = $false)]
-    [string] $ModuleTestFileName = "*",
+    [string] $TestResultPath,
     #
     [Parameter(Mandatory = $false)]
-    [string[]] $PowerShellPaths = @(
-        'pwsh'
-        'powershell'
-        #'D:\Software\PowerShell-6.2.4-win-x64\pwsh.exe'
-    ),
+    [string] $CodeCoveragePath,
     #
     [Parameter(Mandatory = $false)]
-    [switch] $NoNewWindow
+    [string] $ModuleTestsDirectory = ".\tests"
 )
-
-Write-Debug @"
-Environment Variables
-Processor_Architecture: $env:Processor_Architecture
-      CurrentDirectory: $((Get-Location).ProviderPath)
-          PSScriptRoot: $PSScriptRoot
-"@
 
 ## Initialize
 Import-Module "$PSScriptRoot\CommonFunctions.psm1" -Force -WarningAction SilentlyContinue -ErrorAction Stop
-$ModuleTestFileName = $ModuleTestFileName -replace '.Tests.Tests.ps1','.Tests.ps1'
-.\Build-PSModule.ps1
 
-[System.IO.DirectoryInfo] $BaseDirectoryInfo = Get-PathInfo $BaseDirectory -InputPathType Directory -ErrorAction Stop
-[System.IO.DirectoryInfo] $ModuleDirectoryInfo = Get-PathInfo $ModuleDirectory -InputPathType Directory -DefaultDirectory $BaseDirectoryInfo.FullName -ErrorAction SilentlyContinue
-[System.IO.FileInfo] $ModuleManifestFileInfo = Get-PathInfo $ModuleManifestPath -DefaultDirectory $ModuleDirectoryInfo.FullName -DefaultFilename "*.psd1" -ErrorAction SilentlyContinue
-[System.IO.DirectoryInfo] $ModuleTestsDirectoryInfo = Get-PathInfo $ModuleTestsDirectory -InputPathType Directory -DefaultDirectory $BaseDirectoryInfo.FullName -ErrorAction SilentlyContinue
+[System.IO.FileInfo] $ModuleManifestFileInfo = Get-PathInfo $ModuleManifestPath -DefaultFilename "*.psd1" -ErrorAction Stop | Select-Object -Last 1
+[System.IO.FileInfo] $TestResultFileInfo = Get-PathInfo $TestResultPath -DefaultFilename 'TestResult.xml' -ErrorAction Ignore
+[System.IO.FileInfo] $CodeCoverageFileInfo = Get-PathInfo $CodeCoveragePath -DefaultFilename 'CodeCoverage.xml' -ErrorAction Ignore
+[System.IO.DirectoryInfo] $PSModuleCacheDirectoryInfo = Get-PathInfo $PSModuleCacheDirectory -InputPathType Directory -SkipEmptyPaths -ErrorAction SilentlyContinue
+[System.IO.FileInfo] $PesterConfigurationFileInfo = Get-PathInfo $PesterConfigurationPath -DefaultFilename 'PesterConfiguration.psd1' -ErrorAction SilentlyContinue
+[System.IO.DirectoryInfo] $ModuleTestsDirectoryInfo = Get-PathInfo $ModuleTestsDirectory -InputPathType Directory -ErrorAction SilentlyContinue
 
-##
-if ($ModuleManifestFileInfo.Exists) {
-    [string] $ModulePath = $ModuleManifestFileInfo.FullName
-}
-else {
-    [string] $ModulePath = $ModuleDirectoryInfo.FullName
-}
+## Restore Module Dependencies
+&$PSScriptRoot\Restore-PSModuleDependencies.ps1 -ModuleManifestPath $ModuleManifestPath -PSModuleCacheDirectory $PSModuleCacheDirectoryInfo.FullName | Out-Null
 
-$strScriptBlockTest = 'Import-Module {0};' -f $ModulePath
+Import-Module Pester -MinimumVersion 5.0.0
+#$PSModule = Import-Module $ModulePath -PassThru -Force
 
-$ScriptBlockTest = {
-    param ([string]$ModulePath, [string]$TestsDirectory, [string]$TestFileName)
-    ## Force WindowsPowerShell to load correct version of built-in modules when launched from PowerShell 6+
-    if ($PSVersionTable.PSEdition -eq 'Desktop') { Import-Module 'Microsoft.PowerShell.Management', 'Microsoft.PowerShell.Utility', 'CimCmdlets' -MaximumVersion 5.9.9.9 }
-    Import-Module Pester -MaximumVersion 4.99
-    $PSModule = Import-Module $ModulePath -PassThru
+$PesterConfiguration = New-PesterConfiguration (Import-PowerShellDataFile $PesterConfigurationFileInfo.FullName)
+$PesterConfiguration.Run.Container = New-PesterContainer -Path $ModuleTestsDirectoryInfo.FullName -Data @{ ModulePath = $ModuleManifestFileInfo.FullName }
+$PesterConfiguration.CodeCoverage.Path = Split-Path $ModuleManifestFileInfo.FullName -Parent
+if ($TestResultPath) { $PesterConfiguration.TestResult.OutputPath = $TestResultFileInfo.FullName }
+if ($CodeCoveragePath) { $PesterConfiguration.CodeCoverage.OutputPath = $CodeCoverageFileInfo.FullName }
+#$PesterConfiguration.CodeCoverage.OutputPath = [IO.Path]::ChangeExtension($PesterConfiguration.CodeCoverage.OutputPath.Value, "$($PSVersionTable.PSVersion).xml")
+#$PesterConfiguration.TestResult.OutputPath = [IO.Path]::ChangeExtension($PesterConfiguration.TestResult.OutputPath.Value, "$($PSVersionTable.PSVersion).xml")
+$PesterRun = Invoke-Pester -Configuration $PesterConfiguration
+$PesterRun
 
-    Set-ExecutionPolicy Bypass -Scope Process
-    $CodeCoverage = Invoke-Pester @{ Path = (Join-Path $TestsDirectory "$TestFileName*"); Parameters = @{ ModulePath = $ModulePath } } -CodeCoverage (Join-Path $PSModule.ModuleBase ($TestFileName -replace '.Tests.ps1','.ps1')) -PassThru
-}
-$strScriptBlockTest = 'Invoke-Command -ScriptBlock {{ {0} }} -ArgumentList {1}' -f $ScriptBlockTest, (($ModulePath, $ModuleTestsDirectoryInfo.FullName, $ModuleTestFileName | ConvertTo-PsString -Compact) -join ',')
-
-#[string] $strScriptBlockTest = Get-Content (Join-Path $BaseDirectoryInfo.FullName 'tests\Get-X509Certificate.tests.ps1') -Raw
-
-[string[]] $ArgumentList = ('-NoProfile', '-ExecutionPolicy', 'AllSigned', '-EncodedCommand', [Convert]::ToBase64String([System.Text.Encoding]::Unicode.GetBytes($strScriptBlockTest)))
-if (!$NoNewWindow) { $ArgumentList += '-NoExit' }
-foreach ($Path in $PowerShellPaths) {
-    Start-Process $Path -ArgumentList $ArgumentList -NoNewWindow:$NoNewWindow -Wait:$NoNewWindow
-}
+## Return SucceededWithIssues when running in ADO Pipeline and a test fails.
+if ($env:AGENT_ID -and $PesterRun -and $PesterRun.Result -ne 'Passed') { Write-Host '##vso[task.complete result=SucceededWithIssues;]FailedTest' }

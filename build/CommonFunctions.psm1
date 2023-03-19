@@ -179,10 +179,19 @@ function Get-PathInfo {
             if ($Path) {
                 ## Look for existing path
                 try {
-                    $ResolvePath = Resolve-FullPath $Path -BaseDirectory $DefaultDirectory -ErrorAction SilentlyContinue
-                    $OutputPath = Get-Item $ResolvePath -ErrorAction SilentlyContinue
+                    $ResolvePath = Resolve-FullPath $Path -BaseDirectory $DefaultDirectory -ErrorAction Ignore
+                    if ($ResolvePath) {
+                        $OutputPath = Get-Item $ResolvePath -ErrorAction Ignore
+                    }
                 }
                 catch { }
+                if ($OutputPath -is [array]) {
+                    $paramGetPathInfo = Select-PsBoundParameters $PSBoundParameters -CommandName Get-PathInfo -ExcludeParameters Paths
+                    Get-PathInfo $OutputPath @paramGetPathInfo
+                    return
+                }
+
+                [string] $AbsolutePath = $null
                 ## If path could not be found and there are no wildcards, then create a FileSystemInfo object for the path.
                 if (!$OutputPath -and $Path -notmatch '[*?]') {
                     ## Get Absolute Path
@@ -200,8 +209,10 @@ function Get-PathInfo {
                     [string] $AbsolutePath = (Join-Path $OutputPath.FullName $DefaultFileName)
                     $OutputPath = $null
                     try {
-                        $ResolvePath = Resolve-FullPath $AbsolutePath -BaseDirectory $DefaultDirectory -ErrorAction SilentlyContinue
-                        $OutputPath = Get-Item $ResolvePath -ErrorAction SilentlyContinue
+                        $ResolvePath = Resolve-FullPath $AbsolutePath -BaseDirectory $DefaultDirectory -ErrorAction Ignore
+                        if ($ResolvePath) {
+                            $OutputPath = Get-Item $ResolvePath -ErrorAction Ignore
+                        }
                     }
                     catch { }
                     if (!$OutputPath -and $AbsolutePath -notmatch '[*?]') {
@@ -210,8 +221,9 @@ function Get-PathInfo {
                 }
 
                 if (!$OutputPath -or !$OutputPath.Exists) {
-                    if ($OutputPath) { Write-Error -Exception (New-Object System.Management.Automation.ItemNotFoundException -ArgumentList ('Cannot find path ''{0}'' because it does not exist.' -f $OutputPath.FullName)) -TargetObject $OutputPath.FullName -ErrorId 'PathNotFound' -Category ObjectNotFound }
-                    else { Write-Error -Exception (New-Object System.Management.Automation.ItemNotFoundException -ArgumentList ('Cannot find path ''{0}'' because it does not exist.' -f $AbsolutePath)) -TargetObject $AbsolutePath -ErrorId 'PathNotFound' -Category ObjectNotFound }
+                    if ($OutputPath) { Write-Error -Exception (New-Object System.Management.Automation.ItemNotFoundException -ArgumentList ('Cannot find path ''{0}'' because it does not exist.' -f $OutputPath.FullName)) -TargetObject $OutputPath.FullName -ErrorId 'PathNotFound' -Category ObjectNotFound -ErrorAction $ErrorActionPreference }
+                    elseif ($AbsolutePath) { Write-Error -Exception (New-Object System.Management.Automation.ItemNotFoundException -ArgumentList ('Cannot find path ''{0}'' because it does not exist.' -f $AbsolutePath)) -TargetObject $AbsolutePath -ErrorId 'PathNotFound' -Category ObjectNotFound -ErrorAction $ErrorActionPreference }
+                    else { Write-Error -Exception (New-Object System.Management.Automation.ItemNotFoundException -ArgumentList ('Cannot find path ''{0}'' because it does not exist.' -f $Path)) -TargetObject $Path -ErrorId 'PathNotFound' -Category ObjectNotFound -ErrorAction $ErrorActionPreference }
                 }
             }
 
@@ -220,6 +232,7 @@ function Get-PathInfo {
         }
     }
 }
+
 
 function Assert-DirectoryExists {
     [CmdletBinding()]
@@ -250,6 +263,53 @@ function Assert-DirectoryExists {
             }
         }
     }
+}
+
+function New-LogFilename ([string] $Path) { return ('{0}.{1}.log' -f $Path, (Get-Date -Format "yyyyMMddThhmmss")) }
+function Get-ExtractionFolder ([System.IO.FileInfo] $Path) { return Join-Path $Path.DirectoryName $Path.BaseName }
+
+function Use-StartBitsTransfer {
+    [CmdletBinding(SupportsShouldProcess = $true, ConfirmImpact = 'Medium')]
+    param (
+        # Specifies the source location and the names of the files that you want to transfer.
+        [Parameter(Mandatory = $true, Position = 0)]
+        [string] $Source,
+        # Specifies the destination location and the names of the files that you want to transfer.
+        [Parameter(Mandatory = $false, Position = 1)]
+        [string] $Destination,
+        # Specifies the proxy usage settings
+        [Parameter(Mandatory = $false, Position = 3)]
+        [ValidateSet('SystemDefault', 'NoProxy', 'AutoDetect', 'Override')]
+        [string] $ProxyUsage,
+        # Specifies a list of proxies to use
+        [Parameter(Mandatory = $false, Position = 4)]
+        [uri[]] $ProxyList,
+        # Specifies the authentication mechanism to use at the Web proxy
+        [Parameter(Mandatory = $false, Position = 5)]
+        [ValidateSet('Basic', 'Digest', 'NTLM', 'Negotiate', 'Passport')]
+        [string] $ProxyAuthentication,
+        # Specifies the credentials to use to authenticate the user at the proxy
+        [Parameter(Mandatory = $false, Position = 6)]
+        [pscredential] $ProxyCredential,
+        # Returns an object representing transfered item.
+        [Parameter(Mandatory = $false)]
+        [switch] $PassThru
+    )
+    [hashtable] $paramStartBitsTransfer = $PSBoundParameters
+    foreach ($Parameter in $PSBoundParameters.Keys) {
+        if ($Parameter -notin 'ProxyUsage', 'ProxyList', 'ProxyAuthentication', 'ProxyCredential') {
+            $paramStartBitsTransfer.Remove($Parameter)
+        }
+    }
+
+    if (!$Destination) { $Destination = (Get-Location).ProviderPath }
+    if (![System.IO.Path]::HasExtension($Destination)) { $Destination = Join-Path $Destination (Split-Path $Source -Leaf) }
+    if (Test-Path $Destination) { Write-Verbose ('The Source [{0}] was not transfered to Destination [{0}] because it already exists.' -f $Source, $Destination) }
+    else {
+        Write-Verbose ('Downloading Source [{0}] to Destination [{1}]' -f $Source, $Destination);
+        Start-BitsTransfer $Source $Destination @paramStartBitsTransfer
+    }
+    if ($PassThru) { return Get-Item $Destination }
 }
 
 function Use-StartProcess {
@@ -287,169 +347,122 @@ function Use-StartProcess {
     }
 }
 
+<#
+.SYNOPSIS
+    Convert Byte Array or Plain Text String to Base64 String.
+.DESCRIPTION
 
+.EXAMPLE
+    PS C:\>ConvertTo-Base64String "A string with base64 encoding"
+    Convert String with Default Encoding to Base64 String.
+.EXAMPLE
+    PS C:\>"ASCII string with base64url encoding" | ConvertTo-Base64String -Base64Url -Encoding Ascii
+    Convert String with Ascii Encoding to Base64Url String.
+.EXAMPLE
+    PS C:\>ConvertTo-Base64String ([guid]::NewGuid())
+    Convert GUID to Base64 String.
+.INPUTS
+    System.Object
+#>
+function ConvertTo-Base64String {
+    [CmdletBinding()]
+    [OutputType([string])]
+    param (
+        # Value to convert
+        [Parameter(Mandatory = $true, Position = 0, ValueFromPipeline = $true)]
+        [object] $InputObject,
+        # Use base64url variant
+        [Parameter (Mandatory = $false)]
+        [switch] $Base64Url,
+        # Output encoding to use for text strings
+        [Parameter (Mandatory = $false)]
+        [ValidateSet("Ascii", "UTF32", "UTF7", "UTF8", "BigEndianUnicode", "Unicode")]
+        [string] $Encoding = "Default"
+    )
 
-function New-AzureADApplicationPublicClient ($MsalToken) {
-    [hashtable] $Headers = @{
-        Authorization = $MsalToken.CreateAuthorizationHeader()
+    process {
+        [byte[]] $inputBytes = $null
+        if ($InputObject -is [byte[]] -or $InputObject -is [byte]) {
+            $inputBytes = $InputObject
+        }
+        elseif ($InputObject -is [string]) {
+            $inputBytes = [Text.Encoding]::$Encoding.GetBytes($InputObject)
+        }
+        elseif ($InputObject -is [bool] -or $InputObject -is [char] -or $InputObject -is [single] -or $InputObject -is [double] -or $InputObject -is [int16] -or $InputObject -is [int32] -or $InputObject -is [int64] -or $InputObject -is [uint16] -or $InputObject -is [uint32] -or $InputObject -is [uint64]) {
+            $inputBytes = [System.BitConverter]::GetBytes($InputObject)
+        }
+        elseif ($InputObject -is [guid]) {
+            $inputBytes = $InputObject.ToByteArray()
+        }
+        elseif ($InputObject -is [System.IO.FileSystemInfo]) {
+            $inputBytes = Get-Content $InputObject.FullName -Raw -Encoding Byte
+        }
+        else {
+            # Otherwise, write a non-terminating error message indicating that input object type is not supported.
+            $errorMessage = "Cannot convert input of type {0} to Base64 string." -f $InputObject.GetType()
+            Write-Error -Message $errorMessage -Category ([System.Management.Automation.ErrorCategory]::ParserError) -ErrorId "ConvertBase64StringFailureTypeNotSupported"
+        }
+
+        if ($inputBytes) {
+            [string] $outBase64String = [System.Convert]::ToBase64String($inputBytes)
+            if ($Base64Url) { $outBase64String = $outBase64String.Replace('+', '-').Replace('/', '_').Replace('=', '') }
+            return $outBase64String
+        }
     }
+}
 
-    $appPublicClient = Invoke-RestMethod -Method Post -Uri "https://graph.microsoft.com/beta/applications" -Headers $Headers -ContentType 'application/json' -Body (ConvertTo-Json -Depth 4 @{
-            displayName            = "PublicClient"
-            signInAudience         = "AzureADMyOrg"
-            isFallbackPublicClient = $true
-            publicClient           = @{
-                redirectUris = @(
-                    "urn:ietf:wg:oauth:2.0:oob"
-                    "https://login.microsoftonline.com/common/oauth2/nativeclient"
-                )
+<#
+.SYNOPSIS
+    Convert Base64 String to Byte Array or Plain Text String.
+.DESCRIPTION
+
+.EXAMPLE
+    PS C:\>ConvertFrom-Base64String "QSBzdHJpbmcgd2l0aCBiYXNlNjQgZW5jb2Rpbmc="
+    Convert Base64 String to String with Default Encoding.
+.EXAMPLE
+    PS C:\>"QVNDSUkgc3RyaW5nIHdpdGggYmFzZTY0dXJsIGVuY29kaW5n" | ConvertFrom-Base64String -Base64Url -Encoding Ascii
+    Convert Base64Url String to String with Ascii Encoding.
+.EXAMPLE
+    PS C:\>[guid](ConvertFrom-Base64String "5oIhNbCaFUGAe8NsiAKfpA==" -RawBytes)
+    Convert Base64 String to GUID.
+.INPUTS
+    System.String
+#>
+function ConvertFrom-Base64String {
+    [CmdletBinding()]
+    [OutputType([byte[]], [string])]
+    param (
+        # Value to convert
+        [Parameter(Mandatory = $true, Position = 0, ValueFromPipeline = $true)]
+        [string[]] $InputObject,
+        # Use base64url variant
+        [Parameter (Mandatory = $false)]
+        [switch] $Base64Url,
+        # Output raw byte array
+        [Parameter (Mandatory = $false)]
+        [switch] $RawBytes,
+        # Encoding to use for text strings
+        [Parameter (Mandatory = $false)]
+        [ValidateSet("Ascii", "UTF32", "UTF7", "UTF8", "BigEndianUnicode", "Unicode")]
+        [string] $Encoding = "Default"
+    )
+
+    process {
+        $listBytes = New-Object object[] $InputObject.Count
+        for ($iString = 0; $iString -lt $InputObject.Count; $iString++) {
+            [string] $strBase64 = $InputObject[$iString]
+            if ($Base64Url) { $strBase64 = $strBase64.Replace('-', '+').Replace('_', '/').PadRight($strBase64.Length + (4 - $strBase64.Length % 4) % 4, '=') }
+            [byte[]] $outBytes = [System.Convert]::FromBase64String($strBase64)
+            if ($RawBytes) { $listBytes[$iString] = $outBytes }
+            else {
+                $outString = ([Text.Encoding]::$Encoding.GetString($outBytes))
+                Write-Output $outString
             }
-            web                    = $null
-            requiredResourceAccess = @(
-                @{
-                    resourceAppId  = "00000003-0000-0000-c000-000000000000"
-                    resourceAccess = @(
-                        @{
-                            id   = "06da0dbc-49e2-44d2-8312-53f166ab848a"
-                            type = "Scope"
-                        }
-                        @{
-                            id   = "e1fe6dd8-ba31-4d61-89e7-88639da4683d"
-                            type = "Scope"
-                        }
-                    )
-                }
-            )
-            tags                   = @(
-                "Test"
-            )
-        })
-    return $appPublicClient
-}
-
-function New-AzureADApplicationConfidentialClient ($MsalToken) {
-    [hashtable] $Headers = @{
-        Authorization = $MsalToken.CreateAuthorizationHeader()
+        }
+        if ($RawBytes) {
+            return $listBytes
+        }
     }
-
-    $appConfidentialClient = Invoke-RestMethod -Method Post -Uri "https://graph.microsoft.com/beta/applications" -Headers $Headers -ContentType 'application/json' -Body (ConvertTo-Json -Depth 4 @{
-            displayName            = "ConfidentialClient"
-            signInAudience         = "AzureADMyOrg"
-            isFallbackPublicClient = $false
-            publicClient           = $null
-            web                    = @{
-                redirectUris = @(
-                    "urn:ietf:wg:oauth:2.0:oob"
-                    "https://login.microsoftonline.com/common/oauth2/nativeclient"
-                )
-            }
-            requiredResourceAccess = @(
-                @{
-                    resourceAppId  = "00000003-0000-0000-c000-000000000000"
-                    resourceAccess = @(
-                        @{
-                            id   = "7ab1d382-f21e-4acd-a863-ba3e13f7da61"
-                            type = "Role"
-                        }
-                        @{
-                            id   = "e1fe6dd8-ba31-4d61-89e7-88639da4683d"
-                            type = "Scope"
-                        }
-                    )
-                }
-            )
-            api                    = @{
-                oauth2PermissionScopes = @(
-                    @{
-                        id                      = [guid]::NewGuid()
-                        value                   = "user_impersonation"
-                        type                    = "User"
-                        adminConsentDescription = "Allow the application to access ConfidentialClient on behalf of the signed-in user."
-                        adminConsentDisplayName = "Access ConfidentialClient"
-                        userConsentDescription  = "Allow the application to access ConfidentialClient on your behalf."
-                        userConsentDisplayName  = "Access ConfidentialClient"
-                        isEnabled               = $true
-                    }
-                )
-            }
-            tags                   = @(
-                "Test"
-            )
-        })
-    return $appConfidentialClient
-}
-
-function Add-AzureADApplicationClientSecret ($MsalToken, $ClientId) {
-    [hashtable] $Headers = @{
-        Authorization = $MsalToken.CreateAuthorizationHeader()
-    }
-
-    $appConfidentialClient = Invoke-RestMethod -Method Get -Uri "https://graph.microsoft.com/beta/applications?`$filter=appId eq '$ClientId'" -Headers $Headers
-    if ($appConfidentialClient.value.Count) {
-        [securestring] $ClientSecret = New-AzureAdClientSecret
-        Invoke-RestMethod -Method Patch -Uri "https://graph.microsoft.com/beta/applications/$($appConfidentialClient.value[0].id)" -Headers $Headers -ContentType 'application/json' -Body (ConvertTo-Json @{
-                passwordCredentials = @(
-                    $appConfidentialClient.value[0].passwordCredentials | Where-Object displayName -NE 'MSAL.PS'
-                    @{
-                        endDateTime = (Get-Date).AddMonths(1).ToString('O')
-                        secretText  = (ConvertFrom-SecureStringAsPlainText $ClientSecret)
-                        displayName = "MSAL.PS"
-                    }
-                )
-            }) | Out-Null
-    }
-    return $ClientSecret
-}
-
-function Add-AzureADApplicationClientCertificate ($MsalToken, $ClientId) {
-    [hashtable] $Headers = @{
-        Authorization = $MsalToken.CreateAuthorizationHeader()
-    }
-
-    $appConfidentialClient = Invoke-RestMethod -Method Get -Uri "https://graph.microsoft.com/beta/applications?`$filter=appId eq '$ClientId'" -Headers $Headers
-    if ($appConfidentialClient.value.Count) {
-        [System.Security.Cryptography.X509Certificates.X509Certificate2] $ClientCertificate = New-SelfSignedCertificate -Subject 'CN=ConfidentialClient' -KeyFriendlyName "Confidential Client" -HashAlgorithm sha256 -KeySpec Signature -KeyLength 2048 -Type Custom -NotBefore (Get-Date) -NotAfter (Get-Date).AddYears(1) -KeyExportPolicy ExportableEncrypted -CertStoreLocation Cert:\CurrentUser\My
-        Invoke-RestMethod -Method Patch -Uri "https://graph.microsoft.com/beta/applications/$($appConfidentialClient.value[0].id)" -Headers $Headers -ContentType 'application/json' -Body (ConvertTo-Json @{
-                keyCredentials = @(
-                    $appConfidentialClient.value[0].keyCredentials | Where-Object displayName -NE 'MSAL.PS'
-                    @{
-                        type        = "AsymmetricX509Cert"
-                        usage       = "Verify"
-                        key         = ConvertTo-Base64String $ClientCertificate.GetRawCertData()
-                        displayName = "MSAL.PS"
-                    }
-                )
-            }) | Out-Null
-    }
-    return $ClientCertificate
-}
-
-
-function Test-AddingDlls ([string[]]$LiteralPath) {
-    try {
-        Add-Type -LiteralPath $LiteralPath
-    }
-    catch [System.Reflection.ReflectionTypeLoadException] {
-        Write-Host "Message: $($_.Exception.Message)"
-        Write-Host "StackTrace: $($_.Exception.StackTrace)"
-        Write-Host "LoaderExceptions: $($_.Exception.LoaderExceptions)"
-    }
-
-    [appdomain]::CurrentDomain.GetAssemblies()
-}
-
-function Validate-Certificate () {
-    $X509SecurityToken = New-Object Microsoft.IdentityModel.Tokens.X509SecurityKey $ConfidentialClientCertificate
-    $JwtSecurityToken = (New-Object System.IdentityModel.Tokens.Jwt.JwtSecurityTokenHandler).ReadToken($MsalToken.AccessToken)
-    $TokenValidationParameters = New-Object Microsoft.IdentityModel.Tokens.TokenValidationParameters -Property @{
-        IssuerSigningKey = $X509SecurityToken;
-        ValidAudience    = $JwtSecurityToken.Audience;
-        ValidIssuer      = $JwtSecurityToken.Issuer
-    }
-    [Microsoft.IdentityModel.Tokens.SecurityToken] $validatedToken = $null
-    $ValidateTokenResult = (New-Object System.IdentityModel.Tokens.Jwt.JwtSecurityTokenHandler).ValidateToken($MsalToken.AccessToken, $TokenValidationParameters, [ref]$validatedToken)
-    Write-Verbose -Verbose "The token validation result is: $($ValidateTokenResult.Identity.IsAuthenticated)"
-
 }
 
 <#
@@ -507,8 +520,7 @@ function ConvertTo-PsString {
             )
 
             [string] $OutputString = ''
-            if ($ObjectType.IsGenericType -or ($ObjectType.BaseType -and $ObjectType.BaseType.IsGenericType)) {
-                if (!$ObjectType.IsGenericType) { $ObjectType = $ObjectType.BaseType }
+            if ($ObjectType.IsGenericType) {
                 if ($ObjectType.FullName.StartsWith('System.Collections.Generic.Dictionary')) {
                     #$OutputString += '[hashtable]'
                     if ($Compact) {
@@ -589,16 +601,12 @@ function ConvertTo-PsString {
                         [void]$OutputString.AppendFormat("'{0}'", $InputObject.ToString('O'))
                         break
                     }
-                    { $_.BaseType -and $_.BaseType.Equals([Enum]) } {
+                    { $_.BaseType.Equals([Enum]) } {
                         [void]$OutputString.AppendFormat('::{0}', $InputObject)
                         break
                     }
-                    { $_.BaseType -and $_.BaseType.Equals([ValueType]) } {
+                    { $_.BaseType.Equals([ValueType]) } {
                         [void]$OutputString.AppendFormat('{0}', $InputObject)
-                        break
-                    }
-                    { $_.BaseType.Equals([System.IO.FileSystemInfo]) -or $_.Equals([System.Uri]) } {
-                        [void]$OutputString.AppendFormat("'{0}'", $InputObject.ToString().Replace("'", "''")) #.Replace('"','`"')
                         break
                     }
                     { $_.Equals([System.Xml.XmlDocument]) } {
@@ -616,7 +624,7 @@ function ConvertTo-PsString {
                         [void]$OutputString.Append('}')
                         break
                     }
-                    { $_.FullName.StartsWith('System.Collections.Generic.Dictionary') -or ($_.BaseType -and $_.BaseType.FullName.StartsWith('System.Collections.Generic.Dictionary')) } {
+                    { $_.FullName.StartsWith('System.Collections.Generic.Dictionary') } {
                         $iInput = 0
                         foreach ($enumHashtable in $InputObject.GetEnumerator()) {
                             [void]$OutputString.AppendFormat('; $D.Add({0},{1})', (ConvertTo-PsString $enumHashtable.Key -Compact:$Compact -NoEnumerate), (ConvertTo-PsString $enumHashtable.Value -Compact:$Compact -NoEnumerate))
@@ -625,7 +633,7 @@ function ConvertTo-PsString {
                         [void]$OutputString.Append('; $D })')
                         break
                     }
-                    { $_.BaseType -and $_.BaseType.Equals([Array]) } {
+                    { $_.BaseType.Equals([Array]) } {
                         [void]$OutputString.Append('(Write-Output @(')
                         $iInput = 0
                         for ($iInput = 0; $iInput -lt $InputObject.Count; $iInput++) {
@@ -656,7 +664,7 @@ function ConvertTo-PsString {
                         break
                     }
                     ## Convert objects with object initializers
-                    { $_ -is [object] -and ($_.GetConstructors() | foreach { if ($_.IsPublic -and !$_.GetParameters()) { $true } }) } {
+                    { $_ -is [object] -and ($_.GetConstructors() | ForEach-Object { if ($_.IsPublic -and !$_.GetParameters()) { $true } }) } {
                         [void]$OutputString.Append('@{')
                         $iInput = 0
                         foreach ($Item in ($InputObject | Get-Member -MemberType Property, NoteProperty)) {
@@ -719,6 +727,92 @@ function ConvertTo-PsString {
             }
 
         }
+    }
+}
+
+<#
+.SYNOPSIS
+    Filters a hashtable or PSBoundParameters containing PowerShell command parameters to only those valid for specified command.
+.EXAMPLE
+    PS C:\>Select-PsBoundParameters @{Name='Valid'; Verbose=$true; NotAParameter='Remove'} -CommandName Get-Process -ExcludeParameters 'Verbose'
+    Filters the parameter hashtable to only include valid parameters for the Get-Process command and exclude the Verbose parameter.
+.EXAMPLE
+    PS C:\>Select-PsBoundParameters @{Name='Valid'; Verbose=$true; NotAParameter='Remove'} -CommandName Get-Process -CommandParameterSets NameWithUserName
+    Filters the parameter hashtable to only include valid parameters for the Get-Process command in the "NameWithUserName" ParameterSet.
+.INPUTS
+    System.String
+#>
+function Select-PsBoundParameters {
+    [CmdletBinding()]
+    [OutputType([hashtable])]
+    param (
+        # Specifies the parameter key pairs to be filtered.
+        [Parameter(Mandatory = $true, Position = 1, ValueFromPipeline = $true)]
+        [hashtable] $NamedParameters,
+
+        # Specifies the parameter names to remove from the output.
+        [Parameter(Mandatory = $false)]
+        [ArgumentCompleter( {
+                param ( $commandName, $parameterName, $wordToComplete, $commandAst, $fakeBoundParameters )
+                if ($fakeBoundParameters.ContainsKey('NamedParameters')) {
+                    [string[]]$fakeBoundParameters.NamedParameters.Keys | Where-Object { $_ -Like "$wordToComplete*" }
+                }
+            })]
+        [string[]] $ExcludeParameters,
+
+        # Specifies the name of a PowerShell command to further filter valid parameters.
+        [Parameter(Mandatory = $false, ValueFromPipelineByPropertyName = $true)]
+        [ValidateNotNullOrEmpty()]
+        [ArgumentCompleter( {
+                param ( $commandName, $parameterName, $wordToComplete, $commandAst, $fakeBoundParameters )
+                [array] $CommandInfo = Get-Command "$wordToComplete*"
+                if ($CommandInfo) {
+                    $CommandInfo.Name #| ForEach-Object {$_}
+                }
+            })]
+        [Alias('Name')]
+        [string] $CommandName,
+
+        # Specifies parameter sets of the PowerShell command to further filter valid parameters.
+        [Parameter(Mandatory = $false)]
+        [ArgumentCompleter( {
+                param ( $commandName, $parameterName, $wordToComplete, $commandAst, $fakeBoundParameters )
+                if ($fakeBoundParameters.ContainsKey('CommandName')) {
+                    [array] $CommandInfo = Get-Command $fakeBoundParameters.CommandName
+                    if ($CommandInfo) {
+                        $CommandInfo[0].ParameterSets.Name | Where-Object { $_ -Like "$wordToComplete*" }
+                    }
+                }
+            })]
+        [string[]] $CommandParameterSets
+    )
+
+    process {
+        [hashtable] $SelectedParameters = $NamedParameters.Clone()
+
+        [string[]] $CommandParameters = $null
+        if ($CommandName) {
+            $CommandInfo = Get-Command $CommandName
+            if ($CommandParameterSets) {
+                [System.Collections.Generic.List[string]] $listCommandParameters = New-Object System.Collections.Generic.List[string]
+                foreach ($CommandParameterSet in $CommandParameterSets) {
+                    $listCommandParameters.AddRange([string[]]($CommandInfo.ParameterSets | Where-Object Name -EQ $CommandParameterSet | Select-Object -ExpandProperty Parameters | Select-Object -ExpandProperty Name))
+                }
+                $CommandParameters = $listCommandParameters | Select-Object -Unique
+            }
+            else {
+                $CommandParameters = $CommandInfo.Parameters.Keys
+            }
+        }
+
+        [string[]] $ParameterKeys = $SelectedParameters.Keys
+        foreach ($ParameterKey in $ParameterKeys) {
+            if ($ExcludeParameters -contains $ParameterKey -or ($CommandParameters -and $CommandParameters -notcontains $ParameterKey)) {
+                $SelectedParameters.Remove($ParameterKey)
+            }
+        }
+
+        return $SelectedParameters
     }
 }
 

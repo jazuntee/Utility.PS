@@ -5,25 +5,68 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "PowerShell Launch Module",
+            "name": "PowerShell Debug Module",
             "type": "PowerShell",
             "request": "launch",
             "preLaunchTask": "",
-            "script": "${workspaceRoot}/Launch-PSModule.ps1",
-            "cwd": "${workspaceRoot}",
+            "script": "${workspaceFolder}/build/Launch-PSModule.ps1",
+            "cwd": "${workspaceFolder}",
             "args": [
+                "-ModuleManifestPath './src/*.psd1'",
                 "-NoNewWindow"
             ]
         },
         {
-            "name": "PowerShell Launch Module and Current Function w/Args Prompt",
+            "name": "PowerShell Debug Module and Invoke Current Function",
             "type": "PowerShell",
             "request": "launch",
-            "script": "${workspaceRoot}/Launch-PSModule.ps1",
-            "cwd": "${workspaceRoot}",
+            "script": "${workspaceFolder}/build/Launch-PSModule.ps1",
+            "cwd": "${workspaceFolder}",
             "args": [
-                "-PostImportScriptBlock { ${fileBasenameNoExtension} ${command:SpecifyScriptArgs} }",
+                "-ModuleManifestPath './src/*.psd1'",
+                "-PostImportScriptBlock { ${fileBasenameNoExtension} }",
                 "-NoNewWindow"
+            ]
+        },
+        {
+            "name": "PowerShell Debug Module Tests",
+            "type": "PowerShell",
+            "request": "launch",
+            "preLaunchTask": "",
+            "script": "${workspaceFolder}/build/Launch-PSModule.ps1",
+            "cwd": "${workspaceFolder}",
+            "args": [
+                "-ModuleManifestPath './src/*.psd1'",
+                "-PostImportScriptBlock { ${workspaceFolder}/build/Test-PSModule.ps1 -ModuleManifestPath './src/*.psd1' -PesterConfigurationPath './build/PesterConfiguration.Debug.psd1' }",
+                "-NoNewWindow"
+            ]
+        },
+        {
+            "name": "PowerShell Test Module in External Console",
+            "type": "PowerShell",
+            "request": "launch",
+            "preLaunchTask": "",
+            "script": "${workspaceFolder}/build/Launch-PSModule.ps1",
+            "cwd": "${workspaceFolder}",
+            "args": [
+                "-ModuleManifestPath './src/*.psd1'",
+                "-PostImportScriptBlock { ${workspaceFolder}/build/Test-PSModule.ps1 -ModuleManifestPath './src/*.psd1' }",
+                "-PowerShellPaths ${input:pickPowerShellExecutable}",
+                "-NoNewWindow:$false"
+            ]
+        },
+        {
+            "name": "PowerShell Test Module in WSL External Console",
+            "type": "PowerShell",
+            "request": "launch",
+            "preLaunchTask": "",
+            "script": "${workspaceFolder}/build/Launch-PSModule.ps1",
+            "cwd": "${workspaceFolder}",
+            "args": [
+                "-ModuleManifestPath './src/*.psd1'",
+                "-PostImportScriptBlock { &(wslpath '${workspaceFolder}/build/Test-PSModule.ps1') -ModuleManifestPath './src/*.psd1' }",
+                "-PowerShellPaths wsl",
+                "-NoNewWindow:$false"
             ]
         },
         {
@@ -31,35 +74,24 @@
             "type": "PowerShell",
             "request": "launch",
             "preLaunchTask": "",
-            "script": "${workspaceRoot}/Launch-PSModule.ps1",
-            "cwd": "${workspaceRoot}",
+            "script": "${workspaceFolder}/build/Launch-PSModule.ps1",
+            "cwd": "${workspaceFolder}",
             "args": [
+                "-ModuleManifestPath './src/*.psd1'",
                 "-PowerShellPaths ${input:pickPowerShellExecutable}",
                 "-NoNewWindow:$false"
             ]
         },
         {
-            "name": "PowerShell Test Module in External Consoles",
+            "name": "PowerShell Launch Module in WSL External Console",
             "type": "PowerShell",
             "request": "launch",
             "preLaunchTask": "",
-            "script": "${workspaceRoot}/build/Test-PSModule.ps1",
-            "cwd": "${workspaceRoot}/build",
+            "script": "${workspaceFolder}/build/Launch-PSModule.ps1",
+            "cwd": "${workspaceFolder}",
             "args": [
-                "-PowerShellPaths 'pwsh','powershell'",
-                "-NoNewWindow:$false"
-            ]
-        },
-        {
-            "name": "PowerShell Test Current Function in External Consoles",
-            "type": "PowerShell",
-            "request": "launch",
-            "preLaunchTask": "",
-            "script": "${workspaceRoot}/build/Test-PSModule.ps1",
-            "cwd": "${workspaceRoot}/build",
-            "args": [
-                "-ModuleTestFileName '${fileBasenameNoExtension}.Tests.ps1'",
-                "-PowerShellPaths 'pwsh','powershell'",
+                "-ModuleManifestPath './src/*.psd1'",
+                "-PowerShellPaths wsl",
                 "-NoNewWindow:$false"
             ]
         },
@@ -68,31 +100,12 @@
             "type": "PowerShell",
             "request": "launch",
             "script": "${file}",
-            "cwd": "${file}"
-        },
-        {
-            "type": "PowerShell",
-            "request": "launch",
-            "name": "PowerShell Launch Current File w/Args Prompt",
-            "script": "${file}",
-            "args": [
-                "${command:SpecifyScriptArgs}"
-            ],
-            "cwd": "${file}"
-        },
-        {
-            "type": "PowerShell",
-            "request": "launch",
-            "name": "PowerShell Launch Current File in Temporary Console",
-            "script": "${file}",
-            "cwd": "${file}",
-            "createTemporaryIntegratedConsole": true
+            "cwd": "${workspaceFolder}"
         },
         {
             "name": "PowerShell Attach to Host Process",
             "type": "PowerShell",
             "request": "attach",
-            "processId": "${command:PickPSHostProcess}",
             "runspaceId": 1
         }
     ],
@@ -102,8 +115,8 @@
             "id": "pickPowerShellExecutable",
             "description": "Select PowerShell executable to launch",
             "options": [
-                "powershell",
-                "pwsh"
+                "pwsh",
+                "powershell"
             ],
             "default": "pwsh"
         }

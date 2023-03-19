@@ -29,7 +29,7 @@ Import-Module $PSScriptRoot\CommonFunctions.psm1 -DisableNameChecking
 [System.IO.FileInfo] $NuGetConfigFileInfo = Get-PathInfo $NuGetConfigPath -DefaultDirectory $BaseDirectoryInfo.FullName -DefaultFilename "NuGet.config" -SkipEmptyPaths
 [System.IO.DirectoryInfo] $OutputDirectoryInfo = Get-PathInfo $OutputDirectory -InputPathType Directory -DefaultDirectory $BaseDirectoryInfo.FullName -SkipEmptyPaths -ErrorAction SilentlyContinue
 [System.IO.FileInfo] $NuGetFileInfo = Get-PathInfo $NuGetPath -DefaultDirectory $BaseDirectoryInfo.FullName -DefaultFilename "nuget.exe" -ErrorAction SilentlyContinue
-#Set-Alias nuget -Value $NuGetFileInfo.FullName
+#Set-Alias nuget -Value $itemNuGetPath.FullName
 
 ## Download NuGet
 if (!$NuGetFileInfo.Exists) {

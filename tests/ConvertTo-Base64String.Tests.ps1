@@ -1,13 +1,22 @@
 [CmdletBinding()]
 param (
     [Parameter(Mandatory = $false)]
-    [string] $ModulePath = "..\src\*.psd1"
+    [string] $ModulePath = ".\src\*.psd1"
 )
 
-Import-Module $ModulePath -Force
+BeforeDiscovery {
+    ## Load Test Helper Functions
+    . (Join-Path $PSScriptRoot 'TestCommon.ps1')
+}
 
-## Load Test Helper Functions
-. (Join-Path $PSScriptRoot 'TestCommon.ps1')
+BeforeAll {
+    $CriticalError = $null
+    $PSModule = Import-Module $ModulePath -Force -PassThru -ErrorVariable CriticalError
+    if ($CriticalError) { throw $CriticalError }
+
+    ## Load Test Helper Functions
+    . (Join-Path $PSScriptRoot 'TestCommon.ps1')
+}
 
 Describe 'ConvertTo-Base64String' {
 
@@ -119,7 +128,7 @@ Describe 'ConvertTo-Base64String' {
             [type] $ExpectedInputType = [System.IO.FileInfo]
             [hashtable[]] $IO = @(
                 @{
-                    Input  = & { $Path = 'TestDrive:\TextFile.txt'; Set-Content $Path -Value 'A string with base64 encoding'; Get-Item $Path }
+                    Input  = { $Path = 'TestDrive:\TextFile.txt'; Set-Content $Path -Value 'A string with base64 encoding'; Get-Item $Path }
                     Output = 'QSBzdHJpbmcgd2l0aCBiYXNlNjQgZW5jb2RpbmcNCg=='
                 }
             )
@@ -148,7 +157,7 @@ Describe 'ConvertTo-Base64String' {
         TestGroup StringInput
     }
 
-    Write-Host
+    #Write-Host
     It 'Terminating Errors' {
         $ScriptBlock = { ([int]127), ([decimal]127), ([long]127) | ConvertTo-Base64String -ErrorAction Stop }
         $ScriptBlock | Should -Throw

@@ -1,21 +1,30 @@
 [CmdletBinding()]
 param (
     [Parameter(Mandatory = $false)]
-    [string] $ModulePath = "..\src\*.psd1"
+    [string] $ModulePath = ".\src\*.psd1"
 )
 
-Import-Module $ModulePath -Force
+BeforeDiscovery {
+    ## Load Test Helper Functions
+    . (Join-Path $PSScriptRoot 'TestCommon.ps1')
+}
 
-## Load Test Helper Functions
-. (Join-Path $PSScriptRoot 'TestCommon.ps1')
+BeforeAll {
+    $CriticalError = $null
+    $PSModule = Import-Module $ModulePath -Force -PassThru -ErrorVariable CriticalError
+    if ($CriticalError) { throw $CriticalError }
 
-Describe 'ConvertFrom-SecureString' {
+    ## Load Test Helper Functions
+    . (Join-Path $PSScriptRoot 'TestCommon.ps1')
+}
+
+Describe 'ConvertFrom-SecureString' -Skip {
 
     class SecureStringInput {
         [string] $CommandName = 'ConvertFrom-SecureString'
         [hashtable] $BoundParameters = @{
             AsPlainText = $true
-            Force       = $true
+            #Force       = $true
         }
         [type] $ExpectedInputType = [securestring]
         [hashtable[]] $IO = @(

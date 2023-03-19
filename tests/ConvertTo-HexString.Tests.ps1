@@ -1,13 +1,22 @@
 [CmdletBinding()]
 param (
     [Parameter(Mandatory = $false)]
-    [string] $ModulePath = "..\src\*.psd1"
+    [string] $ModulePath = ".\src\*.psd1"
 )
 
-Import-Module $ModulePath -Force
+BeforeDiscovery {
+    ## Load Test Helper Functions
+    . (Join-Path $PSScriptRoot 'TestCommon.ps1')
+}
 
-## Load Test Helper Functions
-. (Join-Path $PSScriptRoot 'TestCommon.ps1')
+BeforeAll {
+    $CriticalError = $null
+    $PSModule = Import-Module $ModulePath -Force -PassThru -ErrorVariable CriticalError
+    if ($CriticalError) { throw $CriticalError }
+
+    ## Load Test Helper Functions
+    . (Join-Path $PSScriptRoot 'TestCommon.ps1')
+}
 
 Describe 'ConvertTo-HexString' {
 
@@ -119,7 +128,7 @@ Describe 'ConvertTo-HexString' {
             [type] $ExpectedInputType = [System.IO.FileInfo]
             [hashtable[]] $IO = @(
                 @{
-                    Input  = & { $Path = 'TestDrive:\TextFile.txt'; Set-Content $Path -Value 'What is a hex string?'; Get-Item $Path }
+                    Input  = { $Path = 'TestDrive:\TextFile.txt'; Set-Content $Path -Value 'What is a hex string?'; Get-Item $Path }
                     Output = '57 68 61 74 20 69 73 20 61 20 68 65 78 20 73 74 72 69 6E 67 3F 0D 0A'
                 }
             )
