@@ -41,7 +41,8 @@ function ConvertFrom-QueryString {
             else { [psobject] $OutputObject = New-Object psobject }
 
             if ($InputString) {
-                if ($InputString[0] -eq '?') { $InputString = $InputString.Substring(1) }
+                $StartIndex = $InputString.IndexOf('?')
+                if ($StartIndex -gt -1) { $InputString = $InputString.Substring($StartIndex+1) }
                 [string[]] $QueryParameters = $InputString.Split('&')
                 foreach ($QueryParameter in $QueryParameters) {
                     [string[]] $QueryParameterPair = $QueryParameter.Split('=')
